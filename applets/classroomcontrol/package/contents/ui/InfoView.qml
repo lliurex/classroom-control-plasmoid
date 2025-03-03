@@ -33,8 +33,8 @@ Item {
             anchors.horizontalCenter:phMsg.horizontalCenter
             display:AbstractButton.TextBesideIcon
             visible:classroomControlWidget.canEdit
-            icon.name:"document-edit"
-            text:i18n("Change control mode")
+            icon.name:"configure"
+            text:i18n("Configuration")
             onClicked:{
                 classroomControlWidget.manageNavigation(1)
             }

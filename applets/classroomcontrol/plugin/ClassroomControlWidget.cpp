@@ -39,8 +39,8 @@ void ClassroomControlWidget::plasmoidMode(){
         if (TARGET_FILE.exists()){
             m_canEdit=true;
     		watcher=new QFileSystemWatcher(this);
-    		connect(watcher,SIGNAL(directoryChanged(QString)),this,SLOT(updateInfo()));
-    		watcher->addPath(n4dVarsPath);
+    		connect(watcher,SIGNAL(fileChanged(QString)),this,SLOT(updateInfo()));
+    		watcher->addPath(controlModeVar);
             updateInfo();
     	}else{
             m_canEdit=false;
@@ -72,12 +72,12 @@ void ClassroomControlWidget::updateInfo(){
                 setSubToolTip(subtooltip);
             }else{
                 cartControlEnabled=true;
-                const QString subtooltip(i18n("Classroom control activated:"));
+                const QString subtooltip(i18n("Classroom control activated"));
                 setCurrentCartIndex(initCart-1);
                 setIsCartControlEnabled(true);
-                setIconName("classroom_control_cart_92");
+                setIconName("classroom_control_cart_90");
                 QString cart=QString::number(initCart);
-                notificationBody=i18n("Cart number: ")+cart;
+                notificationBody=i18n("Controlling cart number: ")+cart;
                 setSubToolTip(subtooltip+'\n'+notificationBody);
 
             }

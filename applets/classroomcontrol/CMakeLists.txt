@@ -35,21 +35,9 @@ install(FILES "icons/classroom_control_off.svg"
         DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)
 install(FILES "icons/classroom_control.svg"
         DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)
-install(FILES "icons/classroom_control_cart_92.svg"
+install(FILES "icons/classroom_control_cart_5.svg"
         DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)
-install(FILES "icons/classroom_control_cart_93.svg"
-        DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)
-install(FILES "icons/classroom_control_cart_94.svg"
-        DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)
-install(FILES "icons/classroom_control_cart_95.svg"
-        DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)
-install(FILES "icons/classroom_control_cart_96.svg"
-        DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)
-install(FILES "icons/classroom_control_cart_97.svg"
-        DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)
-install(FILES "icons/classroom_control_cart_98.svg"
-        DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)
-install(FILES "icons/classroom_control_cart_99.svg"
+install(FILES "icons/classroom_control_cart_15.svg"
         DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)
 #install(FILES "knotifications5/classroomcontrol.notifyrc"
  #       DESTINATION ${DATAROOTDIR}/usr/share/knotifications5/)

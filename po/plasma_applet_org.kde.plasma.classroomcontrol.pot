@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: classroomcontrol \n"
 "Report-Msgid-Bugs-To: http://lliurex.net\n"
-"POT-Creation-Date: 2025-02-25 14:34+0100\n"
+"POT-Creation-Date: 2025-03-03 13:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,57 +17,62 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:36
+#: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:34
 #, kde-format
 msgid "Back to main view"
 msgstr ""
 
-#: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:46
+#: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:44
 #, kde-format
-msgid "Classroom control modes"
+msgid "Classroom control settings"
 msgstr ""
 
-#: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:57
-#, kde-format
-msgid "Controlling the classroom"
-msgstr ""
-
-#: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:75
+#: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:71
 #, kde-format
 msgid "Controlling the cart number:"
 msgstr ""
 
-#: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:104
+#: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:105
+#, kde-format
+msgid "Unlock cart"
+msgstr ""
+
+#: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:116
 #, kde-format
 msgid "Apply"
 msgstr ""
 
-#: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:113
+#: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:125
 #, kde-format
 msgid "Cancel"
 msgstr ""
 
-#: ../applets/classroomcontrol/package/contents/ui/InfoView.qml:36
+#: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:137
 #, kde-format
-msgid "Change control mode"
+msgid "The selected cart is already beaing controlled by another computer"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:67
+#: ../applets/classroomcontrol/package/contents/ui/InfoView.qml:37
 #, kde-format
-msgid "Classroom control mode activated:"
+msgid "Configuration"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:71
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:68
 #, kde-format
-msgid "Classroom"
+msgid "Classroom control disabled"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:78
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:75
 #, kde-format
-msgid "Cart number: "
+msgid "Classroom control activated"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:98
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:80
+#, kde-format
+msgid "Controlling cart number: "
+msgstr ""
+
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:99
 #, kde-format
 msgid "Clasroom Control"
 msgstr ""
