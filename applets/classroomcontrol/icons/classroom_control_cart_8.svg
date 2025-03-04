@@ -5,7 +5,7 @@
    viewBox="0 0 24 24"
    version="1.1"
    id="svg2"
-   sodipodi:docname="classroom_control_cart_5.svg"
+   sodipodi:docname="classroom_control_cart_8.svg"
    inkscape:version="1.3 (1:1.3+202307231459+0e150ed6c4)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -94,17 +94,11 @@
           </g>
         </g>
       </g>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;line-height:0;font-family:Ro;-inkscape-font-specification:'Ro Bold';text-align:center;text-anchor:middle;fill:#ffffff;stroke-width:0.0330233"
-         x="33.474583"
-         y="22.723761"
-         id="text2"><tspan
-           sodipodi:role="line"
-           id="tspan2"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:Roboto;-inkscape-font-specification:'Roboto Bold';fill:#ffffff;stroke-width:0.0330233"
-           x="33.474583"
-           y="22.723761">5</tspan></text>
+      <path
+         style="-inkscape-font-specification:'Roboto Bold';fill:#ffffff;stroke-width:0.0330233"
+         d="m 37.400364,19.688604 q 0,1.609375 -1.09375,2.445313 -1.085938,0.828125 -2.734375,0.828125 -1.648438,0 -2.757813,-0.828125 -1.101562,-0.835938 -1.101562,-2.445313 0,-0.945312 0.484375,-1.648437 0.492187,-0.710938 1.3125,-1.101563 -0.71875,-0.375 -1.132813,-1.015625 -0.414062,-0.648437 -0.414062,-1.46875 0,-1.546875 1.015625,-2.367187 1.015625,-0.820313 2.578125,-0.820313 1.585937,0 2.59375,0.820313 1.015625,0.820312 1.015625,2.367187 0,0.828125 -0.421875,1.46875 -0.414063,0.640625 -1.132813,1.023438 0.820313,0.390625 1.304688,1.09375 0.484375,0.703125 0.484375,1.648437 z m -2.492188,-5.125 q 0,-0.664062 -0.359375,-1.070312 -0.351562,-0.40625 -0.992187,-0.40625 -0.625,0 -0.984375,0.398437 -0.351563,0.390625 -0.351563,1.078125 0,0.671875 0.351563,1.085938 0.359375,0.414062 1,0.414062 0.640625,0 0.984375,-0.414062 0.351562,-0.414063 0.351562,-1.085938 z m 0.234375,4.960938 q 0,-0.765625 -0.4375,-1.203125 -0.4375,-0.4375 -1.148437,-0.4375 -0.710938,0 -1.148438,0.4375 -0.429687,0.4375 -0.429687,1.203125 0,0.757812 0.429687,1.1875 0.4375,0.429687 1.164063,0.429687 0.71875,0 1.140625,-0.429687 0.429687,-0.429688 0.429687,-1.1875 z"
+         id="text2"
+         aria-label="8" />
     </g>
   </g>
 </svg>

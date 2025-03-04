@@ -5,7 +5,7 @@
    viewBox="0 0 24 24"
    version="1.1"
    id="svg2"
-   sodipodi:docname="classroom_control_off.svg"
+   sodipodi:docname="classroom_control_cart_4.svg"
    inkscape:version="1.3 (1:1.3+202307231459+0e150ed6c4)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -20,15 +20,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="9.9731519"
-     inkscape:cx="25.16757"
-     inkscape:cy="14.789708"
+     inkscape:zoom="14.104167"
+     inkscape:cx="1.1344165"
+     inkscape:cy="20.242245"
      inkscape:window-width="1918"
      inkscape:window-height="881"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg2" />
+     inkscape:current-layer="g5" />
   <defs
      id="defs1">
     <style
@@ -58,33 +58,47 @@
     </linearGradient>
   </defs>
   <circle
-     style="fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:1.04762;stroke-dasharray:none;stroke-opacity:1"
+     style="fill:#00a300;fill-opacity:1;stroke:#000000;stroke-width:1.04762;stroke-dasharray:none;stroke-opacity:1"
      id="path3-6"
      cx="12"
      cy="12"
      r="10.476191" />
   <g
      id="g4"
-     transform="translate(-13.334229,-4.7115403)">
+     transform="translate(-13.334229,-4.7115402)">
     <g
        id="g5"
-       transform="translate(-8.222386,-0.4028454)">
-      <circle
-         style="fill:#000000;stroke-width:2.26772"
-         id="path3"
-         cx="33.456841"
-         cy="17.213638"
-         r="4.5" />
+       transform="translate(-8.2223864,-0.4028454)">
       <g
-         id="g2"
-         transform="matrix(0.0390625,0,0,0.0390625,23.556615,7.6612607)"
-         style="fill:#ffffff">
-        <path
-           d="m 256,370 c -70.7,0 -128,-57.3 -128,-128 0,-70.7 57.3,-128 128,-128 70.7,0 128,57.3 128,128 0,70.7 -57.3,128 -128,128 z m 0,-200 c 0,-8.3 1.7,-16.1 4.3,-23.6 -1.5,-0.1 -2.8,-0.4 -4.3,-0.4 -53,0 -96,43 -96,96 0,53 43,96 96,96 53,0 96,-43 96,-96 0,-1.5 -0.4,-2.8 -0.4,-4.3 -7.4,2.6 -15.3,4.3 -23.6,4.3 -39.8,0 -72,-32.2 -72,-72 z"
-           id="path1"
-           sodipodi:nodetypes="sssssscsssscss"
-           style="fill:#ffffff" />
+         id="g4-7"
+         transform="translate(-1.6337836,2.6703304)"
+         style="opacity:1">
+        <g
+           id="g5-5"
+           transform="translate(-8.222386,-0.4028454)">
+          <circle
+             style="fill:#808080;stroke-width:2.26772"
+             id="path3-3"
+             cx="43.412785"
+             cy="14.846901"
+             r="4.5" />
+          <g
+             id="g2-5"
+             transform="matrix(0.0390625,0,0,0.0390625,33.412785,5.3937757)"
+             style="opacity:0.99;fill:#000000">
+            <path
+               d="m 256,370 c -70.7,0 -128,-57.3 -128,-128 0,-70.7 57.3,-128 128,-128 70.7,0 128,57.3 128,128 0,70.7 -57.3,128 -128,128 z m 0,-200 c 0,-8.3 1.7,-16.1 4.3,-23.6 -1.5,-0.1 -2.8,-0.4 -4.3,-0.4 -53,0 -96,43 -96,96 0,53 43,96 96,96 53,0 96,-43 96,-96 0,-1.5 -0.4,-2.8 -0.4,-4.3 -7.4,2.6 -15.3,4.3 -23.6,4.3 -39.8,0 -72,-32.2 -72,-72 z"
+               id="path1-6"
+               sodipodi:nodetypes="sssssscsssscss"
+               style="fill:#000000" />
+          </g>
+        </g>
       </g>
+      <path
+         style="-inkscape-font-specification:'Roboto Bold';fill:#ffffff;stroke-width:0.0330233"
+         d="m 29.400364,18.919073 4.742187,-7.492187 h 2.28125 v 7.09375 h 1.289063 v 1.820312 h -1.289063 v 2.460938 h -2.257812 v -2.460938 h -4.664063 z m 2.242187,-0.398437 h 2.523438 v -4.039063 l -0.15625,0.273438 z"
+         id="text2"
+         aria-label="4" />
     </g>
   </g>
 </svg>

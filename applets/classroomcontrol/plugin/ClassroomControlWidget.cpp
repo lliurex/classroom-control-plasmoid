@@ -77,6 +77,11 @@ void ClassroomControlWidget::updateInfo(){
                 setIsCartControlEnabled(true);
                 setIconName("classroom_control_cart_90");
                 QString cart=QString::number(initCart);
+                setIsCartControlEnabled(true);
+                QString tmpIcon="classroom_control_cart_";
+                tmpIcon.append(QString("%1").arg(cart));
+                qDebug()<<tmpIcon;
+                setIconName(tmpIcon);
                 notificationBody=i18n("Controlling cart number: ")+cart;
                 setSubToolTip(subtooltip+'\n'+notificationBody);
 
