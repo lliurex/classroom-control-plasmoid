@@ -1,14 +1,14 @@
 [Desktop Entry]
 Name=Classroom Control
-Name[ca]=Control de l'aula
-Name[ca@valencia]=Control de l'aula
+Name[ca]=Control de l'Aula
+Name[ca@valencia]=Control de l'Aula
 Name[en_GB]=Clasroom Control
-Name[es]=Control del aula
-Comment=Allow you to manage the classroom control mode to be used
-Comment[ca]=Permet gestionar el mode de control de l'aula a utilitzar
-Comment[ca@valencia]=Permet gestionar el mode de control de l'aula a utilitzar
-Comment[en_GB]=Allow you to manage the classroom control mode to be used
-Comment[es]=Permite gestionar el modo de control del aula a utilizar
+Name[es]=Control del Aula
+Comment=Allows you to manage Classroom Control by selecting the cart to control
+Comment[ca]=Permet gestionar el Control de l'Aula seleccionat el carret a controlar
+Comment[ca@valencia]=Permet gestionar el Control de l'Aula seleccionat el carret a controlar
+Comment[en_GB]=Allows you to manage Classroom Control by selecting the cart to control
+Comment[es]=Permite gestionar el Control del Aula seleccionado el carrito a controlar
 Icon=classroom_control
 Type=Service
 X-Plasma-API=declarativeappletscript

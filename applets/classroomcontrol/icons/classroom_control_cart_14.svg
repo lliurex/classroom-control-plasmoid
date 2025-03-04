@@ -28,7 +28,7 @@
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g5" />
+     inkscape:current-layer="svg2" />
   <defs
      id="defs1">
     <style
@@ -58,14 +58,14 @@
     </linearGradient>
   </defs>
   <circle
-     style="fill:#00a300;fill-opacity:1;stroke:#000000;stroke-width:1.04762;stroke-dasharray:none;stroke-opacity:1"
+     style="fill:#00a300;fill-opacity:1;stroke:#000000;stroke-width:1.09524;stroke-dasharray:none;stroke-opacity:1"
      id="path3-6"
      cx="12"
      cy="12"
-     r="10.476191" />
+     r="10.95238" />
   <g
      id="g4"
-     transform="translate(-13.334229,-4.7115402)">
+     transform="translate(-13.334228,-4.7115401)">
     <g
        id="g5"
        transform="translate(-8.2223864,-0.4028454)">
