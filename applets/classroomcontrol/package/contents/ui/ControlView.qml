@@ -105,7 +105,7 @@ Rectangle{
 			text:i18n("Unlock cart")
 			icon.name:"document-decrypt.svg"
 			KeyNavigation.right:applyBtn
-			enabled:classroomControlWidget.isCartControlMode?true:false
+			enabled:classroomControlWidget.isCartControlEnabled?true:false
 			onClicked: classroomControlWidget.unlockCart()
 			Layout.leftMargin:10
 			Layout.rightMargin:optionsContainer.width-(unlockBtn.width+applyBtn.width+cancelBtn.width+40)

@@ -25,14 +25,14 @@ public:
    ClassroomControlWidgetUtils(QObject *parent = nullptr);
 
    void cleanCache();
-   int getCurrentCart();
+   std::tuple<bool, int> getCurrentCart();
    int getMaxNumCart();
    void updateCart(int carrito);
    bool showWidget();
 
    QString user;
    int maxNumCart=0;
-   variant::Variant modeInfo =variant::Variant::create_array(0);
+   variant::Variant cartInfo =variant::Variant::create_array(0);
 
 private:    
      

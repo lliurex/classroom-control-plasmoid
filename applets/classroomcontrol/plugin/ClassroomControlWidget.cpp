@@ -57,10 +57,10 @@ void ClassroomControlWidget::updateInfo(){
     if (!isWorking){
         isWorking=true;
         TARGET_FILE.setFileName(controlModeVar);
-        qDebug()<<"POSIBLE CAMBIO";
         if (TARGET_FILE.exists()){
-            qDebug()<<"ACTUALIZANDO DATOS";
-        	initCart=m_utils->getCurrentCart();
+            qDebug()<<"Updating info...";
+            auto[isError,cart]=m_utils->getCurrentCart();
+            initCart=cart;
             m_maxNumCart=m_utils->getMaxNumCart();
         	
             if (initCart==0){
@@ -74,8 +74,6 @@ void ClassroomControlWidget::updateInfo(){
                 cartControlEnabled=true;
                 const QString subtooltip(i18n("Classroom control activated"));
                 setCurrentCartIndex(initCart-1);
-                setIsCartControlEnabled(true);
-                setIconName("classroom_control_cart_90");
                 QString cart=QString::number(initCart);
                 setIsCartControlEnabled(true);
                 QString tmpIcon="classroom_control_cart_";
@@ -124,16 +122,6 @@ void ClassroomControlWidget::changeControlMode(bool isCartControlEnabled){
 
 void ClassroomControlWidget::changeCart(int newCart){
 
-    qDebug()<<"New cart: "<<newCart;
-    qDebug()<<"Old cart: "<<m_currentCart;
-
-    /*
-    if (newCart==m_maxNumCart){
-        setCurrentCartIndex(newCart-1);
-    }else{
-        setCurrentCartIndex(newCart);
-    }
-    */
     if (newCart!=initCart){
         qDebug()<<"Nueva configuracion";
         setArePendingChanges(true);
@@ -146,14 +134,14 @@ void ClassroomControlWidget::changeCart(int newCart){
 
 void ClassroomControlWidget::applyChanges(){
 
-	qDebug()<<"Guardando cambios:"<<m_currentCart;
-    qDebug()<<"Cart Mode: "<<m_isCartControlEnabled;
     int newCart=0;
+
     if (m_isCartControlEnabled){
         newCart=m_currentCart;
     }
+
     cartControlEnabled=m_isCartControlEnabled;
-    qDebug()<<"Actualizando cart: "<<newCart;
+
     m_utils->updateCart(newCart);
     if (!isWorking){
         updateInfo();
@@ -187,7 +175,6 @@ void ClassroomControlWidget::manageNavigation(int stackIndex)
 
 void ClassroomControlWidget::setStatus(ClassroomControlWidget::TrayStatus status)
 {
-
     if (m_status != status) {
         m_status = status;
         emit statusChanged();

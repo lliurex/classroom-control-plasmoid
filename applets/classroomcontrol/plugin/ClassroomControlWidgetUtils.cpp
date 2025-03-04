@@ -119,18 +119,21 @@ bool ClassroomControlWidgetUtils::showWidget(){
     return false; 
 }   
 
-int ClassroomControlWidgetUtils::getCurrentCart(){
+ std::tuple<bool, int> ClassroomControlWidgetUtils::getCurrentCart(){
+
+    bool isError=false;
 
     try{
-        variant::Variant modeInfo = client.get_variable("CLASSROOM",true);
-        currentCart=modeInfo["value"]; 
+        variant::Variant cartInfo = client.get_variable("CLASSROOM",true);
+        currentCart=cartInfo["value"]; 
+        qDebug()<<"Reading CLASROOM var: "<<currentCart;
     }catch (...){
-        qDebug()<<"error";
+        qDebug()<<"Error reading CLASROOM var";
+        isError=true;
 
     } 
-   qDebug()<<"CLASROOM"<<currentCart;
    
-   return currentCart;
+   return {isError,currentCart};
 
 }
 
@@ -162,7 +165,5 @@ void ClassroomControlWidgetUtils::updateCart(int newCart){
     }
     */
     currentCart=newCart;
-    qDebug()<<"Cambiar modo"<<currentCart;
-
     
 }
