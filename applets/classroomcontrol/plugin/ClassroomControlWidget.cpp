@@ -42,7 +42,7 @@ void ClassroomControlWidget::plasmoidMode(){
     		createWatcher();
             updateInfo();
     	}else{
-            notificationBody=i18n("Mobile Classroom Control not available im this computer");
+            notificationBody=i18n("Mobile Classroom Control not available in this computer");
             m_canEdit=false;
             setSubToolTip(notificationBody);
     		changeTryIconState(1);

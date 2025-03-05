@@ -22,7 +22,7 @@ Item {
         PlasmaExtras.PlaceholderMessage {
             id:phMsg
             anchors.centerIn: parent
-            width: parent.width*3 
+            width: parent.width*2-(PlasmaCore.Units.gridUnit * 4)
             iconName: Plasmoid.icon
             text:Plasmoid.toolTipSubText
         }
