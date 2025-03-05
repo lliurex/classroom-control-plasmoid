@@ -116,7 +116,7 @@ signals:
 private:
 
     TrayStatus m_status = PassiveStatus;
-    QString m_iconName = QStringLiteral("classroom_control_off");
+    QString m_iconName = QStringLiteral("classroom_control");
     QString m_toolTip;
     QString m_subToolTip;
     int m_currentStackIndex=0;
@@ -131,15 +131,18 @@ private:
     int m_maxNumCart=0;
     int initCart=0;
     bool cartControlEnabled=false;
+    QString notificationTitle;
     QString notificationBody;
     QFile TARGET_FILE;
     QFileSystemWatcher *watcher=nullptr;
     ClassroomControlWidgetUtils* m_utils;
-    QPointer<KNotification> m_changedModeNotification;
     QString n4dVarsPath="/var/lib/n4d/variables";
     QString controlModeVar="/var/lib/n4d/variables/CLASSROOM";
-     
+    bool createdFolderWatcher=false;
+    bool createFileWatcher=false; 
     void plasmoidMode();
+    void createWatcher();
+
 };
 
 

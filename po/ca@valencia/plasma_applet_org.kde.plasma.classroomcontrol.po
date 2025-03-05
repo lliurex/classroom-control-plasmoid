@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: http://lliurex.net\n"
-"POT-Creation-Date: 2025-03-03 13:02+0100\n"
-"PO-Revision-Date: 2025-03-03 13:03+0100\n"
+"POT-Creation-Date: 2025-03-05 11:55+0100\n"
+"PO-Revision-Date: 2025-03-05 11:56+0100\n"
 "Last-Translator: lliurex <lliurex@lliurex.net>\n"
 "Language-Team: Catalan <kde-i18n-ca@kde.org>\n"
 "Language: es\n"
@@ -57,22 +57,27 @@ msgstr ""
 msgid "Configuration"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:68
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:32
 #, kde-format
-msgid "Classroom control disabled"
+msgid "Mobile Classroom Control"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:75
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:45
 #, kde-format
-msgid "Classroom control activated"
-msgstr ""
-
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:80
-#, kde-format
-msgid "Controlling cart number: "
+msgid "Mobile Classroom Control not available im this computer"
 msgstr ""
 
 #: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:99
 #, kde-format
-msgid "Clasroom Control"
+msgid "Classroom control activated"
+msgstr ""
+
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:106
+#, kde-format
+msgid "Controlling cart number: "
+msgstr ""
+
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:110
+#, kde-format
+msgid "Classroom control disabled"
 msgstr ""
