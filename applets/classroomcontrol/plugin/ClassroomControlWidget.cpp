@@ -28,7 +28,6 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
     
 {
     m_utils->cleanCache();
-    TARGET_FILE.setFileName("/usr/bin/natfree-server");
     notificationTitle=i18n("Mobile Classroom Control");
     setSubToolTip(notificationTitle);
     plasmoidMode();
@@ -38,17 +37,15 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
 void ClassroomControlWidget::plasmoidMode(){
 
 	if (m_utils->showWidget()){
-        if (TARGET_FILE.exists()){
-    		createWatcher();
+        if (m_utils->isClassroomControlAvailable()){
+            createWatcher();
             updateInfo();
     	}else{
-            notificationBody=i18n("Mobile Classroom Control not available in this computer");
-            m_canEdit=false;
-            setSubToolTip(notificationBody);
-    		changeTryIconState(1);
+            disableApplet();
     	}
     }else{
-        m_canEdit=false;
+        setCanEdit(false);
+        setCurrentStackIndex(0);
         changeTryIconState(1);
     }
 
@@ -57,18 +54,13 @@ void ClassroomControlWidget::plasmoidMode(){
 void ClassroomControlWidget::createWatcher(){
 
     watcher=new QFileSystemWatcher(this);
-    TARGET_FILE.setFileName(controlModeVar);
-    if (!TARGET_FILE.exists()){
-        if (!createdFolderWatcher){
-            createdFolderWatcher=true;
-            connect(watcher,SIGNAL(directoryChanged(QString)),this,SLOT(updateInfo()));
-            watcher->addPath(n4dVarsPath);
-        }
-    }else{
+    TARGET_FILE.setFileName(m_utils->controlModeVar);
+
+    if (TARGET_FILE.exists()){
         if (!createFileWatcher){
             createFileWatcher=true;
             connect(watcher,SIGNAL(fileChanged(QString)),this,SLOT(updateInfo()));
-            watcher->addPath(controlModeVar);
+            watcher->addPath(m_utils->controlModeVar);
         }
     }
 } 
@@ -76,47 +68,71 @@ void ClassroomControlWidget::createWatcher(){
 void ClassroomControlWidget::updateInfo(){
 
     if (!isWorking){
+        qDebug()<<"[CLASSROOM_CONTROL]: Detecting changed in n4d vars directory";
         isWorking=true;
         bool enable=false;
-        TARGET_FILE.setFileName(controlModeVar);
+        bool disable=false;
+        TARGET_FILE.setFileName(m_utils->controlModeVar);
         if (TARGET_FILE.exists()){
-            qDebug()<<"Updating info...";
+            qDebug()<<"[CLASSROOM_CONTROL]: Updating info...";
             auto[isError,cart]=m_utils->getCurrentCart();
             initCart=cart;
             m_maxNumCart=m_utils->getMaxNumCart();
         	
-            if (initCart>0){
-                enable=true;
+            if (initCart==0){
+                disable=true;
+            }else{
+                if (initCart>0){
+                    enable=true;
+                }
+                 createWatcher();
             }
-            createWatcher();
         }else{
-            if (createFileWatcher){
-                createFileWatcher=false;
+            disable=true;
+        }
+        if (disable){
+            disableApplet();
+            isWorking=false;
+        }else{
+            if (enable){
+                cartControlEnabled=true;
+                QString title=i18n("Classroom control activated");
+                setCurrentCartIndex(initCart-1);
+                QString cart=QString::number(initCart);
+                setIsCartControlEnabled(true);
+                QString tmpIcon="classroom_control_cart_";
+                tmpIcon.append(QString("%1").arg(cart));
+                setIconName(tmpIcon);
+                setIconNamePh("classroom_control");
+                notificationBody=i18n("Controlling cart number: ")+cart;
+                setSubToolTip(title+'\n'+notificationBody);          
+            }else{
+                cartControlEnabled=false;
+                QString title=i18n("Classroom control disabled");
+                setCurrentCartIndex(0);
+                setIsCartControlEnabled(false);
+                setIconName("classroom_control_off");
+                setIconNamePh("classroom_control_off");
+                setSubToolTip(title);
             }
+            changeTryIconState(0);
+            setCanEdit(true);
+            isWorking=false;
         }
-        if (enable){
-            cartControlEnabled=true;
-            QString title=i18n("Classroom control activated");
-            setCurrentCartIndex(initCart-1);
-            QString cart=QString::number(initCart);
-            setIsCartControlEnabled(true);
-            QString tmpIcon="classroom_control_cart_";
-            tmpIcon.append(QString("%1").arg(cart));
-            setIconName(tmpIcon);
-            notificationBody=i18n("Controlling cart number: ")+cart;
-            setSubToolTip(title+'\n'+notificationBody);          
-        }else{
-            cartControlEnabled=false;
-            QString title=i18n("Classroom control disabled");
-            setCurrentCartIndex(initCart);
-            setIsCartControlEnabled(false);
-            setIconName("classroom_control_off");
-            setSubToolTip(title);
-        }
-        changeTryIconState(0);
-        m_canEdit=true;
-        isWorking=false;
     }
+}
+
+void ClassroomControlWidget::disableApplet(){
+
+    notificationBody=i18n("Mobile Classroom Control not available in this computer");
+   
+    setCanEdit(false);
+    setIconName("classroom_control");
+    setIconNamePh("classroom_control");
+    setSubToolTip(notificationBody);
+    setCurrentStackIndex(0);
+    changeTryIconState(1);
+
 }
 
 ClassroomControlWidget::TrayStatus ClassroomControlWidget::status() const
@@ -215,6 +231,19 @@ void ClassroomControlWidget::setIconName(const QString &name)
     if (m_iconName != name) {
         m_iconName = name;
         emit iconNameChanged();
+    }
+}
+
+QString ClassroomControlWidget::iconNamePh() const
+{
+    return m_iconNamePh;
+}
+
+void ClassroomControlWidget::setIconNamePh(const QString &name)
+{
+    if (m_iconNamePh != name) {
+        m_iconNamePh = name;
+        emit iconNamePhChanged();
     }
 }
 
@@ -341,6 +370,16 @@ bool ClassroomControlWidget::canEdit(){
 
     return m_canEdit;
 }
+
+void ClassroomControlWidget::setCanEdit(bool canEdit){
+
+    if (m_canEdit!=canEdit){
+        m_canEdit=canEdit;
+        emit canEditChanged();
+    }
+
+}
+
 
 int ClassroomControlWidget::maxNumCart(){
 

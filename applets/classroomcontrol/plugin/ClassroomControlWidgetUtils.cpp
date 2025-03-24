@@ -119,16 +119,47 @@ bool ClassroomControlWidgetUtils::showWidget(){
     return false; 
 }   
 
- std::tuple<bool, int> ClassroomControlWidgetUtils::getCurrentCart(){
+bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
+
+    TARGET_FILE.setFileName("/usr/bin/natfree-server");
+    bool isAvailable=false;
+
+    if (TARGET_FILE.exists()){
+        TARGET_FILE.setFileName(controlModeVar);
+        if (TARGET_FILE.exists()){
+            auto[isError,cart]=getCurrentCart();
+            if (!isError){
+                if (cart==0){
+                    isAvailable=false;
+                }else{
+                    isAvailable=true;
+                }
+            }
+        }
+    }
+    qDebug()<<"[CLASSROOM_CONTROL]: Classroom Control Available: "<<isAvailable;
+    return isAvailable;
+
+}
+
+std::tuple<bool, int> ClassroomControlWidgetUtils::getCurrentCart(){
 
     bool isError=false;
 
     try{
         variant::Variant cartInfo = client.get_variable("CLASSROOM",true);
-        currentCart=cartInfo["value"]; 
-        qDebug()<<"Reading CLASROOM var: "<<currentCart;
+        auto tmpCart=cartInfo["value"];
+        
+        if (tmpCart.size()>0){
+            currentCart=cartInfo["value"];
+            qDebug()<<"[CLASSROOM_CONTROL]: Reading CLASROOM var: "<<currentCart;
+        }else{
+            currentCart=-1;
+            qDebug()<<"[CLASSROOM_CONTROL]: Reading CLASROOM var: ''";
+
+        }
     }catch (...){
-        qDebug()<<"Error reading CLASROOM var";
+        qDebug()<<"[CLASSROOM_CONTROL]: Error reading CLASROOM var";
         isError=true;
 
     } 

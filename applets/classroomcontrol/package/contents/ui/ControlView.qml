@@ -82,7 +82,7 @@ Rectangle{
 	   			delegate:ItemDelegate{
 	   				width:300
 	   				text:index+1
-	   				}
+	   			}
 	   			displayText:currentIndex+1
 	   			enabled:cartModeCB.checked
 	   			Layout.preferredWidth:50

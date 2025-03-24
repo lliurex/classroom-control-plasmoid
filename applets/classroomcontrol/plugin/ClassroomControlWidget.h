@@ -30,12 +30,13 @@ class ClassroomControlWidget : public QObject
     Q_PROPERTY(QString toolTip READ toolTip NOTIFY toolTipChanged)
     Q_PROPERTY(QString subToolTip READ subToolTip NOTIFY subToolTipChanged)
     Q_PROPERTY(QString iconName READ iconName NOTIFY iconNameChanged)
+    Q_PROPERTY(QString iconNamePh READ iconNamePh NOTIFY iconNamePhChanged)
     Q_PROPERTY(int currentCart READ currentCart NOTIFY currentCartChanged)
     Q_PROPERTY(int currentStackIndex READ currentStackIndex NOTIFY currentStackIndexChanged)
     Q_PROPERTY(int currentCartIndex READ currentCartIndex NOTIFY currentCartIndexChanged)
     Q_PROPERTY (bool isCartControlEnabled READ isCartControlEnabled NOTIFY isCartControlEnabledChanged)
     Q_PROPERTY(bool arePendingChanges READ arePendingChanges NOTIFY arePendingChangesChanged)
-    Q_PROPERTY(bool canEdit READ canEdit CONSTANT)
+    Q_PROPERTY(bool canEdit READ canEdit NOTIFY canEditChanged)
     Q_PROPERTY(int maxNumCart READ maxNumCart CONSTANT)
     Q_PROPERTY(bool showError READ showError NOTIFY showErrorChanged)
     Q_PROPERTY(int errorCode READ errorCode NOTIFY errorCodeChanged)
@@ -65,6 +66,9 @@ public:
     QString iconName() const;
     void setIconName(const QString &name);
 
+    QString iconNamePh() const;
+    void setIconNamePh(const QString &name);
+
     int currentStackIndex();
     void setCurrentStackIndex(int);
 
@@ -87,6 +91,8 @@ public:
     void setErrorCode(int);
 
     bool canEdit();
+    void setCanEdit(bool);
+
     int maxNumCart();
 
 public slots:
@@ -104,6 +110,7 @@ signals:
     void toolTipChanged();
     void subToolTipChanged();
     void iconNameChanged();
+    void iconNamePhChanged();
     void currentStackIndexChanged();
     void statusChanged();
     void currentCartChanged();
@@ -112,11 +119,13 @@ signals:
     void arePendingChangesChanged();
     void showErrorChanged();
     void errorCodeChanged();
+    void canEditChanged();
 
 private:
 
     TrayStatus m_status = PassiveStatus;
     QString m_iconName = QStringLiteral("classroom_control");
+    QString m_iconNamePh = QStringLiteral("classroom_control");
     QString m_toolTip;
     QString m_subToolTip;
     int m_currentStackIndex=0;
@@ -136,12 +145,11 @@ private:
     QFile TARGET_FILE;
     QFileSystemWatcher *watcher=nullptr;
     ClassroomControlWidgetUtils* m_utils;
-    QString n4dVarsPath="/var/lib/n4d/variables";
-    QString controlModeVar="/var/lib/n4d/variables/CLASSROOM";
     bool createdFolderWatcher=false;
     bool createFileWatcher=false; 
     void plasmoidMode();
     void createWatcher();
+    void disableApplet();
 
 };
 

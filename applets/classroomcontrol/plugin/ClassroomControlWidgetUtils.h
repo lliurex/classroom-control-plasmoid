@@ -29,16 +29,20 @@ public:
    int getMaxNumCart();
    void updateCart(int carrito);
    bool showWidget();
+   bool isClassroomControlAvailable();
 
    QString user;
    int maxNumCart=0;
    variant::Variant cartInfo =variant::Variant::create_array(0);
+   QString controlModeVar="/var/lib/n4d/variables/CLASSROOM";
+   QString natfreeServer="/usr/bin/natfree-server";
+
 
 private:    
      
     n4d::Client client;
     int currentCart=0;
-
+    QFile TARGET_FILE;
     QString getInstalledVersion();
 
      
