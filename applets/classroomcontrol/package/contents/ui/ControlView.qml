@@ -13,6 +13,7 @@ import org.kde.plasma.private.classroomcontrol 1.0
 Rectangle{
 	id: optionsContainer
 	color:"transparent"
+	enabled:!classroomControlWidget.showWaitMsg
 
 	GridLayout{
 		id: controlOptions
@@ -93,6 +94,15 @@ Rectangle{
 	   	}
 	}
 
+	PlasmaExtras.PlaceholderMessage {
+		id:phMsg
+		anchors.centerIn: parent
+		visible:classroomControlWidget.showWaitMsg
+		width: parent.width*2-(PlasmaCore.Units.gridUnit * 4)
+		iconName: "view-refresh.svg"
+		text:getTextMsg(classroomControlWidget.msgCode)
+	}
+
 	RowLayout {
 		id:buttomsRow
 		anchors.bottom:optionsContainer.bottom
@@ -135,6 +145,12 @@ Rectangle{
 		switch (code){
 			case 1:
 				msg=i18n("The selected cart is already beaing controlled by another computer")
+				break;
+			case 2:
+				msg=i18n("Applyng changes. Wait a moment...")
+				break;
+			case 3:
+				msg=i18n("Restoring values. Wait a moment...")
 				break;
 		}
 		return msg;

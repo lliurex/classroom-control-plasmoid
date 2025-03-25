@@ -40,6 +40,8 @@ class ClassroomControlWidget : public QObject
     Q_PROPERTY(int maxNumCart READ maxNumCart CONSTANT)
     Q_PROPERTY(bool showError READ showError NOTIFY showErrorChanged)
     Q_PROPERTY(int errorCode READ errorCode NOTIFY errorCodeChanged)
+    Q_PROPERTY(bool showWaitMsg READ showWaitMsg NOTIFY showWaitMsgChanged)
+    Q_PROPERTY(int msgCode READ msgCode NOTIFY msgCodeChanged)
     Q_ENUMS(TrayStatus)
 
 public:
@@ -95,6 +97,12 @@ public:
 
     int maxNumCart();
 
+    bool showWaitMsg();
+    void setShowWaitMsg(bool);
+
+    int msgCode();
+    void setMsgCode(int);
+
 public slots:
     
     void updateInfo();
@@ -120,6 +128,8 @@ signals:
     void showErrorChanged();
     void errorCodeChanged();
     void canEditChanged();
+    void showWaitMsgChanged();
+    void msgCodeChanged();
 
 private:
 
@@ -138,6 +148,8 @@ private:
     int m_errorCode=0;
     bool isWorking=false;
     int m_maxNumCart=0;
+    bool m_showWaitMsg=false;
+    int m_msgCode=0;
     int initCart=0;
     bool cartControlEnabled=false;
     QString notificationTitle;

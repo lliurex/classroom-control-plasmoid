@@ -174,6 +174,9 @@ void ClassroomControlWidget::changeCart(int newCart){
 
 void ClassroomControlWidget::applyChanges(){
 
+    setShowWaitMsg(true);
+    setMsgCode(2);
+
     int newCart=0;
 
     if (m_isCartControlEnabled){
@@ -183,8 +186,11 @@ void ClassroomControlWidget::applyChanges(){
     cartControlEnabled=m_isCartControlEnabled;
 
     m_utils->updateCart(newCart);
-    if (!isWorking){
+    
+   if (!isWorking){
         updateInfo();
+        setShowWaitMsg(false);
+        setMsgCode(0);
         setArePendingChanges(false);
         setCurrentStackIndex(0);
     }
@@ -192,8 +198,13 @@ void ClassroomControlWidget::applyChanges(){
 
 void ClassroomControlWidget::cancelChanges(){
 	
+    setShowWaitMsg(true);
+    setMsgCode(3);
+    
     if (!isWorking){
         updateInfo();
+        setShowWaitMsg(false);
+        setMsgCode(0);
         setArePendingChanges(false);
         setCurrentStackIndex(0);
     }
@@ -384,5 +395,31 @@ void ClassroomControlWidget::setCanEdit(bool canEdit){
 int ClassroomControlWidget::maxNumCart(){
 
     return m_maxNumCart;
+}
+
+bool ClassroomControlWidget::showWaitMsg(){
+
+    return m_showWaitMsg;
+}
+
+void ClassroomControlWidget::setShowWaitMsg(bool showWaitMsg){
+
+    if (m_showWaitMsg!=showWaitMsg){
+        m_showWaitMsg=showWaitMsg;
+        emit showWaitMsgChanged();
+    }
+}
+
+int ClassroomControlWidget::msgCode(){
+
+    return m_msgCode;
+}
+
+void ClassroomControlWidget::setMsgCode(int msgCode){
+
+    if (m_msgCode!=msgCode){
+        m_msgCode=msgCode;
+        emit msgCodeChanged();
+    }
 }
 
