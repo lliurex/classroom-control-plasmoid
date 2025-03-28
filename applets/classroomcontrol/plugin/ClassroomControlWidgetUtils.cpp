@@ -97,7 +97,6 @@ QString ClassroomControlWidgetUtils::getInstalledVersion(){
 
 bool ClassroomControlWidgetUtils::showWidget(){
 
-
     int j, ngroups=32;
     gid_t groups[32];
     struct passwd *pw;
@@ -137,6 +136,7 @@ bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
             }
         }
     }
+    
     qDebug()<<"[CLASSROOM_CONTROL]: Classroom Control Available: "<<isAvailable;
     return isAvailable;
 
@@ -145,26 +145,28 @@ bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
 std::tuple<bool, int> ClassroomControlWidgetUtils::getCurrentCart(){
 
     bool isError=false;
+    QString currentCart="0";
 
     try{
         variant::Variant cartInfo = client.get_variable("CLASSROOM",true);
         auto tmpCart=cartInfo["value"];
         
         if (tmpCart.size()>0){
-            currentCart=cartInfo["value"];
-            qDebug()<<"[CLASSROOM_CONTROL]: Reading CLASROOM var: "<<currentCart;
+            currentCart=QString::fromStdString(cartInfo["value"].get_string());
+            qDebug()<<"[CLASSROOM_CONTROL]: Reading CLASSROOM var: "<<currentCart;
         }else{
-            currentCart=-1;
-            qDebug()<<"[CLASSROOM_CONTROL]: Reading CLASROOM var: ''";
+            currentCart="-1";
+            qDebug()<<"[CLASSROOM_CONTROL]: Reading CLASSROOM var: ''";
 
         }
-    }catch (...){
-        qDebug()<<"[CLASSROOM_CONTROL]: Error reading CLASROOM var";
+    }catch (std::exception& e){
+        qDebug()<<"[CLASSROOM_CONTROL]: Error reading CLASSROOM var: " <<e.what();
         isError=true;
 
     } 
    
-   return {isError,currentCart};
+   int numCart=currentCart.toInt();
+   return {isError,numCart};
 
 }
 
@@ -185,16 +187,32 @@ int ClassroomControlWidgetUtils::getMaxNumCart(){
 
     return maxNumCart;
 }
+std::tuple<bool, int> ClassroomControlWidgetUtils::getApplyChangesResult(QString stdout,QString stderr){
 
-void ClassroomControlWidgetUtils::updateCart(int newCart){
+    bool isError=false;
+    int errorCode=0;
 
-    /*
-    try{
-        client.call("BellSchedulerManager","stop_bell");
-    }catch(...){
-        
+    QStringList lstout=stdout.split("\n");
+    QStringList lsterr=stderr.split("\n");
+   
+    qDebug()<<"[CLASSROOM_CONTROL]: Updating CART Output: "<<lstout;
+    qDebug()<<"[CLASSROOM_CONTROL]: Updating CART Error: "<<lsterr;
+
+    if (lsterr[0]!=""){
+        isError=true;
+        if (lsterr[0].contains("ip") || lsterr[0].contains("hosts")){
+            errorCode=-1;
+        }else if (lsterr[0].contains("Mask")){
+            errorCode=-2;
+        }else if (lsterr[0].contains("Cart")){
+            errorCode=-3;
+        }else if (lsterr[0].contains("authorized")){
+            isError=false;
+        }
+    }else{
+        isError=false;
     }
-    */
-    currentCart=newCart;
-    
+
+    return {isError,errorCode};
+
 }

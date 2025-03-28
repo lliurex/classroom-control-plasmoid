@@ -25,10 +25,14 @@ using namespace edupals::variant;
 ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
     : QObject(parent)
     , m_utils(new ClassroomControlWidgetUtils(this))
-    
+    , m_applyChanges(new QProcess(this))
+   
 {
     m_utils->cleanCache();
     notificationTitle=i18n("Mobile Classroom Control");
+    connect(m_applyChanges, (void (QProcess::*)(int, QProcess::ExitStatus))&QProcess::finished,
+            this, &ClassroomControlWidget::applyChangesFinished);
+
     setSubToolTip(notificationTitle);
     plasmoidMode();
 
@@ -62,6 +66,8 @@ void ClassroomControlWidget::createWatcher(){
             connect(watcher,SIGNAL(fileChanged(QString)),this,SLOT(updateInfo()));
             watcher->addPath(m_utils->controlModeVar);
         }
+    }else{
+        createFileWatcher=false;
     }
 } 
 
@@ -85,18 +91,19 @@ void ClassroomControlWidget::updateInfo(){
                 if (initCart>0){
                     enable=true;
                 }
-                 createWatcher();
+                createWatcher();
             }
         }else{
             disable=true;
         }
+
         if (disable){
             disableApplet();
             isWorking=false;
         }else{
             if (enable){
                 cartControlEnabled=true;
-                QString title=i18n("Classroom control activated");
+                title=i18n("Classroom control activated");
                 setCurrentCartIndex(initCart-1);
                 QString cart=QString::number(initCart);
                 setIsCartControlEnabled(true);
@@ -105,15 +112,19 @@ void ClassroomControlWidget::updateInfo(){
                 setIconName(tmpIcon);
                 setIconNamePh("classroom_control");
                 notificationBody=i18n("Controlling cart number: ")+cart;
-                setSubToolTip(title+'\n'+notificationBody);          
+                setSubToolTip(title+'\n'+notificationBody); 
+                m_notification=KNotification::event(QStringLiteral("Set"),title,notificationBody,tmpIcon,nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
+         
             }else{
                 cartControlEnabled=false;
-                QString title=i18n("Classroom control disabled");
+                title=i18n("Classroom control disabled");
                 setCurrentCartIndex(0);
                 setIsCartControlEnabled(false);
                 setIconName("classroom_control_off");
                 setIconNamePh("classroom_control_off");
                 setSubToolTip(title);
+                m_notification=KNotification::event(QStringLiteral("Unset"),title,"","classroom_control_off",nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
+
             }
             changeTryIconState(0);
             setCanEdit(true);
@@ -170,34 +181,104 @@ void ClassroomControlWidget::changeCart(int newCart){
     }
 
    setCurrentCart(newCart);
+   setCurrentCartIndex(newCart-1);
 }
 
 void ClassroomControlWidget::applyChanges(){
 
+    setShowError(false);
     setShowWaitMsg(true);
     setMsgCode(2);
 
-    int newCart=0;
+    QString newCart="";
+    QString cmd="";
 
-    if (m_isCartControlEnabled){
-        newCart=m_currentCart;
+    if (m_notification){
+        m_notification->close();
     }
 
     cartControlEnabled=m_isCartControlEnabled;
 
-    m_utils->updateCart(newCart);
+    if (m_applyChanges->state() != QProcess::NotRunning) {
+        m_applyChanges->kill();
+    }
+
+    if (m_isCartControlEnabled){
+        newCart=QString::number(m_currentCart);
+        qDebug()<<"[CLASSROOM_CONTROL]: Apply changes. New Cart: "<<newCart;
+        cmd="pkexec natfree-server -v natfree00 SET "+newCart;
+    }else{
+        qDebug()<<"[CLASSROOM_CONTROL]: Apply changes. Disable classroom control";
+        cmd="pkexec natfree-server -v natfree00 UNSET ";
+    }
+    m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
+                       << cmd,QIODevice::ReadOnly);
+
+}
+
+void ClassroomControlWidget::applyChangesFinished(int exitCode, QProcess::ExitStatus exitStatus){    
+   
+    Q_UNUSED(exitCode);
+    bool isError=false;
+    int code=0;
     
-   if (!isWorking){
-        updateInfo();
+    if (exitStatus!=QProcess::NormalExit){
+        isError=true;
+        code=-4;
+    }else{
+        QString stdout=QString::fromLocal8Bit(m_applyChanges->readAllStandardOutput());
+        QString stderr=QString::fromLocal8Bit(m_applyChanges->readAllStandardError());
+
+        auto[tmpError,tmpCode]=m_utils->getApplyChangesResult(stdout, stderr);
+        isError=tmpError;
+        code=tmpCode;
+    }
+    
+    if (isError){
+        if (code==-1){
+            notificationBody=i18n("Unable to get ip from interface");
+        }else if (code==-2){
+            notificationBody=i18n("Mask value from interface is wrong");
+        }else if (code==-3){
+            notificationBody=i18n("The selected cart is already beaing controlled by another computer");
+        }else if (code==-4){
+            notificationBody=i18n("Unable to configure classroom control");
+        }
+
+        setShowWaitMsg(false);
+        setMsgCode(0);
+        setArePendingChanges(false);
+        setShowError(true);
+        setErrorCode(code);
+        setIconName("classroom_control_error");
+        setIconNamePh("classroom_control_error");
+        title=i18n("Error configuring classroom control");
+        setSubToolTip(title+'\n'+notificationBody);
+        m_notification=KNotification::event(QStringLiteral("Error"),title,notificationBody,"classroom_control_error",nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
+
+    }else{
+        if (!createFileWatcher){
+            if (!isWorking){
+                updateInfo();
+            }
+        }
         setShowWaitMsg(false);
         setMsgCode(0);
         setArePendingChanges(false);
         setCurrentStackIndex(0);
     }
+   
 }
 
 void ClassroomControlWidget::cancelChanges(){
-	
+
+    qDebug()<<"[CLASSROOM_CONTROL]: Cancel changes ...";
+
+    if (m_notification){
+        m_notification->close();
+    }
+
+    setShowError(false);
     setShowWaitMsg(true);
     setMsgCode(3);
     
@@ -212,13 +293,28 @@ void ClassroomControlWidget::cancelChanges(){
 
 void ClassroomControlWidget::unlockCart(){
 
-    qDebug()<<"Unlock cart";
+    qDebug()<<"[CLASSROOM_CONTROL]: Unlock cart ...";
+
+    if (m_notification){
+        m_notification->close();
+    }
+
+    setShowError(false);
+    setShowWaitMsg(true);
+    setMsgCode(2);
+
+    QString cmd="pkexec natfree-server -v natfree00 UNSET ";
+    m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
+                       << cmd,QIODevice::ReadOnly);
+
 }
 
 void ClassroomControlWidget::manageNavigation(int stackIndex)
 {
     if (stackIndex==0 && m_arePendingChanges){
-        cancelChanges();
+        if (!m_showError){
+            cancelChanges();
+        }
     }else{
         setCurrentStackIndex(stackIndex);
     }
@@ -343,7 +439,6 @@ bool ClassroomControlWidget::arePendingChanges(){
 
 void ClassroomControlWidget::setArePendingChanges(bool arePendingChanges){
 
-    qDebug()<<"Detectado cambio";
     if (m_arePendingChanges!=arePendingChanges){
         m_arePendingChanges=arePendingChanges;
         emit arePendingChangesChanged();
@@ -390,7 +485,6 @@ void ClassroomControlWidget::setCanEdit(bool canEdit){
     }
 
 }
-
 
 int ClassroomControlWidget::maxNumCart(){
 

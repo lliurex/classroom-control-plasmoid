@@ -27,9 +27,9 @@ public:
    void cleanCache();
    std::tuple<bool, int> getCurrentCart();
    int getMaxNumCart();
-   void updateCart(int carrito);
    bool showWidget();
    bool isClassroomControlAvailable();
+   std::tuple<bool,int> getApplyChangesResult(QString stout,QString stderr);
 
    QString user;
    int maxNumCart=0;
@@ -41,7 +41,6 @@ public:
 private:    
      
     n4d::Client client;
-    int currentCart=0;
     QFile TARGET_FILE;
     QString getInstalledVersion();
 

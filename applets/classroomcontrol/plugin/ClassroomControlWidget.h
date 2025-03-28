@@ -139,7 +139,7 @@ private:
     QString m_toolTip;
     QString m_subToolTip;
     int m_currentStackIndex=0;
-    int m_currentCart=0;
+    int m_currentCart=1;
     int m_currentCartIndex=0;
     bool m_isCartControlEnabled=false;
     bool m_arePendingChanges=false;
@@ -154,14 +154,20 @@ private:
     bool cartControlEnabled=false;
     QString notificationTitle;
     QString notificationBody;
+    QString title;
     QFile TARGET_FILE;
     QFileSystemWatcher *watcher=nullptr;
     ClassroomControlWidgetUtils* m_utils;
-    bool createdFolderWatcher=false;
     bool createFileWatcher=false; 
+    QProcess *m_applyChanges=nullptr;
+    QPointer<KNotification> m_notification;
     void plasmoidMode();
     void createWatcher();
     void disableApplet();
+
+private slots:
+    
+    void applyChangesFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
 };
 

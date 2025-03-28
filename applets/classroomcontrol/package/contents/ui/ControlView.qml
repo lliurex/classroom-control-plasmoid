@@ -115,7 +115,17 @@ Rectangle{
 			text:i18n("Unlock cart")
 			icon.name:"document-decrypt.svg"
 			KeyNavigation.right:applyBtn
-			enabled:classroomControlWidget.isCartControlEnabled?true:false
+			enabled:{
+				if (classroomControlWidget.isCartControlEnabled){
+					if (classroomControlWidget.showError){
+						false
+					}else{
+						true
+					}
+				}else{
+					false
+				}
+			}
 			onClicked: classroomControlWidget.unlockCart()
 			Layout.leftMargin:10
 			Layout.rightMargin:optionsContainer.width-(unlockBtn.width+applyBtn.width+cancelBtn.width+40)
@@ -134,7 +144,17 @@ Rectangle{
 			id: cancelBtn
 			text: i18n("Cancel")
 			icon.name: "dialog-cancel"
-			enabled:classroomControlWidget.arePendingChanges
+			enabled:{
+				if (classroomControlWidget.arePendingChanges){
+					true
+				}else{
+					if (classroomControlWidget.showError){
+						true
+					}else{
+						false
+					}
+				}
+			}
 			onClicked: classroomControlWidget.cancelChanges()
 		}
 	}
@@ -142,9 +162,19 @@ Rectangle{
 	function getTextMsg(code){
 
 		var msg=""
+
 		switch (code){
-			case 1:
+			case -1:
+				msg=i18n("Unable to get ip from interface")
+				break;
+			case -2:
+				msg=i18nd("Mask value from interface is wrong")
+				break;
+			case -3:
 				msg=i18n("The selected cart is already beaing controlled by another computer")
+				break;
+			case -4:
+				msg=i18n("Unable to configure classroom control")
 				break;
 			case 2:
 				msg=i18n("Applyng changes. Wait a moment...")

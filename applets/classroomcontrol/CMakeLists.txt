@@ -31,8 +31,6 @@ target_link_libraries(classroomcontrolplugin
 
 install(FILES plugin/qmldir DESTINATION ${QML_INSTALL_DIR}/org/kde/plasma/private/classroomcontrol)
 install(TARGETS classroomcontrolplugin DESTINATION ${QML_INSTALL_DIR}/org/kde/plasma/private/classroomcontrol)
-install(FILES "icons/classroom_control_off.svg"
-        DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)
 install(FILES "icons/classroom_control.svg"
         DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)
 install(FILES "icons/classroom_control_cart_1.svg"
@@ -65,7 +63,9 @@ install(FILES "icons/classroom_control_cart_14.svg"
         DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)
 install(FILES "icons/classroom_control_cart_15.svg"
         DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)
-#install(FILES "knotifications5/classroomcontrol.notifyrc"
- #       DESTINATION ${DATAROOTDIR}/usr/share/knotifications5/)
-#install(FILES "autostart/lliurex-up-indicator"
-#        DESTINATION ${DATAROOTDIR}/etc/bin)        
+install(FILES "icons/classroom_control_error.svg"
+        DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)
+install(FILES "icons/classroom_control_off.svg"
+        DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)  
+install(FILES "knotifications5/classroomcontrol.notifyrc"
+       DESTINATION ${DATAROOTDIR}/usr/share/knotifications5/)
