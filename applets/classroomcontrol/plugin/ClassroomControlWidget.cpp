@@ -119,6 +119,7 @@ void ClassroomControlWidget::updateInfo(){
             }else{
                 cartControlEnabled=false;
                 title=i18n("Classroom control disabled");
+                setCurrentCart(1);
                 setCurrentCartIndex(0);
                 setIsCartControlEnabled(false);
                 setIconName("classroom_control_off");
@@ -165,12 +166,12 @@ void ClassroomControlWidget::changeTryIconState(int state){
 
 void ClassroomControlWidget::changeControlMode(bool isCartControlEnabled){
 
-    if (isCartControlEnabled!=cartControlEnabled){
+    if (cartControlEnabled!=isCartControlEnabled){
+        cartControlEnabled=isCartControlEnabled;
         setArePendingChanges(true);
     }else{
         setArePendingChanges(false);
     }
-    setIsCartControlEnabled(isCartControlEnabled);
 }
 
 void ClassroomControlWidget::changeCart(int newCart){
@@ -198,13 +199,12 @@ void ClassroomControlWidget::applyChanges(){
         m_notification->close();
     }
 
-    cartControlEnabled=m_isCartControlEnabled;
 
     if (m_applyChanges->state() != QProcess::NotRunning) {
         m_applyChanges->kill();
     }
 
-    if (m_isCartControlEnabled){
+    if (cartControlEnabled){
         newCart=QString::number(m_currentCart);
         qDebug()<<"[CLASSROOM_CONTROL]: Apply changes. New Cart: "<<newCart;
         cmd="pkexec natfree-server -v natfree00 SET "+newCart;
