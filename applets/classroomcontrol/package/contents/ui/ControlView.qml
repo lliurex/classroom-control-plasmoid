@@ -99,7 +99,7 @@ Rectangle{
 		id:phMsg
 		anchors.centerIn: parent
 		visible:classroomControlWidget.showWaitMsg
-		width: parent.width*2-(PlasmaCore.Units.gridUnit * 4)
+		width: parent.width-(PlasmaCore.Units.gridUnit *2 )
 		iconName: "view-refresh.svg"
 		text:getTextMsg(classroomControlWidget.msgCode)
 	}
