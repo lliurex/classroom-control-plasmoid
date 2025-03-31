@@ -9,6 +9,7 @@
 #include <QFile>
 #include <QThread>
 #include <QFileSystemWatcher>
+#include <KIO/CommandLauncherJob>
 
 #include <variant.hpp>
 
@@ -112,6 +113,7 @@ public slots:
     void applyChanges();
     void cancelChanges();
     void unlockCart();
+    void openHelp();
   
 signals:
    

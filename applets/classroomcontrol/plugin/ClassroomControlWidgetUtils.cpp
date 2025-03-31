@@ -200,14 +200,20 @@ std::tuple<bool, int> ClassroomControlWidgetUtils::getApplyChangesResult(QString
 
     if (lsterr[0]!=""){
         isError=true;
-        if (lsterr[0].contains("ip") || lsterr[0].contains("hosts")){
+        if (lsterr[0].contains("ip")){
             errorCode=-1;
         }else if (lsterr[0].contains("Mask")){
             errorCode=-2;
         }else if (lsterr[0].contains("Cart")){
             errorCode=-3;
+        }else if (lsterr[0].contains("hosts")){
+            errorCode=-4;
+        }else if (lsterr[0].contains("Virtual")){
+            errorCode=-5;
         }else if (lsterr[0].contains("authorized")){
-            isError=false;
+            errorCode=-7;
+        }else{
+            errorCode=-6;
         }
     }else{
         isError=false;

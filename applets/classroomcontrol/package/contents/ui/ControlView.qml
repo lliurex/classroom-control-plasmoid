@@ -65,6 +65,7 @@ Rectangle{
 	   		Layout.fillWidth:true
 	   		Layout.leftMargin:15
 	   		Layout.rightMargin:15
+	   		visible:!classroomControlWidget.showWaitMsg
 
 	   		PC3.CheckBox {
 	   			id:cartModeCB
@@ -109,6 +110,7 @@ Rectangle{
 		anchors.bottomMargin:15
 		anchors.fill:optionsContainer.fill
 		spacing:10
+		visible:!classroomControlWidget.showWaitMsg
 
 		PC3.Button{
 			id:unlockBtn
@@ -174,6 +176,12 @@ Rectangle{
 				msg=i18n("The selected cart is already beaing controlled by another computer")
 				break;
 			case -4:
+				msg=i18n("Insufficient number of hosts in subnet")
+				break;
+			case -5:
+				msg=i18n("Virtual interface not created")
+				break;
+			case -6:
 				msg=i18n("Unable to configure classroom control")
 				break;
 			case 2:

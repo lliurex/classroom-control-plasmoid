@@ -16,6 +16,7 @@
 #include <variant.hpp>
 #include <json.hpp>
 #include <QDebug>
+#include <KIO/CommandLauncherJob>
 
 using namespace edupals;
 using namespace std;
@@ -111,7 +112,7 @@ void ClassroomControlWidget::updateInfo(){
                 tmpIcon.append(QString("%1").arg(cart));
                 setIconName(tmpIcon);
                 setIconNamePh("classroom_control");
-                notificationBody=i18n("Controlling cart number: ")+cart;
+                notificationBody=i18n("Controlling the cart number: ")+cart;
                 setSubToolTip(title+'\n'+notificationBody); 
                 m_notification=KNotification::event(QStringLiteral("Set"),title,notificationBody,tmpIcon,nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
          
@@ -224,7 +225,7 @@ void ClassroomControlWidget::applyChangesFinished(int exitCode, QProcess::ExitSt
     
     if (exitStatus!=QProcess::NormalExit){
         isError=true;
-        code=-4;
+        code=-7;
     }else{
         QString stdout=QString::fromLocal8Bit(m_applyChanges->readAllStandardOutput());
         QString stderr=QString::fromLocal8Bit(m_applyChanges->readAllStandardError());
@@ -235,27 +236,37 @@ void ClassroomControlWidget::applyChangesFinished(int exitCode, QProcess::ExitSt
     }
     
     if (isError){
-        if (code==-1){
-            notificationBody=i18n("Unable to get ip from interface");
-        }else if (code==-2){
-            notificationBody=i18n("Mask value from interface is wrong");
-        }else if (code==-3){
-            notificationBody=i18n("The selected cart is already beaing controlled by another computer");
-        }else if (code==-4){
-            notificationBody=i18n("Unable to configure classroom control");
+        if (code==-7){  
+            cancelChanges();
+        }else{
+            qDebug()<<"[CLASSROOM_CONTROL]: Apply changes with error. Code: "<<code;
+
+            if (code==-1){
+                notificationBody=i18n("Unable to get ip from interface");
+            }else if (code==-2){
+                notificationBody=i18n("Mask value from interface is wrong");
+            }else if (code==-3){
+                notificationBody=i18n("The selected cart is already beaing controlled by another computer");
+            }else if (code==-4){
+                notificationBody=i18n("Insufficient number of hosts in subnet");
+            }else if (code==-5){
+                notificationBody=i18n("Virtual interface not created");
+            }else if (code==-6){
+                notificationBody=i18n("Unable to configure classroom control");
+            }
+            
+            setShowWaitMsg(false);
+            setMsgCode(0);
+            setArePendingChanges(false);
+            setShowError(true);
+            setErrorCode(code);
+            setIconName("classroom_control_error");
+            setIconNamePh("classroom_control_error");
+            title=i18n("Error configuring classroom control");
+            setSubToolTip(title+'\n'+notificationBody);
+            m_notification=KNotification::event(QStringLiteral("Error"),title,notificationBody,"classroom_control_error",nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
         }
-
-        setShowWaitMsg(false);
-        setMsgCode(0);
-        setArePendingChanges(false);
-        setShowError(true);
-        setErrorCode(code);
-        setIconName("classroom_control_error");
-        setIconNamePh("classroom_control_error");
-        title=i18n("Error configuring classroom control");
-        setSubToolTip(title+'\n'+notificationBody);
-        m_notification=KNotification::event(QStringLiteral("Error"),title,notificationBody,"classroom_control_error",nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
-
+    
     }else{
         if (!createFileWatcher){
             if (!isWorking){
@@ -318,6 +329,14 @@ void ClassroomControlWidget::manageNavigation(int stackIndex)
     }else{
         setCurrentStackIndex(stackIndex);
     }
+}
+
+void ClassroomControlWidget::openHelp(){
+
+    QString command="xdg-open https://wiki.edu.gva.es/lliurex";
+    KIO::CommandLauncherJob *job = nullptr;
+    job = new KIO::CommandLauncherJob(command);
+    job->start();
 }
 
 void ClassroomControlWidget::setStatus(ClassroomControlWidget::TrayStatus status)

@@ -41,7 +41,7 @@ Item {
 
     Component.onCompleted: {
        plasmoid.removeAction("configure");
-
+       plasmoid.setAction("openHelp",i18n("See help"),"help-contents")
     }
 
    
@@ -81,6 +81,12 @@ Item {
             }
 
         }
+    }
+
+    function action_openHelp(){
+
+        classroomControlWidget.openHelp()
+
     }
     
  }  
