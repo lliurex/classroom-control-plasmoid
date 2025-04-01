@@ -9,6 +9,7 @@
 #include <QTextStream>
 #include <QJsonObject>
 #include <QList>
+#include <KLocalizedString>
 #include <sys/types.h>
 
 #include <grp.h>
@@ -126,9 +127,9 @@ bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
     if (TARGET_FILE.exists()){
         TARGET_FILE.setFileName(controlModeVar);
         if (TARGET_FILE.exists()){
-            auto[isError,cart]=getCurrentCart();
-            if (!isError){
-                if (cart==0){
+            QVariantList ret=getCurrentCart();
+            if (!ret[0].toBool()){
+                if (ret[1].toInt()==0){
                     isAvailable=false;
                 }else{
                     isAvailable=true;
@@ -142,10 +143,11 @@ bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
 
 }
 
-std::tuple<bool, int> ClassroomControlWidgetUtils::getCurrentCart(){
+QVariantList ClassroomControlWidgetUtils::getCurrentCart(){
 
     bool isError=false;
     QString currentCart="0";
+    QVariantList result;
 
     try{
         variant::Variant cartInfo = client.get_variable("CLASSROOM",true);
@@ -166,7 +168,10 @@ std::tuple<bool, int> ClassroomControlWidgetUtils::getCurrentCart(){
     } 
    
    int numCart=currentCart.toInt();
-   return {isError,numCart};
+   
+   result.append(isError);
+   result.append(numCart);
+   return result;
 
 }
 
@@ -187,10 +192,12 @@ int ClassroomControlWidgetUtils::getMaxNumCart(){
 
     return maxNumCart;
 }
-std::tuple<bool, int> ClassroomControlWidgetUtils::getApplyChangesResult(QString stdout,QString stderr){
+QVariantList ClassroomControlWidgetUtils::getApplyChangesResult(QString stdout,QString stderr){
 
     bool isError=false;
     int errorCode=0;
+    QString msgText="";
+    QVariantList result;
 
     QStringList lstout=stdout.split("\n");
     QStringList lsterr=stderr.split("\n");
@@ -202,23 +209,32 @@ std::tuple<bool, int> ClassroomControlWidgetUtils::getApplyChangesResult(QString
         isError=true;
         if (lsterr[0].contains("ip")){
             errorCode=-1;
+            msgText=i18n("Unable to get ip from interface");
         }else if (lsterr[0].contains("Mask")){
             errorCode=-2;
+            msgText=i18n("Mask value from interface is wrong");
         }else if (lsterr[0].contains("Cart")){
             errorCode=-3;
+            msgText=i18n("The selected cart is already beaing controlled by another computer");
         }else if (lsterr[0].contains("hosts")){
             errorCode=-4;
+            msgText=i18n("Insufficient number of hosts in subnet");
         }else if (lsterr[0].contains("Virtual")){
             errorCode=-5;
+            msgText=i18n("Virtual interface not created");
         }else if (lsterr[0].contains("authorized")){
             errorCode=-7;
         }else{
             errorCode=-6;
+            msgText=i18n("Unable to configure classroom control");
         }
     }else{
         isError=false;
     }
-
-    return {isError,errorCode};
+    result.append(isError);
+    result.append(errorCode);
+    result.append(msgText);
+    
+    return result;
 
 }

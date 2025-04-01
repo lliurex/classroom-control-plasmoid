@@ -160,7 +160,8 @@ private:
     QFile TARGET_FILE;
     QFileSystemWatcher *watcher=nullptr;
     ClassroomControlWidgetUtils* m_utils;
-    bool createFileWatcher=false; 
+    bool createFileWatcher=false;
+    bool showNotification=true; 
     QProcess *m_applyChanges=nullptr;
     QPointer<KNotification> m_notification;
     void plasmoidMode();
