@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: http://lliurex.net\n"
-"POT-Creation-Date: 2025-03-31 12:36+0200\n"
-"PO-Revision-Date: 2025-03-31 12:43+0200\n"
+"POT-Creation-Date: 2025-04-01 09:59+0200\n"
+"PO-Revision-Date: 2025-04-01 10:00+0200\n"
 "Last-Translator: lliurex <lliurex@lliurex.net>\n"
 "Language-Team: Catalan <kde-i18n-ca@kde.org>\n"
 "Language: es\n"
@@ -48,31 +48,32 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:170
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:245
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:212
 #, kde-format
 msgid "Unable to get ip from interface"
 msgstr "No es posible obtener la ip desde la interfaz"
 
 #: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:176
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:249
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:218
 #, kde-format
 msgid "The selected cart is already beaing controlled by another computer"
 msgstr "El carrito seleccionado ya esta siendo controlado por otro ordenador"
 
 #: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:179
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:251
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:221
 #, kde-format
 msgid "Insufficient number of hosts in subnet"
 msgstr "Insuficiente número de hosts en la subred"
 
 #: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:182
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:253
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:224
 #, kde-format
 msgid "Virtual interface not created"
 msgstr "Interfaz virtual no creada"
 
 #: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:185
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:255
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:234
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:229
 #, kde-format
 msgid "Unable to configure classroom control"
 msgstr "No es posible configurar el Control del Aula"
@@ -112,22 +113,22 @@ msgstr "Control del Aula activado"
 msgid "Controlling the cart number: "
 msgstr "Controlando el carrito número: "
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:121
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:123
 #, kde-format
 msgid "Classroom control disabled"
 msgstr "Control del Aula desactivado"
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:139
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:144
 #, kde-format
 msgid "Mobile Classroom Control not available in this computer"
 msgstr "Control del Aula Móvil no disponible en este equipo"
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:247
-#, kde-format
-msgid "Mask value from interface is wrong"
-msgstr "El valor de la máscara de la interfaz es erróneo"
-
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:265
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:258
 #, kde-format
 msgid "Error configuring classroom control"
 msgstr "Error configurando el Control del Aula"
+
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:215
+#, kde-format
+msgid "Mask value from interface is wrong"
+msgstr "El valor de la máscara de la interfaz es erróneo"

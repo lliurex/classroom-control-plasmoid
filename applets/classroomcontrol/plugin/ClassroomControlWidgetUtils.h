@@ -25,11 +25,11 @@ public:
    ClassroomControlWidgetUtils(QObject *parent = nullptr);
 
    void cleanCache();
-   std::tuple<bool, int> getCurrentCart();
+   QVariantList getCurrentCart();
    int getMaxNumCart();
    bool showWidget();
    bool isClassroomControlAvailable();
-   std::tuple<bool,int> getApplyChangesResult(QString stout,QString stderr);
+   QVariantList getApplyChangesResult(QString stout,QString stderr);
 
    QString user;
    int maxNumCart=0;

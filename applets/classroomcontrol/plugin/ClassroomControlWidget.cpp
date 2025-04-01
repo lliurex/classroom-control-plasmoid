@@ -82,8 +82,8 @@ void ClassroomControlWidget::updateInfo(){
         TARGET_FILE.setFileName(m_utils->controlModeVar);
         if (TARGET_FILE.exists()){
             qDebug()<<"[CLASSROOM_CONTROL]: Updating info...";
-            auto[isError,cart]=m_utils->getCurrentCart();
-            initCart=cart;
+            QVariantList ret=m_utils->getCurrentCart();
+            initCart=ret[1].toInt();
             m_maxNumCart=m_utils->getMaxNumCart();
         	
             if (initCart==0){
@@ -114,8 +114,10 @@ void ClassroomControlWidget::updateInfo(){
                 setIconNamePh("classroom_control");
                 notificationBody=i18n("Controlling the cart number: ")+cart;
                 setSubToolTip(title+'\n'+notificationBody); 
-                m_notification=KNotification::event(QStringLiteral("Set"),title,notificationBody,tmpIcon,nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
-         
+                if (showNotification){
+                    m_notification=KNotification::event(QStringLiteral("Set"),title,notificationBody,tmpIcon,nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
+                }         
+            
             }else{
                 cartControlEnabled=false;
                 title=i18n("Classroom control disabled");
@@ -125,11 +127,13 @@ void ClassroomControlWidget::updateInfo(){
                 setIconName("classroom_control_off");
                 setIconNamePh("classroom_control_off");
                 setSubToolTip(title);
-                m_notification=KNotification::event(QStringLiteral("Unset"),title,"","classroom_control_off",nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
-
+                if (showNotification){
+                    m_notification=KNotification::event(QStringLiteral("Unset"),title,"","classroom_control_off",nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
+                }
             }
             changeTryIconState(0);
             setCanEdit(true);
+            showNotification=true;
             isWorking=false;
         }
     }
@@ -199,7 +203,6 @@ void ClassroomControlWidget::applyChanges(){
         m_notification->close();
     }
 
-
     if (m_applyChanges->state() != QProcess::NotRunning) {
         m_applyChanges->kill();
     }
@@ -222,17 +225,22 @@ void ClassroomControlWidget::applyChangesFinished(int exitCode, QProcess::ExitSt
     Q_UNUSED(exitCode);
     bool isError=false;
     int code=0;
+
+    showNotification=true;
     
     if (exitStatus!=QProcess::NormalExit){
         isError=true;
-        code=-7;
+        code=-6;
+        notificationBody=i18n("Unable to configure classroom control");
+
     }else{
         QString stdout=QString::fromLocal8Bit(m_applyChanges->readAllStandardOutput());
         QString stderr=QString::fromLocal8Bit(m_applyChanges->readAllStandardError());
 
-        auto[tmpError,tmpCode]=m_utils->getApplyChangesResult(stdout, stderr);
-        isError=tmpError;
-        code=tmpCode;
+        QVariantList ret=m_utils->getApplyChangesResult(stdout, stderr);
+        isError=ret[0].toBool();
+        code=ret[1].toInt();
+        notificationBody=ret[2].toString();
     }
     
     if (isError){
@@ -240,21 +248,6 @@ void ClassroomControlWidget::applyChangesFinished(int exitCode, QProcess::ExitSt
             cancelChanges();
         }else{
             qDebug()<<"[CLASSROOM_CONTROL]: Apply changes with error. Code: "<<code;
-
-            if (code==-1){
-                notificationBody=i18n("Unable to get ip from interface");
-            }else if (code==-2){
-                notificationBody=i18n("Mask value from interface is wrong");
-            }else if (code==-3){
-                notificationBody=i18n("The selected cart is already beaing controlled by another computer");
-            }else if (code==-4){
-                notificationBody=i18n("Insufficient number of hosts in subnet");
-            }else if (code==-5){
-                notificationBody=i18n("Virtual interface not created");
-            }else if (code==-6){
-                notificationBody=i18n("Unable to configure classroom control");
-            }
-            
             setShowWaitMsg(false);
             setMsgCode(0);
             setArePendingChanges(false);
@@ -264,7 +257,9 @@ void ClassroomControlWidget::applyChangesFinished(int exitCode, QProcess::ExitSt
             setIconNamePh("classroom_control_error");
             title=i18n("Error configuring classroom control");
             setSubToolTip(title+'\n'+notificationBody);
-            m_notification=KNotification::event(QStringLiteral("Error"),title,notificationBody,"classroom_control_error",nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
+            if (showNotification){
+                m_notification=KNotification::event(QStringLiteral("Error"),title,notificationBody,"classroom_control_error",nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
+            }
         }
     
     }else{
@@ -292,6 +287,8 @@ void ClassroomControlWidget::cancelChanges(){
     setShowError(false);
     setShowWaitMsg(true);
     setMsgCode(3);
+    
+    showNotification=false;
     
     if (!isWorking){
         updateInfo();
