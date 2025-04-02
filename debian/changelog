@@ -1,3 +1,9 @@
+classroom-control-plasmoid (0.1.1) jammy; urgency=medium
+
+  * Cleaned files 
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Wed, 02 Apr 2025 14:40:13 +0200
+
 classroom-control-plasmoid (0.1) jammy; urgency=medium
 
   * Initial release
