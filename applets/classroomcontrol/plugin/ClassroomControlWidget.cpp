@@ -210,10 +210,11 @@ void ClassroomControlWidget::applyChanges(){
     if (cartControlEnabled){
         newCart=QString::number(m_currentCart);
         qDebug()<<"[CLASSROOM_CONTROL]: Apply changes. New Cart: "<<newCart;
-        cmd="pkexec natfree-server -v natfree00 SET "+newCart;
+        cmd="pkexec natfree-server CONFIGURE "+newCart;
     }else{
         qDebug()<<"[CLASSROOM_CONTROL]: Apply changes. Disable classroom control";
-        cmd="pkexec natfree-server -v natfree00 UNSET ";
+        cmd="pkexec natfree-server UNSET";
+    
     }
     m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
                        << cmd,QIODevice::ReadOnly);
