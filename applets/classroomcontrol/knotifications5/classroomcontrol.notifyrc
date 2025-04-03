@@ -2,15 +2,18 @@
 IconName=classroom_control
 Comment=Mobile Classroom Control
 Comment[ca@valencia]=Control de l'Aula Mòbil
+Comment[ca]=Control de l'Aula Mòbil
 Comment[es]=Control del Aula Movil
 
 [Event/Set]
 Name= Classroom Control activated
 Name[ca@valencia]=Control de l'aula activat
+Name[ca]=Control de l'aula activat
 Name[es]=Control del aula activado
 
 Comment=Occurs when classroom control is activated
 Comment[ca@valencia]=Ocorre quan s'activa el control d'aula
+Comment[ca]=Ocorre quan s'activa el control d'aula
 Comment[es]=Ocurre cuando se activa el control de aula
 Action=Popup
 Urgency=Normal
@@ -18,10 +21,12 @@ Urgency=Normal
 [Event/Unset]
 Name= Classroom Control disabled
 Name[ca@valencia]=Control de l'aula desactivat
+Name[ca]=Control de l'aula desactivat
 Name[es]=Control del aula desactivado
 
 Comment=Occurs when classroom control is disabled
 Comment[ca@valencia]=Ocorre quan es desactiva el control d'aula
+Comment[ca]=Ocorre quan es desactiva el control d'aula
 Comment[es]=Ocurre cuando se desactiva el control de aula
 Action=Popup
 Urgency=Normal
@@ -29,10 +34,12 @@ Urgency=Normal
 [Event/Error]
 Name=Error configuring classroom control
 Name[ca@valencia]=Error en configurar el control de l'aula
+Name[ca]=Error en configurar el control de l'aula
 Name[es]=Error al configurar el control del aula
 
 Comment=Occurs when an error occurs while configuring classroom control
 Comment[ca@valencia]=Ocorre quan es produïx un error en configurar el control de l'aula
+Comment[ca]=Ocorre quan es produïx un error en configurar el control de l'aula
 Comment[es]=Ocurre cuando se produce un error al configurar el control del aula
 Action=Popup
 Urgency=Normal
