@@ -31,6 +31,8 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
 {
     m_utils->cleanCache();
     notificationTitle=i18n("Mobile Classroom Control");
+    TARGET_FILE.setFileName(m_utils->controlModeVar);
+
     connect(m_applyChanges, (void (QProcess::*)(int, QProcess::ExitStatus))&QProcess::finished,
             this, &ClassroomControlWidget::applyChangesFinished);
 
@@ -41,9 +43,11 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
 
 void ClassroomControlWidget::plasmoidMode(){
 
-	if (m_utils->showWidget()){
-        if (m_utils->isClassroomControlAvailable()){
+    if (m_utils->showWidget()){
+        if (TARGET_FILE.exists()){
             createWatcher();
+        }
+        if (m_utils->isClassroomControlAvailable()){
             updateInfo();
     	}else{
             disableApplet();
@@ -59,7 +63,6 @@ void ClassroomControlWidget::plasmoidMode(){
 void ClassroomControlWidget::createWatcher(){
 
     watcher=new QFileSystemWatcher(this);
-    TARGET_FILE.setFileName(m_utils->controlModeVar);
 
     if (TARGET_FILE.exists()){
         if (!createFileWatcher){
@@ -79,7 +82,7 @@ void ClassroomControlWidget::updateInfo(){
         isWorking=true;
         bool enable=false;
         bool disable=false;
-        TARGET_FILE.setFileName(m_utils->controlModeVar);
+       
         if (TARGET_FILE.exists()){
             qDebug()<<"[CLASSROOM_CONTROL]: Updating info...";
             QVariantList ret=m_utils->getCurrentCart();
