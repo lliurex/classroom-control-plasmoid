@@ -1,3 +1,10 @@
+classroom-control-plasmoid (0.1.2) jammy; urgency=medium
+
+  * Fixed translations to knotifications
+  * Improved general performance
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Wed, 09 Apr 2025 12:11:38 +0200
+
 classroom-control-plasmoid (0.1.1) jammy; urgency=medium
 
   * Cleaned files 
