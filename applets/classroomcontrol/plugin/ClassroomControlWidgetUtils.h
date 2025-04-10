@@ -36,13 +36,14 @@ public:
    variant::Variant cartInfo =variant::Variant::create_array(0);
    QString controlModeVar="/var/lib/n4d/variables/CLASSROOM";
    QString natfreeServer="/usr/bin/natfree-server";
-
+   QString hideAppletVar="/var/lib/n4d/variables/HIDE_CLASSROOM_APPLET";
 
 private:    
      
     n4d::Client client;
     QFile TARGET_FILE;
     QString getInstalledVersion();
+    bool getHideAppletValue();
 
      
 };
