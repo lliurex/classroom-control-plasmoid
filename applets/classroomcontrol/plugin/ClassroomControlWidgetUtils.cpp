@@ -125,14 +125,16 @@ bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
     bool isAvailable=false;
 
     if (TARGET_FILE.exists()){
-        TARGET_FILE.setFileName(controlModeVar);
-        if (TARGET_FILE.exists()){
-            QVariantList ret=getCurrentCart();
-            if (!ret[0].toBool()){
-                if (ret[1].toInt()==0){
-                    isAvailable=false;
-                }else{
-                    isAvailable=true;
+        if (!getHideAppletValue()){
+            TARGET_FILE.setFileName(controlModeVar);
+            if (TARGET_FILE.exists()){
+                QVariantList ret=getCurrentCart();
+                if (!ret[0].toBool()){
+                    if (ret[1].toInt()==0){
+                        isAvailable=false;
+                    }else{
+                        isAvailable=true;
+                    }
                 }
             }
         }
@@ -236,5 +238,27 @@ QVariantList ClassroomControlWidgetUtils::getApplyChangesResult(QString stdout,Q
     result.append(msgText);
     
     return result;
+
+}
+
+bool ClassroomControlWidgetUtils::getHideAppletValue(){
+
+    bool hideApplet=false;
+
+    TARGET_FILE.setFileName(hideAppletVar);
+
+    if (TARGET_FILE.exists()){
+
+        try{
+            variant::Variant appletInfo = client.get_variable("HIDE_CLASSROOM_APPLET",true);
+            hideApplet=appletInfo["value"];
+            qDebug()<<"[CLASSROOM_CONTROL]: Reading HIDE_CLASSROOM_APPLET var: "<<QString::number(hideApplet);
+        }catch (std::exception& e){
+            qDebug()<<"[CLASSROOM_CONTROL]: Error reading HIDE_CLASSROOM_APPLET var: " <<e.what();
+        } 
+   }
+   
+   return hideApplet;
+
 
 }
