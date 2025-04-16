@@ -33,7 +33,7 @@ public:
 
    QString user;
    int maxNumCart=0;
-   variant::Variant cartInfo =variant::Variant::create_array(0);
+   Variant cartInfo =Variant::create_array(0);
    QString controlModeVar="/var/lib/n4d/variables/CLASSROOM";
    QString natfreeServer="/usr/bin/natfree-server";
    QString hideAppletVar="/var/lib/n4d/variables/HIDE_CLASSROOM_APPLET";

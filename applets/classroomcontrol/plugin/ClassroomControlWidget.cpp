@@ -4,7 +4,6 @@
 #include <KLocalizedString>
 #include <KFormat>
 #include <KNotification>
-#include <KRun>
 #include <QTimer>
 #include <QStandardPaths>
 #include <QDebug>
@@ -118,7 +117,12 @@ void ClassroomControlWidget::updateInfo(){
                 notificationBody=i18n("Controlling the cart number: ")+cart;
                 setSubToolTip(title+'\n'+notificationBody); 
                 if (showNotification){
-                    m_notification=KNotification::event(QStringLiteral("Set"),title,notificationBody,tmpIcon,nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
+                    m_notification = new KNotification(QStringLiteral("Set"),KNotification::CloseOnTimeout,this);
+                    m_notification->setComponentName(QStringLiteral("classroomcontrol"));
+                    m_notification->setTitle(title);
+                    m_notification->setText(notificationBody);
+                    m_notification->setIconName(tmpIcon);
+                    m_notification->sendEvent();
                 }         
             
             }else{
@@ -131,7 +135,12 @@ void ClassroomControlWidget::updateInfo(){
                 setIconNamePh("classroom_control_off");
                 setSubToolTip(title);
                 if (showNotification){
-                    m_notification=KNotification::event(QStringLiteral("Unset"),title,"","classroom_control_off",nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
+                    m_notification = new KNotification(QStringLiteral("Unset"),KNotification::CloseOnTimeout,this);
+                    m_notification->setComponentName(QStringLiteral("classroomcontrol"));
+                    m_notification->setTitle(title);
+                    m_notification->setText("");
+                    m_notification->setIconName("classroom_control_off");
+                    m_notification->sendEvent();
                 }
             }
             changeTryIconState(0);
@@ -262,7 +271,12 @@ void ClassroomControlWidget::applyChangesFinished(int exitCode, QProcess::ExitSt
             title=i18n("Error configuring classroom control");
             setSubToolTip(title+'\n'+notificationBody);
             if (showNotification){
-                m_notification=KNotification::event(QStringLiteral("Error"),title,notificationBody,"classroom_control_error",nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
+                m_notification = new KNotification(QStringLiteral("Error"),KNotification::CloseOnTimeout,this);
+                m_notification->setComponentName(QStringLiteral("classroomcontrol"));
+                m_notification->setTitle(title);
+                m_notification->setText(notificationBody);
+                m_notification->setIconName("classroom_control_error");
+                m_notification->sendEvent();
             }
         }
     

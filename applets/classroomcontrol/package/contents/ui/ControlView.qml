@@ -1,12 +1,11 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.plasmoid 2.0
-import org.kde.plasma.components 2.0 as Components
-import org.kde.plasma.components 3.0 as PC3
-import org.kde.plasma.extras 2.0 as PlasmaExtras
-import org.kde.kirigami 2.16 as Kirigami
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.plasmoid
+import org.kde.plasma.components as PC3
+import org.kde.plasma.extras as PlasmaExtras
+import org.kde.kirigami as Kirigami
 
 import org.kde.plasma.private.classroomcontrol 1.0
 
@@ -40,7 +39,7 @@ Rectangle{
 				}
 			} 
 
-			Components.Label{
+			PC3.Label{
 				id:headText
 				text:i18n("Classroom control settings")
 				font.italic:true
@@ -99,7 +98,7 @@ Rectangle{
 		id:phMsg
 		anchors.centerIn: parent
 		visible:classroomControlWidget.showWaitMsg
-		width: parent.width-(PlasmaCore.Units.gridUnit *2 )
+		width: parent.width-(Kirigami.Units.gridUnit *2 )
 		iconName: "view-refresh.svg"
 		text:getTextMsg(classroomControlWidget.msgCode)
 	}
