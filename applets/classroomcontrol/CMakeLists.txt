@@ -7,27 +7,27 @@ plasma_install_package(package org.kde.plasma.classroomcontrol)
 #######################################################################################
 # Notes Library
 add_definitions(-DTRANSLATION_DOMAIN="plasma_applet_org.kde.plasma.classroomcontrol")
+ecm_add_qml_module(classroomcontrolplugin URI org.kde.plasma.private.classroomcontrol)
 
-set(classroomcontrolwidget_SRCS
+target_sources(classroomcontrolplugin PRIVATE
     plugin/plugin.cpp
     plugin/ClassroomControlWidget.cpp
     plugin/ClassroomControlWidgetUtils.cpp
    
 )
 
-add_library(classroomcontrolplugin SHARED ${classroomcontrolwidget_SRCS})
-
-target_link_libraries(classroomcontrolplugin
-                      Qt5::Quick
-                      Qt5::Core
-                      Qt5::Widgets
-                      KF5::CoreAddons
-                      KF5::I18n
-                      KF5::Notifications
-                      KF5::KIOWidgets
+target_link_libraries(classroomcontrolplugin PRIVATE
+                      Qt6::Quick
+                      Qt6::Core
+                      Qt6::Widgets
+                      KF6::CoreAddons
+                      KF6::I18n
+                      KF6::Notifications
+                      KF6::KIOWidgets
                       Edupals::Base Edupals::N4D
 
                       )
+ecm_finalize_qml_module(classroomcontrolplugin)
 
 install(FILES plugin/qmldir DESTINATION ${QML_INSTALL_DIR}/org/kde/plasma/private/classroomcontrol)
 install(TARGETS classroomcontrolplugin DESTINATION ${QML_INSTALL_DIR}/org/kde/plasma/private/classroomcontrol)
@@ -67,5 +67,5 @@ install(FILES "icons/classroom_control_error.svg"
         DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)
 install(FILES "icons/classroom_control_off.svg"
         DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)  
-install(FILES "knotifications5/classroomcontrol.notifyrc"
-       DESTINATION ${DATAROOTDIR}/usr/share/knotifications5/)
+install(FILES "knotifications6/classroomcontrol.notifyrc"
+       DESTINATION ${DATAROOTDIR}/usr/share/knotifications6/)

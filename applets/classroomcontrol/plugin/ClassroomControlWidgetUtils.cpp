@@ -152,7 +152,7 @@ QVariantList ClassroomControlWidgetUtils::getCurrentCart(){
     QVariantList result;
 
     try{
-        variant::Variant cartInfo = client.get_variable("CLASSROOM",true);
+        Variant cartInfo = client.get_variable("CLASSROOM",true);
         auto tmpCart=cartInfo["value"];
         
         if (tmpCart.size()>0){
@@ -250,7 +250,7 @@ bool ClassroomControlWidgetUtils::getHideAppletValue(){
     if (TARGET_FILE.exists()){
 
         try{
-            variant::Variant appletInfo = client.get_variable("HIDE_CLASSROOM_APPLET",true);
+            Variant appletInfo = client.get_variable("HIDE_CLASSROOM_APPLET",true);
             hideApplet=appletInfo["value"];
             qDebug()<<"[CLASSROOM_CONTROL]: Reading HIDE_CLASSROOM_APPLET var: "<<QString::number(hideApplet);
         }catch (std::exception& e){

@@ -1,11 +1,12 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
 
-import org.kde.plasma.plasmoid 2.0
-import org.kde.plasma.core 2.1 as PlasmaCore
-import org.kde.plasma.components 3.0 as PC3
-import org.kde.plasma.extras 2.0 as PlasmaExtras
+import org.kde.plasma.plasmoid
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.components as PC3
+import org.kde.plasma.extras as PlasmaExtras
+import org.kde.kirigami as Kirigami
 
 import org.kde.plasma.private.classroomcontrol 1.0
 
@@ -16,15 +17,15 @@ Item {
     PC3.Page {
 
         anchors.centerIn:parent
-        implicitWidth: PlasmaCore.Units.gridUnit * 12
-        implicitHeight: PlasmaCore.Units.gridUnit * 6
+        implicitWidth: Kirigami.Units.gridUnit * 12
+        implicitHeight: Kirigami.Units.gridUnit * 6
 
         PlasmaExtras.PlaceholderMessage {
             id:phMsg
             anchors.centerIn: parent
-            width: parent.width*2-(PlasmaCore.Units.gridUnit * 4)
+            width: parent.width*2-(Kirigami.Units.gridUnit * 4)
             iconName: classroomControlWidget.iconNamePh
-            text:Plasmoid.toolTipSubText
+            text:classroomControlWidget.subToolTip
         }
 
         PC3.Button {
