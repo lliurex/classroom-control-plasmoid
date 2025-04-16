@@ -94,7 +94,7 @@ PlasmoidItem {
         id: configureAction
         text: i18n("See help")
         icon.name:"help-contents"
-        onTriggered: action_openHelp
+        onTriggered: action_openHelp()
     }
     
  }  
