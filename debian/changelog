@@ -1,3 +1,9 @@
+classroom-control-plasmoid (0.1.5) noble; urgency=medium
+
+  * Replaced natfree-server by natfree-adi
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Mon, 02 Jun 2025 14:21:47 +0200
+
 classroom-control-plasmoid (0.1.4) noble; urgency=medium
 
   * First noble version 
