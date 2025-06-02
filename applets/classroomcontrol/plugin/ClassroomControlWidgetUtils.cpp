@@ -121,7 +121,7 @@ bool ClassroomControlWidgetUtils::showWidget(){
 
 bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
 
-    TARGET_FILE.setFileName("/usr/bin/natfree-server");
+    TARGET_FILE.setFileName("/usr/bin/natfree-adi");
     bool isAvailable=false;
 
     if (TARGET_FILE.exists()){
