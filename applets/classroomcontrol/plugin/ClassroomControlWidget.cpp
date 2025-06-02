@@ -222,10 +222,10 @@ void ClassroomControlWidget::applyChanges(){
     if (cartControlEnabled){
         newCart=QString::number(m_currentCart);
         qDebug()<<"[CLASSROOM_CONTROL]: Apply changes. New Cart: "<<newCart;
-        cmd="pkexec natfree-server CONFIGURE "+newCart;
+        cmd="pkexec natfree-adi CONFIGURE "+newCart;
     }else{
         qDebug()<<"[CLASSROOM_CONTROL]: Apply changes. Disable classroom control";
-        cmd="pkexec natfree-server UNSET";
+        cmd="pkexec natfree-adi UNSET";
     
     }
     m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
@@ -329,7 +329,7 @@ void ClassroomControlWidget::unlockCart(){
     setShowWaitMsg(true);
     setMsgCode(2);
 
-    QString cmd="pkexec natfree-server -v natfree00 UNSET ";
+    QString cmd="pkexec natfree-adi -v natfree00 UNSET ";
     m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
                        << cmd,QIODevice::ReadOnly);
 
