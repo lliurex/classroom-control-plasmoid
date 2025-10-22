@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: http://lliurex.net\n"
 "POT-Creation-Date: 2025-04-01 09:59+0200\n"
-"PO-Revision-Date: 2025-04-01 10:00+0200\n"
+"PO-Revision-Date: 2025-10-22 16:09+0200\n"
 "Last-Translator: lliurex <lliurex@lliurex.net>\n"
 "Language-Team: Catalan <kde-i18n-ca@kde.org>\n"
 "Language: es\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:35
 #, kde-format
@@ -63,7 +63,7 @@ msgstr "El carret seleccionat ja esta sent controlat per un altre ordinador"
 #: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:221
 #, kde-format
 msgid "Insufficient number of hosts in subnet"
-msgstr "Insuficient número de hosts en la subxarxa"
+msgstr "Insuficient nombre de hosts en la subxarxa"
 
 #: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:182
 #: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:224
