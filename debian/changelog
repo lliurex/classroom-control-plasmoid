@@ -1,3 +1,10 @@
+classroom-control-plasmoid (0.1.5) jammy; urgency=medium
+
+  * Fixed maximum number of carts to show
+  * Fixed valencian translation
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Wed, 22 Oct 2025 16:30:50 +0200
+
 classroom-control-plasmoid (0.1.4) jammy; urgency=medium
 
   * Replaced natfree-server by natfree-adi
