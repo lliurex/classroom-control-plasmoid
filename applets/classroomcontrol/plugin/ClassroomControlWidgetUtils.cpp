@@ -189,7 +189,7 @@ int ClassroomControlWidgetUtils::getMaxNumCart(){
     QStringList lst=stdout.split("\n");
 
     if (lst.length()>0){
-        maxNumCart=lst[0].toInt();
+        maxNumCart=lst[0].toInt()-1;
     }
 
     return maxNumCart;
