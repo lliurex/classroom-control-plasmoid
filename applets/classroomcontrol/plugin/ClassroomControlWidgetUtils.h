@@ -30,6 +30,7 @@ public:
    bool showWidget();
    bool isClassroomControlAvailable();
    QVariantList getApplyChangesResult(QString stout,QString stderr);
+   bool isAdi();
 
    QString user;
    int maxNumCart=0;

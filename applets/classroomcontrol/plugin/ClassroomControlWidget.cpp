@@ -31,6 +31,7 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
     m_utils->cleanCache();
     notificationTitle=i18n("Mobile Classroom Control");
     TARGET_FILE.setFileName(m_utils->controlModeVar);
+    TARGET_FILE_ADI.setFileName(m_utils->natfreeServer);
 
     connect(m_applyChanges, (void (QProcess::*)(int, QProcess::ExitStatus))&QProcess::finished,
             this, &ClassroomControlWidget::applyChangesFinished);
@@ -82,19 +83,23 @@ void ClassroomControlWidget::updateInfo(){
         bool enable=false;
         bool disable=false;
        
-        if (TARGET_FILE.exists()){
-            qDebug()<<"[CLASSROOM_CONTROL]: Updating info...";
-            QVariantList ret=m_utils->getCurrentCart();
-            initCart=ret[1].toInt();
-            m_maxNumCart=m_utils->getMaxNumCart();
-        	
-            if (initCart==0){
-                disable=true;
-            }else{
-                if (initCart>0){
-                    enable=true;
+        if (TARGET_FILE_ADI.exists() && m_utils->isAdi()){
+            if (TARGET_FILE.exists()){
+                qDebug()<<"[CLASSROOM_CONTROL]: Updating info...";
+                QVariantList ret=m_utils->getCurrentCart();
+                initCart=ret[1].toInt();
+                m_maxNumCart=m_utils->getMaxNumCart();
+            	
+                if (initCart==0){
+                    disable=true;
+                }else{
+                    if (initCart>0){
+                        enable=true;
+                    }
+                    createWatcher();
                 }
-                createWatcher();
+            }else{
+                disable=true;
             }
         }else{
             disable=true;
@@ -204,32 +209,36 @@ void ClassroomControlWidget::changeCart(int newCart){
 
 void ClassroomControlWidget::applyChanges(){
 
-    setShowError(false);
-    setShowWaitMsg(true);
-    setMsgCode(2);
+    if (m_utils->isAdi()){
+        setShowError(false);
+        setShowWaitMsg(true);
+        setMsgCode(2);
 
-    QString newCart="";
-    QString cmd="";
+        QString newCart="";
+        QString cmd="";
 
-    if (m_notification){
-        m_notification->close();
-    }
+        if (m_notification){
+            m_notification->close();
+        }
 
-    if (m_applyChanges->state() != QProcess::NotRunning) {
-        m_applyChanges->kill();
-    }
+        if (m_applyChanges->state() != QProcess::NotRunning) {
+            m_applyChanges->kill();
+        }
 
-    if (cartControlEnabled){
-        newCart=QString::number(m_currentCart);
-        qDebug()<<"[CLASSROOM_CONTROL]: Apply changes. New Cart: "<<newCart;
-        cmd="pkexec natfree-adi CONFIGURE "+newCart;
+        if (cartControlEnabled){
+            newCart=QString::number(m_currentCart);
+            qDebug()<<"[CLASSROOM_CONTROL]: Apply changes. New Cart: "<<newCart;
+            cmd="pkexec natfree-adi CONFIGURE "+newCart;
+        }else{
+            qDebug()<<"[CLASSROOM_CONTROL]: Apply changes. Disable classroom control";
+            cmd="pkexec natfree-adi UNSET";
+        
+        }
+        m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
+                           << cmd,QIODevice::ReadOnly);
     }else{
-        qDebug()<<"[CLASSROOM_CONTROL]: Apply changes. Disable classroom control";
-        cmd="pkexec natfree-adi UNSET";
-    
+        disableApplet();
     }
-    m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
-                       << cmd,QIODevice::ReadOnly);
 
 }
 
@@ -319,30 +328,38 @@ void ClassroomControlWidget::cancelChanges(){
 
 void ClassroomControlWidget::unlockCart(){
 
-    qDebug()<<"[CLASSROOM_CONTROL]: Unlock cart ...";
+    if (m_utils->isAdi()){
+        qDebug()<<"[CLASSROOM_CONTROL]: Unlock cart ...";
 
-    if (m_notification){
-        m_notification->close();
+        if (m_notification){
+            m_notification->close();
+        }
+
+        setShowError(false);
+        setShowWaitMsg(true);
+        setMsgCode(2);
+
+        QString cmd="pkexec natfree-adi -v natfree00 UNSET ";
+        m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
+                           << cmd,QIODevice::ReadOnly);
+    }else{
+        disableApplet();
     }
-
-    setShowError(false);
-    setShowWaitMsg(true);
-    setMsgCode(2);
-
-    QString cmd="pkexec natfree-adi -v natfree00 UNSET ";
-    m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
-                       << cmd,QIODevice::ReadOnly);
 
 }
 
 void ClassroomControlWidget::manageNavigation(int stackIndex)
 {
-    if (stackIndex==0 && m_arePendingChanges){
-        if (!m_showError){
-            cancelChanges();
+    if (m_utils->isAdi()){
+        if (stackIndex==0 && m_arePendingChanges){
+            if (!m_showError){
+                cancelChanges();
+            }
+        }else{
+            setCurrentStackIndex(stackIndex);
         }
     }else{
-        setCurrentStackIndex(stackIndex);
+        disableApplet();
     }
 }
 
