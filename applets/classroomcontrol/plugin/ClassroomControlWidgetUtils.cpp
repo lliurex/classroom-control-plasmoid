@@ -121,19 +121,21 @@ bool ClassroomControlWidgetUtils::showWidget(){
 
 bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
 
-    TARGET_FILE.setFileName("/usr/bin/natfree-adi");
+    TARGET_FILE.setFileName(natfreeServer);
     bool isAvailable=false;
 
-    if (TARGET_FILE.exists()){
-        if (!getHideAppletValue()){
-            TARGET_FILE.setFileName(controlModeVar);
-            if (TARGET_FILE.exists()){
-                QVariantList ret=getCurrentCart();
-                if (!ret[0].toBool()){
-                    if (ret[1].toInt()==0){
-                        isAvailable=false;
-                    }else{
-                        isAvailable=true;
+    if (isAdi()){
+        if (TARGET_FILE.exists()){
+            if (!getHideAppletValue()){
+                TARGET_FILE.setFileName(controlModeVar);
+                if (TARGET_FILE.exists()){
+                    QVariantList ret=getCurrentCart();
+                    if (!ret[0].toBool()){
+                        if (ret[1].toInt()==0){
+                            isAvailable=false;
+                        }else{
+                            isAvailable=true;
+                        }
                     }
                 }
             }
@@ -260,5 +262,29 @@ bool ClassroomControlWidgetUtils::getHideAppletValue(){
    
    return hideApplet;
 
+
+}
+
+bool ClassroomControlWidgetUtils::isAdi(){
+
+    bool matchAdi=false;
+    QProcess process;
+    QStringList flavours;
+    QString cmd="lliurex-version -v";
+    process.start("/bin/sh",QStringList()<<"-c"<<cmd);
+    process.waitForFinished(-1);
+    QString stdout=process.readAllStandardOutput();
+    QString stderr=process.readAllStandardError();
+    flavours=stdout.split('\n');
+
+
+    for (int i=0;i<flavours.count();i++){
+        if (flavours[i].contains("adi")){
+            matchAdi=true;
+            break;
+        }
+    }
+
+    return matchAdi;
 
 }
