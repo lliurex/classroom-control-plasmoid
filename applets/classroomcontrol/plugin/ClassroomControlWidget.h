@@ -158,6 +158,7 @@ private:
     QString notificationBody;
     QString title;
     QFile TARGET_FILE;
+    QFile TARGET_FILE_ADI;
     QFileSystemWatcher *watcher=nullptr;
     ClassroomControlWidgetUtils* m_utils;
     bool createFileWatcher=false;
