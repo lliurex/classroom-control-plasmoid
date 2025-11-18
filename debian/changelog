@@ -1,3 +1,9 @@
+classroom-control-plasmoid (0.1.8) noble; urgency=medium
+
+  * Improved stability when there are changes in installed metapackages
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Tue, 18 Nov 2025 16:57:42 +0100
+
 classroom-control-plasmoid (0.1.7) noble; urgency=medium
 
   * Fixed url to access the wiki article
