@@ -54,7 +54,7 @@ void ClassroomControlWidget::plasmoidMode(){
             disableApplet();
     	}
     }else{
-        disableApplet()
+        disableApplet();
     }
 
 }
