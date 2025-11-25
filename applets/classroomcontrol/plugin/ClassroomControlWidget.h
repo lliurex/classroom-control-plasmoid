@@ -51,7 +51,8 @@ public:
      */
     enum TrayStatus {
         ActiveStatus=0,
-        PassiveStatus
+        PassiveStatus,
+        HiddenStatus
     };
 
     ClassroomControlWidget(QObject *parent = nullptr);
