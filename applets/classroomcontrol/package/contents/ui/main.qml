@@ -28,7 +28,8 @@ PlasmoidItem {
                 return PlasmaCore.Types.ActiveStatus
             case ClassroomControlWidget.PassiveStatus:
                 return PlasmaCore.Types.PassiveStatus
-           
+            case ClassroomControlWidget.HiddenStatus:
+                return PlasmaCore.Types.HiddenStatus 
         }
         return  PlasmaCore.Types.ActiveStatus
         
