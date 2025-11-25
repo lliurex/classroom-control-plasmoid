@@ -171,7 +171,7 @@ void ClassroomControlWidget::changeTryIconState(int state){
     }else if (state==1){
         setStatus(PassiveStatus);
     }else if (state==2){
-        setStatus(HiddenStatus)
+        setStatus(HiddenStatus);
     }
 
 }
