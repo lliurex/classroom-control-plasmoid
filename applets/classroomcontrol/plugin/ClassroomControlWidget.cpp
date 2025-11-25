@@ -45,18 +45,16 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
 void ClassroomControlWidget::plasmoidMode(){
 
     if (m_utils->showWidget()){
-        if (TARGET_FILE.exists()){
-            createWatcher();
-        }
         if (m_utils->isClassroomControlAvailable()){
+            if (TARGET_FILE.exists()){
+                createWatcher();
+            }
             updateInfo();
     	}else{
             disableApplet();
     	}
     }else{
-        setCanEdit(false);
-        setCurrentStackIndex(0);
-        changeTryIconState(1);
+        disableApplet()
     }
 
 }
@@ -156,7 +154,7 @@ void ClassroomControlWidget::disableApplet(){
     setIconNamePh("classroom_control");
     setSubToolTip(notificationBody);
     setCurrentStackIndex(0);
-    changeTryIconState(1);
+    changeTryIconState(2);
 
 }
 
@@ -170,8 +168,10 @@ void ClassroomControlWidget::changeTryIconState(int state){
     if (state==0){
     	setStatus(ActiveStatus);
         setToolTip(notificationTitle);
-    }else{
+    }else if (state==1){
         setStatus(PassiveStatus);
+    }else if (state==2){
+        setStatus(HiddenStatus)
     }
 
 }
