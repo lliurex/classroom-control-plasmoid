@@ -1,3 +1,9 @@
+classroom-control-plasmoid (0.1.8) jammy; urgency=medium
+
+  * Changed to hide widget when not need 
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Tue, 25 Nov 2025 13:33:14 +0100
+
 classroom-control-plasmoid (0.1.7) jammy; urgency=medium
 
   * Improved stability when there are changes in metapackages
