@@ -21,14 +21,14 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="14.104167"
-     inkscape:cx="1.1344165"
+     inkscape:cx="1.098966"
      inkscape:cy="20.242245"
-     inkscape:window-width="1918"
-     inkscape:window-height="881"
+     inkscape:window-width="1920"
+     inkscape:window-height="882"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg2" />
+     inkscape:current-layer="g5" />
   <defs
      id="defs1">
     <style
@@ -95,8 +95,8 @@
         </g>
       </g>
       <path
-         style="-inkscape-font-specification:'Roboto Bold';fill:#ffffff;stroke-width:0.0330233"
-         d="M 30.193333,11.419073 V 22.809698 H 27.93552 v -8.710937 l -2.6875,0.835937 v -1.828125 l 4.703125,-1.6875 z m 3.359375,7.507813 4.742187,-7.492188 h 2.28125 v 7.09375 h 1.289063 v 1.820313 h -1.289063 v 2.460937 H 38.318333 V 20.348761 H 33.65427 Z m 2.242187,-0.398438 h 2.523438 v -4.039062 l -0.15625,0.273437 z"
+         style="-inkscape-font-specification:'Roboto Bold';fill:#ffffff;stroke-width:0.0336303"
+         d="m 30.131512,11.314386 v 11.6 H 27.832197 V 14.04333 l -2.7369,0.851303 v -1.861728 l 4.789575,-1.718519 z m 3.421124,7.645816 4.829355,-7.629905 h 2.323183 v 7.224143 h 1.312757 v 1.853773 h -1.312757 v 2.506172 H 38.40586 v -2.506172 h -4.749795 z m 2.283402,-0.405762 h 2.569822 v -4.113305 l -0.159122,0.278464 z"
          id="text2"
          aria-label="14" />
     </g>
