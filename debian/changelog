@@ -1,3 +1,9 @@
+classroom-control-plasmoid (0.1.9) jammy; urgency=medium
+
+  * Fixed icons
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 28 Nov 2025 11:50:55 +0100
+
 classroom-control-plasmoid (0.1.8) jammy; urgency=medium
 
   * Changed to hide widget when not need 
