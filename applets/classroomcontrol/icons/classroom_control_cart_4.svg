@@ -21,14 +21,14 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="14.104167"
-     inkscape:cx="1.1344165"
-     inkscape:cy="20.242245"
-     inkscape:window-width="1918"
-     inkscape:window-height="881"
+     inkscape:cx="1.098966"
+     inkscape:cy="20.277695"
+     inkscape:window-width="1920"
+     inkscape:window-height="882"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg2" />
+     inkscape:current-layer="g5" />
   <defs
      id="defs1">
     <style
@@ -95,8 +95,8 @@
         </g>
       </g>
       <path
-         style="-inkscape-font-specification:'Roboto Bold';fill:#ffffff;stroke-width:0.0330233"
-         d="m 29.400364,18.919073 4.742187,-7.492187 h 2.28125 v 7.09375 h 1.289063 v 1.820312 h -1.289063 v 2.460938 h -2.257812 v -2.460938 h -4.664063 z m 2.242187,-0.398437 h 2.523438 v -4.039063 l -0.15625,0.273438 z"
+         style="-inkscape-font-specification:'Roboto Bold';fill:#ffffff;stroke-width:0.0380312"
+         d="m 28.770077,19.192751 5.461332,-8.628365 h 2.627198 v 8.169505 h 1.484547 v 2.09636 h -1.484547 v 2.834135 h -2.600206 v -2.834135 h -5.37136 z m 2.582211,-0.45886 h 2.906113 v -4.65158 l -0.179945,0.314905 z"
          id="text2"
          aria-label="4" />
     </g>
