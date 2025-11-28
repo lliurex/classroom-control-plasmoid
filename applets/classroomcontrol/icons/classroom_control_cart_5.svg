@@ -21,14 +21,14 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="14.104167"
-     inkscape:cx="1.1344165"
+     inkscape:cx="1.098966"
      inkscape:cy="20.242245"
-     inkscape:window-width="1918"
-     inkscape:window-height="881"
+     inkscape:window-width="1920"
+     inkscape:window-height="882"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg2" />
+     inkscape:current-layer="g5" />
   <defs
      id="defs1">
     <style
@@ -96,15 +96,15 @@
       </g>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;line-height:0;font-family:Ro;-inkscape-font-specification:'Ro Bold';text-align:center;text-anchor:middle;fill:#ffffff;stroke-width:0.0330233"
-         x="33.474583"
-         y="22.723761"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:18.1767px;line-height:0;font-family:Ro;-inkscape-font-specification:'Ro Bold';text-align:center;text-anchor:middle;fill:#ffffff;stroke-width:0.0375159"
+         x="33.463425"
+         y="23.486881"
          id="text2"><tspan
            sodipodi:role="line"
            id="tspan2"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:Roboto;-inkscape-font-specification:'Roboto Bold';fill:#ffffff;stroke-width:0.0330233"
-           x="33.474583"
-           y="22.723761">5</tspan></text>
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:18.1767px;font-family:Roboto;-inkscape-font-specification:'Roboto Bold';fill:#ffffff;stroke-width:0.0375159"
+           x="33.463425"
+           y="23.486881">5</tspan></text>
     </g>
   </g>
 </svg>
