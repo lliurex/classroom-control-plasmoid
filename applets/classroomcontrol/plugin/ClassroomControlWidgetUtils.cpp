@@ -127,17 +127,7 @@ bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
     if (isAdi()){
         if (TARGET_FILE.exists()){
             if (!getHideAppletValue()){
-                TARGET_FILE.setFileName(controlModeVar);
-                if (TARGET_FILE.exists()){
-                    QVariantList ret=getCurrentCart();
-                    if (!ret[0].toBool()){
-                        if (ret[1].toInt()==0){
-                            isAvailable=false;
-                        }else{
-                            isAvailable=true;
-                        }
-                    }
-                }
+                isAvailable=true;
             }
         }
     }
@@ -150,7 +140,7 @@ bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
 QVariantList ClassroomControlWidgetUtils::getCurrentCart(){
 
     bool isError=false;
-    QString currentCart="0";
+    QString currentCart="-1";
     QVariantList result;
 
     try{

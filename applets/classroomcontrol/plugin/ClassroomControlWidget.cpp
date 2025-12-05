@@ -31,8 +31,9 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
 {
     m_utils->cleanCache();
     notificationTitle=i18n("Mobile Classroom Control");
-    TARGET_FILE.setFileName(m_utils->controlModeVar);
+    TARGET_VAR_FILE.setFileName(m_utils->controlModeVar);
     TARGET_FILE_ADI.setFileName(m_utils->natfreeServer);
+    TARGET_DIR_N4DVARS.setPath(n4dVarPath);
 
     connect(m_applyChanges, (void (QProcess::*)(int, QProcess::ExitStatus))&QProcess::finished,
             this, &ClassroomControlWidget::applyChangesFinished);
@@ -46,9 +47,7 @@ void ClassroomControlWidget::plasmoidMode(){
 
     if (m_utils->showWidget()){
         if (m_utils->isClassroomControlAvailable()){
-            if (TARGET_FILE.exists()){
-                createWatcher();
-            }
+            createWatcher();
             updateInfo();
     	}else{
             disableApplet();
@@ -63,14 +62,20 @@ void ClassroomControlWidget::createWatcher(){
 
     watcher=new QFileSystemWatcher(this);
 
-    if (TARGET_FILE.exists()){
-        if (!createFileWatcher){
-            createFileWatcher=true;
-            connect(watcher,SIGNAL(fileChanged(QString)),this,SLOT(updateInfo()));
-            watcher->addPath(m_utils->controlModeVar);
+    if (TARGET_DIR_N4DVARS.exists()){
+        if (!createDirectoryN4dWatcher){
+            createDirectoryN4dWatcher=true;
+            connect(watcher,SIGNAL(directoryChanged(QString)),this,SLOT(updateInfo()));
+            watcher->addPath(n4dVarPath);
         }
-    }else{
-        createFileWatcher=false;
+        if (TARGET_VAR_FILE.exists()){
+            if (!createFileVarWatcher){
+                createFileVarWatcher=true;
+                connect(watcher,SIGNAL(fileChanged(QString)),this,SLOT(updateInfo()));
+                watcher->addPath(m_utils->controlModeVar);
+            }
+
+        }
     }
 } 
 
@@ -83,22 +88,27 @@ void ClassroomControlWidget::updateInfo(){
         bool disable=false;
        
         if (TARGET_FILE_ADI.exists() && m_utils->isAdi()){
-            if (TARGET_FILE.exists()){
+            m_maxNumCart=m_utils->getMaxNumCart();
+
+            if (TARGET_VAR_FILE.exists()){
                 qDebug()<<"[CLASSROOM_CONTROL]: Updating info...";
                 QVariantList ret=m_utils->getCurrentCart();
-                initCart=ret[1].toInt();
-                m_maxNumCart=m_utils->getMaxNumCart();
-            	
-                if (initCart==0){
-                    disable=true;
+                cartConfigured=ret[1].toInt();
+            	createWatcher();
+                if (cartConfigured>0){
+                    enable=true;
                 }else{
-                    if (initCart>0){
-                        enable=true;
-                    }
-                    createWatcher();
+                    enable=false;
                 }
             }else{
-                disable=true;
+                cartConfigured=0;
+                enable=false;
+            }
+            if (previousCart!=cartConfigured){
+                previousCart=cartConfigured;
+                showNotification=true;
+            }else{
+                showNotification=false;
             }
         }else{
             disable=true;
@@ -111,8 +121,8 @@ void ClassroomControlWidget::updateInfo(){
             if (enable){
                 cartControlEnabled=true;
                 title=i18n("Classroom control activated");
-                setCurrentCartIndex(initCart-1);
-                QString cart=QString::number(initCart);
+                setCurrentCartIndex(cartConfigured-1);
+                QString cart=QString::number(cartConfigured);
                 setIsCartControlEnabled(true);
                 QString tmpIcon="classroom_control_cart_";
                 tmpIcon.append(QString("%1").arg(cart));
@@ -126,6 +136,8 @@ void ClassroomControlWidget::updateInfo(){
             
             }else{
                 cartControlEnabled=false;
+                createDirectoryN4dWatcher=false;
+                createFileVarWatcher=false;
                 title=i18n("Classroom control disabled");
                 setCurrentCart(1);
                 setCurrentCartIndex(0);
@@ -188,7 +200,7 @@ void ClassroomControlWidget::changeControlMode(bool isCartControlEnabled){
 
 void ClassroomControlWidget::changeCart(int newCart){
 
-    if (newCart!=initCart){
+    if (newCart!=cartConfigured){
         setArePendingChanges(true);
     }else{
         setArePendingChanges(false);
@@ -276,7 +288,7 @@ void ClassroomControlWidget::applyChangesFinished(int exitCode, QProcess::ExitSt
         }
     
     }else{
-        if (!createFileWatcher){
+        if (!createDirectoryN4dWatcher || !createFileVarWatcher){
             if (!isWorking){
                 updateInfo();
             }
@@ -325,7 +337,7 @@ void ClassroomControlWidget::unlockCart(){
         setShowWaitMsg(true);
         setMsgCode(2);
 
-        QString cmd="pkexec natfree-adi -v natfree00 UNSET ";
+        QString cmd="pkexec natfree-adi UNSET ";
         m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
                            << cmd,QIODevice::ReadOnly);
     }else{
