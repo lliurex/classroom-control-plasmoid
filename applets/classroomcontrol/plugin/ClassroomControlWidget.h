@@ -155,6 +155,8 @@ private:
     int m_msgCode=0;
     int cartConfigured=0;
     int previousCart=0;
+    int lastCartConfigured=0;
+    int deactivationTimeOut=3000000;
     bool cartControlEnabled=false;
     QString notificationTitle;
     QString notificationBody;
@@ -168,11 +170,22 @@ private:
     bool createFileVarWatcher=false;
     bool createDirectoryN4dWatcher=false;
     bool showNotification=true; 
+    bool deactivationTimerLaunched=false;
+    bool automaticallyDeactivated=false;
     QProcess *m_applyChanges=nullptr;
     QPointer<KNotification> m_notification;
+    QPointer<KNotification> m_deactivationNotification;
+    QPointer<KNotification> m_reactivationNotification;
+    QTimer *m_timer_deactivation = nullptr;
+    QTimer *m_timer_countdown = nullptr;
     void plasmoidMode();
     void createWatcher();
     void disableApplet();
+    void showDeactivationWarning();
+    void launchAutomaticDeactivation();
+    void stopDeactivation();
+    void reactivateControl();
+    void closeAllNotifications();
 
 private slots:
     

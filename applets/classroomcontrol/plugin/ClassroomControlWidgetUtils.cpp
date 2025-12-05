@@ -33,8 +33,10 @@ ClassroomControlWidgetUtils::ClassroomControlWidgetUtils(QObject *parent)
 {
     user=qgetenv("USER");
     n4d::Client client;
-    client=n4d::Client("https://127.0.0.1:9779");
-  
+    client=n4d::Client("https://127.0.0.1:9779",user.toStdString(),"");
+    n4d::Ticket ticket=client.create_ticket();
+    client=n4d::Client(ticket);
+
 }
 
 void ClassroomControlWidgetUtils::cleanCache(){
@@ -276,5 +278,26 @@ bool ClassroomControlWidgetUtils::isAdi(){
     }
 
     return matchAdi;
+
+}
+
+int ClassroomControlWidgetUtils::getDeactivationTimeOut(){
+
+    QFile CUSTOM_DEACTIVATION_TIMEOUT;
+    QString customTimeOut;
+    int deactivationTimeOut=defaultDeactivationTimeOut;
+    
+    CUSTOM_DEACTIVATION_TIMEOUT.setFileName(automaticDeactivationConfig);
+
+    if (CUSTOM_DEACTIVATION_TIMEOUT.exists()){
+        if (CUSTOM_DEACTIVATION_TIMEOUT.open(QIODevice::ReadOnly)){
+            QTextStream content(&CUSTOM_DEACTIVATION_TIMEOUT);
+            customTimeOut=content.readLine();
+            CUSTOM_DEACTIVATION_TIMEOUT.close();
+            deactivationTimeOut=customTimeOut.toInt()*60*1000;
+
+        }
+    }
+    return deactivationTimeOut;
 
 }
