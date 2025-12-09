@@ -475,10 +475,7 @@ void ClassroomControlWidget::manageNavigation(int stackIndex)
 
 void ClassroomControlWidget::closeAllNotifications(){
 
-    qDebug()<<"CERRANDO notificaciones";
-
     if (m_notification){
-        qDebug()<<"ESTANDAR";
         m_notification->close();
     }
 
