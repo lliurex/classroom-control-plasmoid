@@ -424,7 +424,7 @@ void ClassroomControlWidget::automaticDeactivation(){
     if (!ret){
         QString titleError=i18n("Automatic deactivation has failed");
         QString bodyError=i18n("Classroom control remains active");
-        m_notification=KNotification::event(QStringLiteral("Set"),titleError,bodyError,"classroom_control_error",nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
+        m_notification=KNotification::event(QStringLiteral("Error"),titleError,bodyError,"classroom_control_error",nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
     }
     setShowWaitMsg(false);
     setMsgCode(0);
@@ -450,7 +450,7 @@ void ClassroomControlWidget::reactivate(){
    if (!ret){
       QString titleError=i18n("The reactivation has failed");
       QString bodyError=i18n("Classroom control remains deactivate");
-      m_notification=KNotification::event(QStringLiteral("Set"),titleError,bodyError,"classroom_control_error",nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
+      m_notification=KNotification::event(QStringLiteral("Error"),titleError,bodyError,"classroom_control_error",nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
        
    }
    setShowWaitMsg(false);
