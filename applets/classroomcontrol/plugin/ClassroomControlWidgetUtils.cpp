@@ -32,11 +32,12 @@ ClassroomControlWidgetUtils::ClassroomControlWidgetUtils(QObject *parent)
        
 {
     user=qgetenv("USER");
+    n4d::Client tmpClient;
     n4d::Client client;
-    client=n4d::Client("https://127.0.0.1:9779",user.toStdString(),"");
-    n4d::Ticket ticket=client.create_ticket();
+    
+    tmpClient=n4d::Client("https://127.0.0.1:9779",user.toStdString(),"");
+    n4d::Ticket ticket=tmpClient.create_ticket();
     client=n4d::Client(ticket);
-
 }
 
 void ClassroomControlWidgetUtils::cleanCache(){
@@ -300,4 +301,33 @@ int ClassroomControlWidgetUtils::getDeactivationTimeOut(){
     }
     return deactivationTimeOut;
 
+}
+
+bool ClassroomControlWidgetUtils::automaticDeactivation(){
+
+    bool result=false;
+    try{
+        variant::Variant ret=client.call("NatfreeADI","unset");
+        bool result=ret;
+        qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Result: "<<result;
+    }catch(std::exception& e){
+        qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Error: "<<e.what();
+    }
+
+    return result;
+}
+
+bool ClassroomControlWidgetUtils::reactivateControl(int cart){
+
+    bool result=false;
+    try{
+        vector<variant::Variant>params={cart};
+        variant::Variant ret=client.call("NatfreeADI","set",params);
+        bool result=ret;
+        qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Result: "<<result;
+    }catch(std::exception& e){
+        qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Error: "<<e.what();
+    }
+
+    return result;
 }

@@ -186,6 +186,8 @@ private:
     void stopDeactivation();
     void reactivateControl();
     void closeAllNotifications();
+    void automaticDeactivation();
+    void reactivate();
 
 private slots:
     

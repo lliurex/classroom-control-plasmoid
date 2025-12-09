@@ -17,6 +17,8 @@
 #include <json.hpp>
 #include <QDebug>
 #include <KIO/CommandLauncherJob>
+#include <QtConcurrent/QtConcurrent>
+#include <QFuture>
 
 using namespace edupals;
 using namespace std;
@@ -172,9 +174,8 @@ void ClassroomControlWidget::updateInfo(){
                 if (automaticallyDeactivated){
                     automaticallyDeactivated=false;
                     if (!m_reactivationNotification){
-                        QString titleWarning=i18n("Classroom control warning");
                         QString bodyWarning=i18n("Classroom control automatically disabled");
-                        m_reactivationNotification=KNotification::event(QStringLiteral("Set"),titleWarning,bodyWarning,"classroom_control_error",nullptr,KNotification::Persistent,QStringLiteral("classroomcontrol"));
+                        m_reactivationNotification=KNotification::event(QStringLiteral("Warning"),title,bodyWarning,"classroom_control_off",nullptr,KNotification::Persistent,QStringLiteral("classroomcontrol"));
                         QString action=i18n("Reactivate control of cart: ")+QString::number(lastCartConfigured);
                         m_reactivationNotification->setDefaultAction(action);
                         m_reactivationNotification->setActions({action});
@@ -383,9 +384,9 @@ void ClassroomControlWidget::showDeactivationWarning(){
 
     m_timer_deactivation->stop();
     closeAllNotifications();
-    QString titleWarning=i18n("Classroom control warning");
-    QString bodyWarning=i18n("Classroom Control will be deactivate in few seconds");
-    m_deactivationNotification=KNotification::event(QStringLiteral("Set"),titleWarning,bodyWarning,"classroom_control_error",nullptr,KNotification::Persistent,QStringLiteral("classroomcontrol"));
+    QString titleWarning=i18n("Classroom control will be deactivate");
+    QString bodyWarning=i18n("Deactivation will be occur in a few seconds");
+    m_deactivationNotification=KNotification::event(QStringLiteral("Warning"),titleWarning,bodyWarning,"classroom_control_error",nullptr,KNotification::Persistent,QStringLiteral("classroomcontrol"));
     QString action=i18n("Cancel deactivation");
     m_deactivationNotification->setDefaultAction(action);
     m_deactivationNotification->setActions({action});
@@ -407,16 +408,53 @@ void ClassroomControlWidget::launchAutomaticDeactivation(){
     m_timer_deactivation->stop();
     automaticallyDeactivated=true;
     m_timer_countdown->stop();
-    unlockCart();
+    setShowError(false);
+    setShowWaitMsg(true);
+    setMsgCode(4);
+    closeAllNotifications();
+    QFuture<void> future=QtConcurrent::run([this](){
+        this->ClassroomControlWidget::automaticDeactivation();
+    });
+}
+
+void ClassroomControlWidget::automaticDeactivation(){
+     
+        
+    bool ret=m_utils->automaticDeactivation();
+    if (!ret){
+        QString titleError=i18n("Automatic deactivation has failed");
+        QString bodyError=i18n("Classroom control remains active");
+        m_notification=KNotification::event(QStringLiteral("Set"),titleError,bodyError,"classroom_control_error",nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
+    }
+    setShowWaitMsg(false);
+    setMsgCode(0);
+
 }
 
 void ClassroomControlWidget::reactivateControl(){
 
     closeAllNotifications();
-    qDebug()<<"REACTIVANDO EL CONTROL"<<lastCartConfigured;
+    setShowError(false);
+    setShowWaitMsg(true);
+    setMsgCode(5);
     cartControlEnabled=true;
-    setCurrentCart(lastCartConfigured);
-    applyChanges();
+    QFuture<void> future=QtConcurrent::run([this](){
+        this->ClassroomControlWidget::reactivate();
+    });
+   
+}
+
+void ClassroomControlWidget::reactivate(){
+
+   bool ret=m_utils->reactivateControl(lastCartConfigured);
+   if (!ret){
+      QString titleError=i18n("The reactivation has failed");
+      QString bodyError=i18n("Classroom control remains deactivate");
+      m_notification=KNotification::event(QStringLiteral("Set"),titleError,bodyError,"classroom_control_error",nullptr,KNotification::CloseOnTimeout,QStringLiteral("classroomcontrol"));
+       
+   }
+   setShowWaitMsg(false);
+   setMsgCode(0);
 
 }
 

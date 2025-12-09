@@ -32,6 +32,8 @@ public:
    QVariantList getApplyChangesResult(QString stout,QString stderr);
    bool isAdi();
    int getDeactivationTimeOut();
+   bool automaticDeactivation();
+   bool reactivateControl(int cart);
 
 
    QString user;

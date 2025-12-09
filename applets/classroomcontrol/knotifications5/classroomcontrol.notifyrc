@@ -43,3 +43,16 @@ Comment[ca]=Ocorre quan es produïx un error en configurar el control de l'aula
 Comment[es]=Ocurre cuando se produce un error al configurar el control del aula
 Action=Popup
 Urgency=Normal
+
+[Event/Warning]
+Name=Warning regarding automatic deactivation of classroom control
+Name[ca@valencia]=Avís sobre la desactivació automàtica del control de l'aula
+Name[ca]=Avís sobre la desactivació automàtica del control de l'aula
+Name[es]=Aviso sobre la desactivación automática del control del aula
+
+Comment=Occurs when the automatic deactivation of classroom control is activated
+Comment[ca@valencia]=Ocorre quan s'activa la desactivació automàtica del control de l'aula
+Comment[ca]=Ocorre quan s'activa la desactivació automàtica del control de l'aula
+Comment[es]=Ocurre cuando se activa la desactivación automática del control del aula
+Action=Popup
+Urgency=Normal
