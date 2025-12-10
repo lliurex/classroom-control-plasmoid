@@ -293,9 +293,17 @@ int ClassroomControlWidgetUtils::getDeactivationTimeOut(){
             QTextStream content(&CUSTOM_DEACTIVATION_TIMEOUT);
             customTimeOut=content.readLine();
             CUSTOM_DEACTIVATION_TIMEOUT.close();
-            deactivationTimeOut=customTimeOut.toInt()*60*1000;
+            try{
+                deactivationTimeOut=customTimeOut.toInt()*60*1000;
+            }catch(std::exception& e){
+                qDebug()<<"[CLASSROOM_CONTROL]: Reading custom timeout. Error: "<<e.what();
+            }
 
         }
+    }
+
+    if (deactivationTimeOut==0){
+        deactivationTimeOut=defaultDeactivationTimeOut;
     }
     return deactivationTimeOut;
 
