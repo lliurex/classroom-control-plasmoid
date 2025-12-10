@@ -189,6 +189,12 @@ Rectangle{
 			case 3:
 				msg=i18n("Restoring values. Wait a moment...")
 				break;
+			case 4:
+				msg=i18n("Deactivating classroom control. Wait a moment...")
+				break;
+			case 5:
+				msg=i18n("Reactivating classroom control. Wait a moment...")
+				break;
 		}
 		return msg;
 	}

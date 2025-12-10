@@ -31,6 +31,10 @@ public:
    bool isClassroomControlAvailable();
    QVariantList getApplyChangesResult(QString stout,QString stderr);
    bool isAdi();
+   int getDeactivationTimeOut();
+   bool automaticDeactivation();
+   bool reactivateControl(int cart);
+
 
    QString user;
    int maxNumCart=0;
@@ -38,6 +42,8 @@ public:
    QString controlModeVar="/var/lib/n4d/variables/CLASSROOM";
    QString natfreeServer="/usr/bin/natfree-adi";
    QString hideAppletVar="/var/lib/n4d/variables/HIDE_CLASSROOM_APPLET";
+   QString automaticDeactivationConfig="/etc/classroom-plasmoid.cfg";
+   int defaultDeactivationTimeOut=3000000;
 
 private:    
      
