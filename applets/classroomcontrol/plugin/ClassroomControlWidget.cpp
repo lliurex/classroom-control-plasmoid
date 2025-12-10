@@ -177,7 +177,7 @@ void ClassroomControlWidget::updateInfo(){
                 if (automaticallyDeactivated){
 		              automaticallyDeactivated=false;
                         if (!m_reactivationNotification){
-                            QString bodyWarning=i18n("Classroom control automatically disabled");
+                            QString bodyWarning=i18n("Automatically disabled");
                             m_reactivationNotification=new KNotification(QStringLiteral("Warning"),KNotification::Persistent,this);
                             m_reactivationNotification->setComponentName(QStringLiteral("classroomcontrol"));
                             m_reactivationNotification->setTitle(title);

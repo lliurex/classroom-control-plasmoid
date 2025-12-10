@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: classroom-control-plasmoid \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-10 11:02+0100\n"
+"POT-Creation-Date: 2025-12-10 11:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -125,7 +125,7 @@ msgstr ""
 
 #: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:180
 #, kde-format
-msgid "Classroom control automatically disabled"
+msgid "Automatically disabled"
 msgstr ""
 
 #: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:186
