@@ -34,6 +34,8 @@ Depends: plasma-framework,
          qml-module-qtquick-window2,
          qml-module-qtwebengine,
          qml-module-qtwebkit,
+	 natfree-adi,
+	 n4d-natfree-adi,
          ${misc:Depends},
          ${shlibs:Depends}
 Description: additional widgets for Plasma 6
