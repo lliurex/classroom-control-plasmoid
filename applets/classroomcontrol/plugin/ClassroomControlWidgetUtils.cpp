@@ -32,12 +32,11 @@ ClassroomControlWidgetUtils::ClassroomControlWidgetUtils(QObject *parent)
        
 {
     user=qgetenv("USER");
-    n4d::Client tmpClient;
-    n4d::Client client;
     
-    tmpClient=n4d::Client("https://127.0.0.1:9779",user.toStdString(),"");
+    n4d::Client tmpClient=n4d::Client("https://127.0.0.1:9779",user.toStdString(),"");
     n4d::Ticket ticket=tmpClient.create_ticket();
-    client=n4d::Client(ticket);
+    tmpClient=n4d::Client(ticket);
+    client=tmpClient;
 }
 
 void ClassroomControlWidgetUtils::cleanCache(){
@@ -295,9 +294,15 @@ int ClassroomControlWidgetUtils::getDeactivationTimeOut(){
             QTextStream content(&CUSTOM_DEACTIVATION_TIMEOUT);
             customTimeOut=content.readLine();
             CUSTOM_DEACTIVATION_TIMEOUT.close();
-            deactivationTimeOut=customTimeOut.toInt()*60*1000;
-
+            try{
+                deactivationTimeOut=customTimeOut.toInt()*60*1000;
+            }catch(std::exception& e){
+                qDebug()<<"[CLASSROOM_CONTROL]: getDeactivationTimeOut. Error: "<<e.what();
+            }
         }
+    }
+    if (deactivationTimeOut==0){
+        deactivationTimeOut=defaultDeactivationTimeOut;
     }
     return deactivationTimeOut;
 
@@ -308,7 +313,7 @@ bool ClassroomControlWidgetUtils::automaticDeactivation(){
     bool result=false;
     try{
         variant::Variant ret=client.call("NatfreeADI","unset");
-        bool result=ret;
+        result=ret;
         qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Result: "<<result;
     }catch(std::exception& e){
         qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Error: "<<e.what();
@@ -323,7 +328,7 @@ bool ClassroomControlWidgetUtils::reactivateControl(int cart){
     try{
         vector<variant::Variant>params={cart};
         variant::Variant ret=client.call("NatfreeADI","set",params);
-        bool result=ret;
+        result=ret;
         qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Result: "<<result;
     }catch(std::exception& e){
         qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Error: "<<e.what();
