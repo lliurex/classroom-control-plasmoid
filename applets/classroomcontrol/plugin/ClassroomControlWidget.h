@@ -153,22 +153,41 @@ private:
     int m_maxNumCart=0;
     bool m_showWaitMsg=false;
     int m_msgCode=0;
-    int initCart=0;
+    int cartConfigured=0;
+    int previousCart=0;
+    int lastCartConfigured=0;
+    int deactivationTimeOut=3000000;
     bool cartControlEnabled=false;
     QString notificationTitle;
     QString notificationBody;
     QString title;
-    QFile TARGET_FILE;
+    QFile TARGET_VAR_FILE;
     QFile TARGET_FILE_ADI;
+    QDir TARGET_DIR_N4DVARS;
+    QString n4dVarPath="/var/lib/n4d/variables/";
     QFileSystemWatcher *watcher=nullptr;
     ClassroomControlWidgetUtils* m_utils;
-    bool createFileWatcher=false;
+    bool createFileVarWatcher=false;
+    bool createDirectoryN4dWatcher=false;
     bool showNotification=true; 
+    bool deactivationTimerLaunched=false;
+    bool automaticallyDeactivated=false;
     QProcess *m_applyChanges=nullptr;
     QPointer<KNotification> m_notification;
+    QPointer<KNotification> m_deactivationNotification;
+    QPointer<KNotification> m_reactivationNotification;
+    QTimer *m_timer_deactivation = nullptr;
+    QTimer *m_timer_countdown = nullptr;
     void plasmoidMode();
     void createWatcher();
     void disableApplet();
+    void showDeactivationWarning();
+    void launchAutomaticDeactivation();
+    void stopDeactivation();
+    void reactivateControl();
+    void closeAllNotifications();
+    void automaticDeactivation();
+    void reactivate();
 
 private slots:
     

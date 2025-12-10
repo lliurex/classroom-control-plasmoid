@@ -32,9 +32,10 @@ ClassroomControlWidgetUtils::ClassroomControlWidgetUtils(QObject *parent)
        
 {
     user=qgetenv("USER");
-    n4d::Client client;
-    client=n4d::Client("https://127.0.0.1:9779");
-  
+    n4d::Client tmpClient=n4d::Client("https://127.0.0.1:9779",user.toStdString(),"");
+    n4d::Ticket ticket=tmpClient.create_ticket();
+    tmpClient=n4d::Client(ticket);
+    client=tmpClient;
 }
 
 void ClassroomControlWidgetUtils::cleanCache(){
@@ -127,17 +128,7 @@ bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
     if (isAdi()){
         if (TARGET_FILE.exists()){
             if (!getHideAppletValue()){
-                TARGET_FILE.setFileName(controlModeVar);
-                if (TARGET_FILE.exists()){
-                    QVariantList ret=getCurrentCart();
-                    if (!ret[0].toBool()){
-                        if (ret[1].toInt()==0){
-                            isAvailable=false;
-                        }else{
-                            isAvailable=true;
-                        }
-                    }
-                }
+                isAvailable=true;
             }
         }
     }
@@ -150,7 +141,7 @@ bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
 QVariantList ClassroomControlWidgetUtils::getCurrentCart(){
 
     bool isError=false;
-    QString currentCart="0";
+    QString currentCart="-1";
     QVariantList result;
 
     try{
@@ -287,4 +278,61 @@ bool ClassroomControlWidgetUtils::isAdi(){
 
     return matchAdi;
 
+}
+
+int ClassroomControlWidgetUtils::getDeactivationTimeOut(){
+
+    QFile CUSTOM_DEACTIVATION_TIMEOUT;
+    QString customTimeOut;
+    int deactivationTimeOut=defaultDeactivationTimeOut;
+    
+    CUSTOM_DEACTIVATION_TIMEOUT.setFileName(automaticDeactivationConfig);
+
+    if (CUSTOM_DEACTIVATION_TIMEOUT.exists()){
+        if (CUSTOM_DEACTIVATION_TIMEOUT.open(QIODevice::ReadOnly)){
+            QTextStream content(&CUSTOM_DEACTIVATION_TIMEOUT);
+            customTimeOut=content.readLine();
+            CUSTOM_DEACTIVATION_TIMEOUT.close();
+            try{
+                deactivationTimeOut=customTimeOut.toInt()*60*1000;
+            }catch(std::exception& e){
+                qDebug()<<"[CLASSROOM_CONTROL]: Reading custom timeout. Error: "<<e.what();
+            }
+
+        }
+    }
+
+    if (deactivationTimeOut==0){
+        deactivationTimeOut=defaultDeactivationTimeOut;
+    }
+    return deactivationTimeOut;
+
+}
+
+bool ClassroomControlWidgetUtils::automaticDeactivation(){
+
+    bool result=false;
+    try{
+        Variant ret=client.call("NatfreeADI","unset");
+        result=ret;
+        qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Result: "<<result;
+    }catch(std::exception& e){
+        qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Error: "<<e.what();
+    }
+
+    return result;
+}
+
+bool ClassroomControlWidgetUtils::reactivateControl(int cart){
+
+    bool result=false;
+    try{
+        vector<Variant> params={cart};
+        Variant ret=client.call("NatfreeADI","set",params);
+        result=ret;
+        qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Result: "<<result;
+    }catch(std::exception& e){
+        qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Error: "<<e.what();
+    }
+    return result;
 }
