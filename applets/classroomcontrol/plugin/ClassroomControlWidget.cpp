@@ -39,7 +39,7 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
     TARGET_FILE_ADI.setFileName(m_utils->natfreeServer);
     TARGET_DIR_N4DVARS.setPath(n4dVarPath);
     deactivationTimeOut=m_utils->getDeactivationTimeOut();
-    qDebug()<<"[CLASSROOM_CONTROL]: TimeOut for deactivation: "<< deactivationTimeOut;
+    qDebug()<<"[CLASSROOM_CONTROL]: TimeOut for automatic deactivation (in ms): "<<deactivationTimeOut;
 
     connect(m_applyChanges, (void (QProcess::*)(int, QProcess::ExitStatus))&QProcess::finished,
             this, &ClassroomControlWidget::applyChangesFinished);
