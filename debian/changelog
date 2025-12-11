@@ -1,3 +1,9 @@
+classroom-control-plasmoid (0.1.11) noble; urgency=medium
+
+  * Added support to automatic deactivation
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Thu, 11 Dec 2025 11:40:03 +0100
+
 classroom-control-plasmoid (0.1.10) noble; urgency=medium
 
   * Fixed icons
