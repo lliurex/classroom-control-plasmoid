@@ -425,6 +425,10 @@ void ClassroomControlWidget::stopDeactivation(){
 
     closeAllNotifications();
     m_timer_countdown->stop();
+    if (cartControlEnabled){
+        m_timer_deactivation->stop();
+        m_timer_deactivation->start(deactivationTimeOut);
+    }
 
 }
 
