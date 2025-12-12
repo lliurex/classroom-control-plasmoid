@@ -43,7 +43,7 @@ public:
    QString natfreeServer="/usr/bin/natfree-adi";
    QString hideAppletVar="/var/lib/n4d/variables/HIDE_CLASSROOM_APPLET";
    QString automaticDeactivationConfig="/etc/classroom-plasmoid.cfg";
-   int defaultDeactivationTimeOut=3000000;
+   int defaultDeactivationTimeOut=3600000;
 
 private:    
      
