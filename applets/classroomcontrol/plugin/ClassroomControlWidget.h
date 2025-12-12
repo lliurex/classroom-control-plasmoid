@@ -156,7 +156,7 @@ private:
     int cartConfigured=0;
     int previousCart=0;
     int lastCartConfigured=0;
-    int deactivationTimeOut=3000000;
+    int deactivationTimeOut=3600000;
     bool cartControlEnabled=false;
     QString notificationTitle;
     QString notificationBody;
