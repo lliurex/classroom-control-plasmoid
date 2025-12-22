@@ -11,6 +11,7 @@
 #include <QList>
 #include <KLocalizedString>
 #include <sys/types.h>
+#include <QDBusConnection>
 
 #include <grp.h>
 #include <pwd.h>
@@ -37,6 +38,7 @@ ClassroomControlWidgetUtils::ClassroomControlWidgetUtils(QObject *parent)
     n4d::Ticket ticket=tmpClient.create_ticket();
     tmpClient=n4d::Client(ticket);
     client=tmpClient;
+    registerService();
 }
 
 void ClassroomControlWidgetUtils::cleanCache(){
@@ -97,6 +99,14 @@ QString ClassroomControlWidgetUtils::getInstalledVersion(){
     return installedVersion;
 
 }  
+
+void ClassroomControlWidgetUtils::registerService(){
+
+    QDBusConnection bus=QDBusConnection::sessionBus();
+    bus.registerService("com.classroomcontrol.DeactivationWarning");
+    bus.registerObject("/DeactivationWarning",this,QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals);
+}
+
 
 bool ClassroomControlWidgetUtils::showWidget(){
 
@@ -336,3 +346,16 @@ bool ClassroomControlWidgetUtils::reactivateControl(int cart){
 
     return result;
 }
+
+void ClassroomControlWidgetUtils::cancelDeactivation(){
+
+    qDebug()<<"RECIBIENDO MENSAJE";
+    emit cancelDeactivationSignal();
+}
+
+void ClassroomControlWidgetUtils::launchDeactivation(){
+
+    qDebug()<<"RECIBIENDO MENSAJE";
+    emit launchDeactivationSignal();
+}
+

@@ -69,3 +69,5 @@ install(FILES "icons/classroom_control_off.svg"
         DESTINATION ${DATAROOTDIR}/usr/share/icons/hicolor/scalable/apps/)  
 install(FILES "knotifications5/classroomcontrol.notifyrc"
        DESTINATION ${DATAROOTDIR}/usr/share/knotifications5/)
+install(FILES "warning/classroom-control-dialog.py"
+       DESTINATION ${DATAROOTDIR}/usr/bin/)
