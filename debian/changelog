@@ -1,3 +1,9 @@
+classroom-control-plasmoid (0.1.12) jammy; urgency=medium
+
+  * Refactorized desactivation warning
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Mon, 22 Dec 2025 14:44:00 +0100
+
 classroom-control-plasmoid (0.1.11) jammy; urgency=medium
 
   * Changed default timeout for deactivation

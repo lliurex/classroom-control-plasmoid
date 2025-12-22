@@ -3,3 +3,4 @@ usr/share/kservices5/plasma-applet-org.kde.plasma.classroomcontrol.desktop
 usr/share/metainfo/org.kde.plasma.classroomcontrol.appdata.xml
 usr/share/plasma/plasmoids/org.kde.plasma.classroomcontrol/
 usr/share/locale/*/*/*.mo
+usr/bin
