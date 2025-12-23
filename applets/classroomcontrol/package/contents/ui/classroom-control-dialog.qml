@@ -10,11 +10,11 @@ ApplicationWindow {
 	property int margin: 1
 	flags:Qt.FramelessWindowHint | Qt.Window
 	color:"#eff0f1"
-	width: 610
+	width: 550
 	height: mainLayout.implicitHeight + 2 * margin
-	minimumWidth: 610
+	minimumWidth: 550
 	minimumHeight: mainLayout.Layout.minimumHeight + 2 * margin
-	maximumWidth: 610
+	maximumWidth: 550
 	maximumHeight: mainLayout.Layout.maximumHeight + 2 * margin
 	Component.onCompleted: {
 	    x = Screen.width/2 - width/2 
@@ -34,8 +34,8 @@ ApplicationWindow {
     	id: mainLayout
     	anchors.fill: parent
     	anchors.margins: margin
-    	Layout.minimumWidth:610	
-    	Layout.maximumWidth:610
+    	Layout.minimumWidth:550	
+    	Layout.maximumWidth:550
     	Layout.minimumHeight:205
     	Layout.maximumHeight:205
     	
@@ -53,7 +53,9 @@ ApplicationWindow {
 	   			width:60
 	   			height:60
 	   			Image{
-	   				source:"/usr/share/icons/breeze/status/64/dialog-warning.svg"
+	   				source:"/usr/share/icons/hicolor/scalable/apps/classroom_control_error.svg"
+	   				sourceSize.width:64
+	   				sourceSize.height:64
 	   				anchors.centerIn:parent
 	   			}
 	   		}
