@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-10 11:26+0100\n"
-"PO-Revision-Date: 2025-12-10 11:28+0100\n"
+"POT-Creation-Date: 2025-12-23 12:15+0100\n"
+"PO-Revision-Date: 2025-12-23 12:17+0100\n"
 "Last-Translator: lliurex <lliurex@lliurex.net>\n"
 "Language-Team: Catalan <kde-i18n-ca@kde.org>\n"
 "Language: es\n"
@@ -48,32 +48,32 @@ msgid "Cancel"
 msgstr ""
 
 #: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:169
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:207
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:222
 #, kde-format
 msgid "Unable to get ip from interface"
 msgstr ""
 
 #: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:175
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:213
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:228
 #, kde-format
 msgid "The selected cart is already beaing controlled by another computer"
 msgstr ""
 
 #: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:178
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:216
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:231
 #, kde-format
 msgid "Insufficient number of hosts in subnet"
 msgstr ""
 
 #: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:181
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:219
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:234
 #, kde-format
 msgid "Virtual interface not created"
 msgstr ""
 
 #: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:184
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:309
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:224
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:326
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:239
 #, kde-format
 msgid "Unable to configure classroom control"
 msgstr ""
@@ -108,82 +108,75 @@ msgstr ""
 msgid "See help"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:37
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:34
 #, kde-format
 msgid "Mobile Classroom Control"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:142
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:141
 #, kde-format
 msgid "Classroom control activated"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:150
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:149
 #, kde-format
 msgid "Controlling the cart number: "
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:169
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:172
 #, kde-format
 msgid "Classroom control disabled"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:180
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:183
 #, kde-format
 msgid "Automatically disabled"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:186
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:189
 #, kde-format
 msgid "Reactivate control of cart: "
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:212
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:228
 #, kde-format
 msgid "Mobile Classroom Control not available in this computer"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:333
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:350
 #, kde-format
 msgid "Error configuring classroom control"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:406
-#, kde-format
-msgid "Classroom control will be deactivate"
-msgstr ""
-
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:407
-#, kde-format
-msgid "Deactivation will be occur in a few seconds"
-msgstr ""
-
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:414
-#, kde-format
-msgid "Cancel deactivation"
-msgstr ""
-
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:449
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:467
 #, kde-format
 msgid "Automatic deactivation has failed"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:450
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:468
 #, kde-format
 msgid "Classroom control remains active"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:482
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:506
 #, kde-format
 msgid "The reactivation has failed"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:483
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:507
 #, kde-format
 msgid "Classroom control remains deactivate"
 msgstr ""
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:210
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:225
 #, kde-format
 msgid "Mask value from interface is wrong"
+msgstr ""
+
+#: ../applets/classroomcontrol/warning/classroom-control-dialog.py:37
+msgid "Classroom Control will be deactivate in few seconds"
+msgstr ""
+
+#: ../applets/classroomcontrol/warning/classroom-control-dialog.py:38
+msgid "Cancel deactivation"
 msgstr ""

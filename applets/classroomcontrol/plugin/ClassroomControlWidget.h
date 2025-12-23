@@ -174,10 +174,12 @@ private:
     bool automaticallyDeactivated=false;
     QProcess *m_applyChanges=nullptr;
     QPointer<KNotification> m_notification;
-    QPointer<KNotification> m_deactivationNotification;
     QPointer<KNotification> m_reactivationNotification;
     QTimer *m_timer_deactivation = nullptr;
-    QTimer *m_timer_countdown = nullptr;
+    QList<QPointer <KNotification>> activeNotifications;
+    bool deleteNoticationWorker=false;
+    int maxManualCloseNotifications=4;
+    int manualCloseNotificationsCount=0; 
     void plasmoidMode();
     void createWatcher();
     void disableApplet();
@@ -185,7 +187,7 @@ private:
     void launchAutomaticDeactivation();
     void stopDeactivation();
     void reactivateControl();
-    void closeAllNotifications();
+    void closeAllNotifications(QList<QPointer<KNotification>> openNotifications);
     void automaticDeactivation();
     void reactivate();
 

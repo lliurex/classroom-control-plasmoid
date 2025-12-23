@@ -11,6 +11,7 @@
 #include <QList>
 #include <KLocalizedString>
 #include <sys/types.h>
+#include <QDBusConnection>
 
 #include <grp.h>
 #include <pwd.h>
@@ -36,12 +37,14 @@ ClassroomControlWidgetUtils::ClassroomControlWidgetUtils(QObject *parent)
     n4d::Ticket ticket=tmpClient.create_ticket();
     tmpClient=n4d::Client(ticket);
     client=tmpClient;
+    registerService();
 }
 
 void ClassroomControlWidgetUtils::cleanCache(){
 
     QFile CURRENT_VERSION_TOKEN;
     QDir cacheDir("/home/"+user+"/.cache/plasmashell/qmlcache");
+    QDir warningCache("/home/"+user+"/.cache/classroom-control-dialog.py");
     QString currentVersion="";
     bool clear=false;
 
@@ -75,6 +78,10 @@ void ClassroomControlWidgetUtils::cleanCache(){
         if (cacheDir.exists()){
             cacheDir.removeRecursively();
         }
+
+        if (warningCache.exists()){
+            warningCache.removeRecursively();
+        }
     }   
 
 }
@@ -96,6 +103,14 @@ QString ClassroomControlWidgetUtils::getInstalledVersion(){
     return installedVersion;
 
 }  
+
+void ClassroomControlWidgetUtils::registerService(){
+
+    QDBusConnection bus=QDBusConnection::sessionBus();
+    bus.registerService("com.classroomcontrol.DeactivationWarning");
+    bus.registerObject("/DeactivationWarning",this,QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals);
+}
+
 
 bool ClassroomControlWidgetUtils::showWidget(){
 
@@ -336,3 +351,14 @@ bool ClassroomControlWidgetUtils::reactivateControl(int cart){
     }
     return result;
 }
+
+void ClassroomControlWidgetUtils::cancelDeactivation(){
+
+    emit cancelDeactivationSignal();
+}
+
+void ClassroomControlWidgetUtils::launchDeactivation(){
+
+    emit launchDeactivationSignal();
+}
+
