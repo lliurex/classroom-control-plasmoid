@@ -1,3 +1,10 @@
+classroom-control-plasmoid (0.1.13) noble; urgency=medium
+
+  * Refactorized desactivation warning message
+  * Removed cache of desactivation warning window
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Tue, 23 Dec 2025 12:24:26 +0100
+
 classroom-control-plasmoid (0.1.12) noble; urgency=medium
 
   * Changed default timeout for deactivation

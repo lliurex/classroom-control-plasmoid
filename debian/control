@@ -15,7 +15,8 @@ Build-Depends: cmake,
                libkf6notifications-dev,
                libkf6kio-dev,
                libedupals-base-dev,
-               libedupals-n4d-dev
+               libedupals-n4d-dev,
+	       llxsrchelper
 Standards-Version: 3.9.6
 Homepage: https://lliurex.net
 Vcs-Git: https://svn.lliurex.net/jammy/classroom-control-plasmoid
