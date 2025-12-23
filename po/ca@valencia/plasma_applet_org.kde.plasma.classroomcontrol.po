@@ -174,7 +174,7 @@ msgid "Mask value from interface is wrong"
 msgstr "El valor de la màscara de la interfície és erroni"
 
 #: ../applets/classroomcontrol/warning/classroom-control-dialog.py:37
-msgid "Classroom control will be deactivate in few seconds"
+msgid "Classroom Control will be deactivate in few seconds"
 msgstr "El Control de l'Aula serà desactivat en pocs segons"
 
 #: ../applets/classroomcontrol/warning/classroom-control-dialog.py:38
