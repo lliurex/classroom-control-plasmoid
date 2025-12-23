@@ -1,3 +1,9 @@
+classroom-control-plasmoid (0.1.14) jammy; urgency=medium
+
+  * Hided deactivation warning when unlock cart
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Tue, 23 Dec 2025 13:42:11 +0100
+
 classroom-control-plasmoid (0.1.13) jammy; urgency=medium
 
   * Resized deactivation warning window and changed icon
