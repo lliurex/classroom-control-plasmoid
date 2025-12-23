@@ -5,6 +5,7 @@
 #include <QProcess>
 #include <QFile>
 #include <QDir>
+#include <QDBusConnection>
 
 #include <n4d.hpp>
 #include <variant.hpp>
@@ -17,6 +18,7 @@ using namespace edupals::variant;
 class ClassroomControlWidgetUtils : public QObject
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.classroomcontrol.Bridge")
 
 
 public:
@@ -45,16 +47,29 @@ public:
    QString automaticDeactivationConfig="/etc/classroom-plasmoid.cfg";
    int defaultDeactivationTimeOut=3600000;
 
+
+public slots:
+    
+    void cancelDeactivation();
+    void launchDeactivation();
+
+signals:
+
+    void closeWarning();
+
 private:    
      
     n4d::Client client;
     QFile TARGET_FILE;
     QString getInstalledVersion();
     bool getHideAppletValue();
+    void registerService();
 
      
+signals:
+    void cancelDeactivationSignal();
+    void launchDeactivationSignal();
+
 };
-
-
 
 #endif // PLASMA_CLASSROOM_CONTROL_WIDGET_UTILS_H

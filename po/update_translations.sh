@@ -12,5 +12,6 @@ xgettext --from-code=UTF-8 -C --kde -ci18n -ki18n:1 -ki18nc:1c,2 -ki18np:1,2 -ki
     --msgid-bugs-address="${bugAddress}" --files-from=infiles.list --width=200 \
     --package-name="${widgetName}" --package-version="" \
     -D "${packageRoot}" -D "${DIR}" -o "${outFile}" || { echo "[merge] error xgettext, aborting."; exit 1; }
+xgettext --join-existing -L python ../applets/classroomcontrol/warning/classroom-control-dialog.py -o "${outFile}"  || { echo "[merge] error xgettext, aborting."; exit 1; }
 
 rm ${DIR}/infiles.list
