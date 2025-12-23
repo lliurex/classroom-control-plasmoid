@@ -45,6 +45,7 @@ void ClassroomControlWidgetUtils::cleanCache(){
 
     QFile CURRENT_VERSION_TOKEN;
     QDir cacheDir("/home/"+user+"/.cache/plasmashell/qmlcache");
+    QDir warningCache("/home/"+user+"/.cache/classroom-control-dialog.py");
     QString currentVersion="";
     bool clear=false;
 
@@ -77,6 +78,10 @@ void ClassroomControlWidgetUtils::cleanCache(){
     if (clear){
         if (cacheDir.exists()){
             cacheDir.removeRecursively();
+        }
+
+        if (warningCache.exists()){
+            warningCache.removeRecursively();
         }
     }   
 
@@ -349,13 +354,11 @@ bool ClassroomControlWidgetUtils::reactivateControl(int cart){
 
 void ClassroomControlWidgetUtils::cancelDeactivation(){
 
-    qDebug()<<"RECIBIENDO MENSAJE";
     emit cancelDeactivationSignal();
 }
 
 void ClassroomControlWidgetUtils::launchDeactivation(){
 
-    qDebug()<<"RECIBIENDO MENSAJE";
     emit launchDeactivationSignal();
 }
 
