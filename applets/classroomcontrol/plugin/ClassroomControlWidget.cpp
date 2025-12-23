@@ -404,7 +404,7 @@ void ClassroomControlWidget::unlockCart(){
 
     if (m_utils->isAdi()){
        qDebug()<<"[CLASSROOM_CONTROL]: Unlock cart ...";
-
+       emit m_utils->closeWarning();
        closeAllNotifications(activeNotifications);
 
        setShowError(false);
