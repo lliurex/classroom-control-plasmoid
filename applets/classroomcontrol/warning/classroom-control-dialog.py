@@ -34,7 +34,7 @@ class Bridge(QObject):
 	
 	def initValues(self):
 		
-		warningMsg=_("Classroom control will be deactivate in few seconds")
+		warningMsg=_("Classroom Control will be deactivate in few seconds")
 		cancelBtnMsg=_("Cancel deactivation")
 
 		self._translateMsg=[warningMsg,cancelBtnMsg]
