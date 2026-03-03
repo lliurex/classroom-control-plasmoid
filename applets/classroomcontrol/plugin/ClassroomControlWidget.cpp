@@ -34,19 +34,15 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
     m_utils->cleanCache();
     notificationTitle=i18n("Mobile Classroom Control");
     TARGET_VAR_FILE.setFileName(m_utils->controlModeVar);
-    TARGET_FILE_ADI.setFileName(m_utils->natfreeServer);
     TARGET_DIR_N4DVARS.setPath(n4dVarPath);
-    deactivationTimeOut=m_utils->getDeactivationTimeOut();
-    qDebug()<<"[CLASSROOM_CONTROL]: TimeOut for automatic deactivation (in ms): "<<deactivationTimeOut;
 
+    connect(m_utils,&ClassroomControlWidgetUtils::getWidgetStatusFinished,this,&ClassroomControlWidget::initPlasmoid);
+    connect(m_timer_deactivation, &QTimer::timeout, this, &ClassroomControlWidget::showDeactivationWarning);
+    connect(m_utils,&ClassroomControlWidgetUtils::getCurrentInfoFinished,this,&ClassroomControlWidget::updateInfo);
     connect(m_applyChanges, (void (QProcess::*)(int, QProcess::ExitStatus))&QProcess::finished,
             this, &ClassroomControlWidget::applyChangesFinished);
-
-    connect(m_timer_deactivation, &QTimer::timeout, this, &ClassroomControlWidget::showDeactivationWarning);
-
     connect(m_utils,&ClassroomControlWidgetUtils::cancelDeactivationSignal,this,&ClassroomControlWidget::stopDeactivation);
     connect(m_utils,&ClassroomControlWidgetUtils::launchDeactivationSignal,this,&ClassroomControlWidget::launchAutomaticDeactivation);
-
     setSubToolTip(notificationTitle);
     plasmoidMode();
 
@@ -54,13 +50,17 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
 
 void ClassroomControlWidget::plasmoidMode(){
 
-    if (m_utils->showWidget()){
-        if (m_utils->isClassroomControlAvailable()){
-            createWatcher();
-            updateInfo();
-    	}else{
-            disableApplet();
-    	}
+    m_utils->getWidgetStatus();
+  
+}
+
+void ClassroomControlWidget::initPlasmoid(bool isEnabled, int timeOut){
+
+    if (isEnabled){
+        deactivationTimeOut=timeOut;
+        qDebug()<<"[CLASSROOM_CONTROL]: TimeOut for automatic deactivation (in ms): "<<deactivationTimeOut;
+        createWatcher();
+        getInfo();
     }else{
         disableApplet();
     }
@@ -74,13 +74,13 @@ void ClassroomControlWidget::createWatcher(){
     if (TARGET_DIR_N4DVARS.exists()){
         if (!createDirectoryN4dWatcher){
             createDirectoryN4dWatcher=true;
-            connect(watcher,SIGNAL(directoryChanged(QString)),this,SLOT(updateInfo()));
+            connect(watcher,SIGNAL(directoryChanged(QString)),this,SLOT(getInfo()));
             watcher->addPath(n4dVarPath);
         }
         if (TARGET_VAR_FILE.exists()){
             if (!createFileVarWatcher){
                 createFileVarWatcher=true;
-                connect(watcher,SIGNAL(fileChanged(QString)),this,SLOT(updateInfo()));
+                connect(watcher,SIGNAL(fileChanged(QString)),this,SLOT(getInfo()));
                 watcher->addPath(m_utils->controlModeVar);
             }
 
@@ -89,139 +89,108 @@ void ClassroomControlWidget::createWatcher(){
     
 } 
 
-void ClassroomControlWidget::updateInfo(){
+void ClassroomControlWidget::getInfo(){
 
     if (!isWorking){
         qDebug()<<"[CLASSROOM_CONTROL]: Detecting changed in n4d vars directory";
         isWorking=true;
-        bool enable=false;
-        bool disable=false;
-       
-        if (TARGET_FILE_ADI.exists() && m_utils->isAdi()){
-            m_maxNumCart=m_utils->getMaxNumCart();
+        m_utils->getCurrentInfo();
+    }
+}
 
-            if (TARGET_VAR_FILE.exists()){
-                qDebug()<<"[CLASSROOM_CONTROL]: Updating info...";
-                QVariantList ret=m_utils->getCurrentCart();
-                cartConfigured=ret[1].toInt();
-            	createWatcher();
-                if (cartConfigured>0){
-                    lastCartConfigured=cartConfigured;
-                    enable=true;
-                    if (!deactivationTimerLaunched){
-                        m_timer_deactivation->start(deactivationTimeOut);
-                        deactivationTimerLaunched=true;
-                    }
-                }else{
-                    enable=false;
-                }
-            }else{
-                cartConfigured=0;
-                enable=false;
-            }
-            if (previousCart!=cartConfigured){
-                previousCart=cartConfigured;
-                showNotification=true;
-                if (deactivationTimerLaunched){
-                    m_timer_deactivation->stop();
-                    m_timer_deactivation->start(deactivationTimeOut);
-                }
-            }else{
-                showNotification=false;
+void ClassroomControlWidget::updateInfo(bool isAvailable, bool isEnabled, int cartConfigured, int maxNumCart){
+
+    if (isAvailable){
+        m_maxNumCart=maxNumCart;
+        createWatcher();
+
+        if (previousCart!=cartConfigured){
+            previousCart=cartConfigured;
+            showNotification=true;
+            if (deactivationTimerLaunched){
+                m_timer_deactivation->stop();
+                m_timer_deactivation->start(deactivationTimeOut);
             }
         }else{
-            disable=true;
+            showNotification=false;
         }
-
-        if (disable){
-            disableApplet();
-            isWorking=false;
+        qDebug()<<"[CLASSROOM_CONTROL]: Updating info";
+        if (isEnabled){
+            lastCartConfigured=cartConfigured;
+            if (!deactivationTimerLaunched){
+                m_timer_deactivation->start(deactivationTimeOut);
+                deactivationTimerLaunched=true;
+            }
+            cartControlEnabled=true;
+            title=i18n("Classroom control activated");
+            setCurrentCartIndex(cartConfigured-1);
+            QString cart=QString::number(cartConfigured);
+            setIsCartControlEnabled(true);
+            QString tmpIcon="classroom_control_cart_";
+            tmpIcon.append(QString("%1").arg(cart));
+            setIconName(tmpIcon);
+            setIconNamePh("classroom_control");
+            notificationBody=i18n("Controlling the cart number: ")+cart;
+            setSubToolTip(title+'\n'+notificationBody); 
+            if (showNotification){
+                closeAllNotifications();
+                KNotification *m_notification = new KNotification(QStringLiteral("Set"),KNotification::CloseOnTimeout,this);
+                m_notification->setComponentName(QStringLiteral("classroomcontrol"));
+                m_notification->setTitle(title);
+                m_notification->setText(notificationBody);
+                m_notification->setIconName(tmpIcon);
+                m_notification->sendEvent();
+            } 
         }else{
-            if (enable){
-                cartControlEnabled=true;
-                title=i18n("Classroom control activated");
-                setCurrentCartIndex(cartConfigured-1);
-                QString cart=QString::number(cartConfigured);
-                setIsCartControlEnabled(true);
-                QString tmpIcon="classroom_control_cart_";
-                tmpIcon.append(QString("%1").arg(cart));
-                setIconName(tmpIcon);
-                setIconNamePh("classroom_control");
-                notificationBody=i18n("Controlling the cart number: ")+cart;
-                setSubToolTip(title+'\n'+notificationBody); 
+            cartConfigured=0;
+            cartControlEnabled=false;
+            createFileVarWatcher=false;
+            m_timer_deactivation->stop();
+            deactivationTimerLaunched=false;
+            title=i18n("Classroom control disabled");
+            setCurrentCart(1);
+            setCurrentCartIndex(0);
+            setIsCartControlEnabled(false);
+            setIconName("classroom_control_off");
+            setIconNamePh("classroom_control_off");
+            setSubToolTip(title);
+            if (automaticallyDeactivated){
+                automaticallyDeactivated=false;
+                if (!m_reactivationNotification){
+                    closeAllNotifications();
+                    QString bodyWarning=i18n("Automatically disabled");
+                    KNotification *m_reactivationNotification=new KNotification(QStringLiteral("Warning"),KNotification::Persistent,this);
+                    m_reactivationNotification->setComponentName(QStringLiteral("classroomcontrol"));
+                    m_reactivationNotification->setTitle(title);
+                    m_reactivationNotification->setText(bodyWarning);
+                    m_reactivationNotification->setIconName("classroom_control_off");
+                    QString action=i18n("Reactivate control of cart: ")+QString::number(lastCartConfigured);
+                    m_reactivationNotification->setDefaultAction(action);
+                    m_reactivationNotification->setActions({action});
+                    connect(m_reactivationNotification,QOverload<unsigned int>::of(&KNotification::activated),this,&ClassroomControlWidget::reactivateControl);
+                    m_reactivationNotification->sendEvent();
+                }
+            }else{    
                 if (showNotification){
-                    closeAllNotifications(activeNotifications);
-                    KNotification *m_notification = new KNotification(QStringLiteral("Set"),KNotification::CloseOnTimeout,this);
+                    closeAllNotifications();
+                    KNotification *m_notification = new KNotification(QStringLiteral("Unset"),KNotification::CloseOnTimeout,this);
                     m_notification->setComponentName(QStringLiteral("classroomcontrol"));
                     m_notification->setTitle(title);
-                    m_notification->setText(notificationBody);
-                    m_notification->setIconName(tmpIcon);
-                    activeNotifications.append(m_notification);
-                    connect(m_notification,&KNotification::closed,this,[this,m_notification](){
-                        if (activeNotifications.contains(m_notification)){
-                            activeNotifications.removeAll(m_notification);
-                        }
-                    });
+                    m_notification->setText("");
+                    m_notification->setIconName("classroom_control_off");
                     m_notification->sendEvent();
-                }         
-            
-            }else{
-                cartControlEnabled=false;
-                createFileVarWatcher=false;
-                m_timer_deactivation->stop();
-                deactivationTimerLaunched=false;
-                title=i18n("Classroom control disabled");
-                setCurrentCart(1);
-                setCurrentCartIndex(0);
-                setIsCartControlEnabled(false);
-                setIconName("classroom_control_off");
-                setIconNamePh("classroom_control_off");
-                setSubToolTip(title);
-                if (automaticallyDeactivated){
-                    automaticallyDeactivated=false;
-                    if (!m_reactivationNotification){
-                        closeAllNotifications(activeNotifications);
-                        QString bodyWarning=i18n("Automatically disabled");
-                        KNotification *m_reactivationNotification=new KNotification(QStringLiteral("Warning"),KNotification::Persistent,this);
-                        m_reactivationNotification->setComponentName(QStringLiteral("classroomcontrol"));
-                        m_reactivationNotification->setTitle(title);
-                        m_reactivationNotification->setText(bodyWarning);
-                        m_reactivationNotification->setIconName("classroom_control_off");
-                        QString action=i18n("Reactivate control of cart: ")+QString::number(lastCartConfigured);
-                        m_reactivationNotification->setDefaultAction(action);
-                        m_reactivationNotification->setActions({action});
-                        connect(m_reactivationNotification,QOverload<unsigned int>::of(&KNotification::activated),this,&ClassroomControlWidget::reactivateControl);
-                        activeNotifications.append(m_reactivationNotification);
-                        connect(m_reactivationNotification,&KNotification::closed,this,[this,m_reactivationNotification](){
-                            if (activeNotifications.contains(m_reactivationNotification)){
-                                activeNotifications.removeAll(m_reactivationNotification);
-                            }
-                        });
-                        m_reactivationNotification->sendEvent();
-                    }
-                }else{    
-                    if (showNotification){
-                        closeAllNotifications(activeNotifications);
-                        KNotification *m_notification = new KNotification(QStringLiteral("Unset"),KNotification::CloseOnTimeout,this);
-                        m_notification->setComponentName(QStringLiteral("classroomcontrol"));
-                        m_notification->setTitle(title);
-                        m_notification->setText("");
-                        m_notification->setIconName("classroom_control_off");
-                        activeNotifications.append(m_notification);
-                        connect(m_notification,&KNotification::closed,this,[this,m_notification](){
-                            if (activeNotifications.contains(m_notification)){
-                                activeNotifications.removeAll(m_notification);
-                            }
-                        });
-                        m_notification->sendEvent();
-                    }
                 }
             }
-            changeTryIconState(0);
-            setCanEdit(true);
-            showNotification=true;
-            isWorking=false;
         }
+        changeTryIconState(0);
+        setCanEdit(true);
+        showNotification=true;
+        isWorking=false;
+
+    }else{
+        qDebug()<<"[CLASSROOM_CONTROL]: Updating info";
+        disableApplet();
+        isWorking=false; 
     }
 }
 
@@ -283,9 +252,9 @@ void ClassroomControlWidget::applyChanges(){
 
     if (m_utils->isAdi()){
 
-        emit m_utils->closeWarning();
+        emit m_utils->closeWarningSignal();
 
-        closeAllNotifications(activeNotifications);
+        closeAllNotifications();
         setShowError(false);
         setShowWaitMsg(true);
         setMsgCode(2);
@@ -357,12 +326,6 @@ void ClassroomControlWidget::applyChangesFinished(int exitCode, QProcess::ExitSt
                 m_notification->setTitle(title);
                 m_notification->setText(notificationBody);
                 m_notification->setIconName("classroom_control_error");
-                activeNotifications.append(m_notification);
-                connect(m_notification,&KNotification::closed,this,[this,m_notification](){
-                    if (activeNotifications.contains(m_notification)){
-                        activeNotifications.removeAll(m_notification);
-                    }
-                });
                 m_notification->sendEvent();
             }
         }
@@ -370,7 +333,7 @@ void ClassroomControlWidget::applyChangesFinished(int exitCode, QProcess::ExitSt
     }else{
         if (!createDirectoryN4dWatcher || !createFileVarWatcher){
             if (!isWorking){
-                updateInfo();
+                getInfo();
             }
         }
         setShowWaitMsg(false);
@@ -385,7 +348,7 @@ void ClassroomControlWidget::cancelChanges(){
 
     qDebug()<<"[CLASSROOM_CONTROL]: Cancel changes ...";
 
-    closeAllNotifications(activeNotifications);
+    closeAllNotifications();
 
     setShowError(false);
     setShowWaitMsg(true);
@@ -394,7 +357,7 @@ void ClassroomControlWidget::cancelChanges(){
     showNotification=false;
     
     if (!isWorking){
-        updateInfo();
+        getInfo();
         setShowWaitMsg(false);
         setMsgCode(0);
         setArePendingChanges(false);
@@ -407,8 +370,8 @@ void ClassroomControlWidget::unlockCart(){
     if (m_utils->isAdi()){
         qDebug()<<"[CLASSROOM_CONTROL]: Unlock cart ...";
 
-       emit m_utils->closeWarning();
-       closeAllNotifications(activeNotifications);
+       emit m_utils->closeWarningSignal();
+       closeAllNotifications();
 
        setShowError(false);
        setShowWaitMsg(true);
@@ -425,7 +388,7 @@ void ClassroomControlWidget::unlockCart(){
 
 void ClassroomControlWidget::showDeactivationWarning(){
 
-    closeAllNotifications(activeNotifications);
+    closeAllNotifications();
     m_timer_deactivation->stop();
   
     QString command="/usr/bin/classroom-control-dialog.py";
@@ -438,7 +401,7 @@ void ClassroomControlWidget::showDeactivationWarning(){
 
 void ClassroomControlWidget::stopDeactivation(){
 
-    closeAllNotifications(activeNotifications);
+    closeAllNotifications();
 
     if (cartControlEnabled){
         m_timer_deactivation->stop();
@@ -466,7 +429,7 @@ void ClassroomControlWidget::automaticDeactivation(){
     bool ret=m_utils->automaticDeactivation();
 
     if (!ret){
-        closeAllNotifications(activeNotifications);
+        closeAllNotifications();
         QString titleError=i18n("Automatic deactivation has failed");
         QString bodyError=i18n("Classroom control remains active");
         KNotification *m_notification=new KNotification(QStringLiteral("Error"),KNotification::CloseOnTimeout,this);
@@ -475,12 +438,6 @@ void ClassroomControlWidget::automaticDeactivation(){
         m_notification->setText(bodyError);
         m_notification->setIconName("classroom_control_error");
         m_notification->sendEvent();
-        activeNotifications.append(m_notification);
-        connect(m_notification,&KNotification::closed,this,[this,m_notification](){
-            if (activeNotifications.contains(m_notification)){
-                activeNotifications.removeAll(m_notification);
-            }
-        });
         m_notification->sendEvent();
     }
     setShowWaitMsg(false);
@@ -504,7 +461,7 @@ void ClassroomControlWidget::reactivate(){
 
    bool ret=m_utils->reactivateControl(lastCartConfigured);
    if (!ret){
-        closeAllNotifications(activeNotifications);
+        closeAllNotifications();
         QString titleError=i18n("The reactivation has failed");
         QString bodyError=i18n("Classroom control remains deactivate");
         KNotification *m_notification=new KNotification(QStringLiteral("Error"),KNotification::CloseOnTimeout,this);
@@ -512,12 +469,6 @@ void ClassroomControlWidget::reactivate(){
         m_notification->setTitle(titleError);
         m_notification->setText(bodyError);
         m_notification->setIconName("classroom_control_error");
-        activeNotifications.append(m_notification);
-        connect(m_notification,&KNotification::closed,this,[this,m_notification](){
-            if (activeNotifications.contains(m_notification)){
-                activeNotifications.removeAll(m_notification);
-            }
-        });
         m_notification->sendEvent();
        
    }
@@ -541,37 +492,16 @@ void ClassroomControlWidget::manageNavigation(int stackIndex)
     }
 }
 
-void ClassroomControlWidget::closeAllNotifications(QList<QPointer<KNotification>> openNotifications){
+void ClassroomControlWidget::closeAllNotifications(){
 
     qDebug()<<"[CLASSROOM_CONTROL]: Clossing all notifications...";
    
-    if (!deleteNoticationWorker){
-        deleteNoticationWorker=true;
-        if (!openNotifications.isEmpty()){
-            if (manualCloseNotificationsCount<maxManualCloseNotifications){
-                KNotification *n = openNotifications.takeFirst();
-                if (n){
-                    n->close();
-                }
-                deleteNoticationWorker=false;
-                if (!openNotifications.isEmpty()){
-                    manualCloseNotificationsCount+=1;
-                    QTimer::singleShot(100,[this,openNotifications](){
-                        closeAllNotifications(activeNotifications);
-                    });
-                }else{
-                    manualCloseNotificationsCount=0;
-                    deleteNoticationWorker=false;
-                }
-            }else{
-                deleteNoticationWorker=false;
-                manualCloseNotificationsCount=0;
-            }
-        }else{
-          manualCloseNotificationsCount=0;
-          deleteNoticationWorker=false;  
-        }
+    if (m_notification){
+        m_notification->close();
+    }
 
+    if (m_reactivationNotification){
+        m_reactivationNotification->close();
     }
 
 }

@@ -1,17 +1,18 @@
 #include "ClassroomControlWidgetUtils.h"
+#include "ClassroomControlWidgetAdaptor.h"
 
 #include <QFile>
 #include <QDateTime>
 #include <QFileInfo>
 #include <QRegularExpression>
 #include <QStandardPaths>
-#include <QDebug>
 #include <QTextStream>
 #include <QJsonObject>
 #include <QList>
 #include <KLocalizedString>
-#include <sys/types.h>
 #include <QDBusConnection>
+#include <QDebug>
+#include <QtConcurrent>
 
 #include <grp.h>
 #include <pwd.h>
@@ -21,7 +22,8 @@
 
 #include <tuple>
 #include <sys/types.h>
-#include <QDebug>
+
+
 
 using namespace edupals;
 using namespace std;
@@ -107,12 +109,28 @@ QString ClassroomControlWidgetUtils::getInstalledVersion(){
 
 void ClassroomControlWidgetUtils::registerService(){
 
+    new ClassroomControlWidgetAdaptor(this);
     QDBusConnection bus=QDBusConnection::sessionBus();
-    bus.registerService("com.classroomcontrol.DeactivationWarning");
-    bus.registerObject("/DeactivationWarning",this,QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals);
+    if (bus.registerService("com.classroomcontrol.DeactivationWarning")){
+        bus.registerObject("/DeactivationWarning",this,QDBusConnection::ExportAdaptors);
+    }
 }
 
 
+void ClassroomControlWidgetUtils::getWidgetStatus(){
+
+    QtConcurrent::run([this]() {
+        bool isEnabled=false;
+        int deactivationTimeOut=0;
+        if (showWidget()){
+            if (isClassroomControlAvailable()){
+                deactivationTimeOut=getDeactivationTimeOut();
+                isEnabled=true;
+            }
+        }
+        emit getWidgetStatusFinished(isEnabled,deactivationTimeOut);
+    });
+}
 bool ClassroomControlWidgetUtils::showWidget(){
 
     int j, ngroups=32;
@@ -138,11 +156,11 @@ bool ClassroomControlWidgetUtils::showWidget(){
 
 bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
 
-    TARGET_FILE.setFileName(natfreeServer);
+    QFile natfreeServerFile(natfreeServer);
     bool isAvailable=false;
 
     if (isAdi()){
-        if (TARGET_FILE.exists()){
+        if (natfreeServerFile.exists()){
             if (!getHideAppletValue()){
                 isAvailable=true;
             }
@@ -152,6 +170,32 @@ bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
     qDebug()<<"[CLASSROOM_CONTROL]: Classroom Control Available: "<<isAvailable;
     return isAvailable;
 
+}
+
+void ClassroomControlWidgetUtils::getCurrentInfo(){
+
+    QtConcurrent::run([this]() {
+
+        qDebug()<<"[CLASSROOM_CONTROL]: Getting current info";
+        bool isAvailable=false;
+        bool isEnabled=false;
+        int cartConfigured=0;
+
+        if (isClassroomControlAvailable()){
+            isAvailable=true;
+            getMaxNumCart();
+            QFile n4dVarFile(controlModeVar);
+            if (n4dVarFile.exists()){
+                QVariantList ret=getCurrentCart();
+                cartConfigured=ret[1].toInt();
+                if (cartConfigured>0){
+                    isEnabled=true;
+                }
+            }
+        }
+
+    emit getCurrentInfoFinished(isAvailable,isEnabled,cartConfigured,maxNumCart);
+    });
 }
 
 QVariantList ClassroomControlWidgetUtils::getCurrentCart(){

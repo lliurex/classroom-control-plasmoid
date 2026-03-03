@@ -108,7 +108,6 @@ public:
 
 public slots:
     
-    void updateInfo();
     void changeCart(int cart);
     void changeControlMode(bool isCartControlEnabled);
     void manageNavigation(int stackIndex);
@@ -177,10 +176,6 @@ private:
     QPointer<KNotification> m_notification;
     QPointer<KNotification> m_reactivationNotification;
     QTimer *m_timer_deactivation = nullptr;
-    QList<QPointer <KNotification>> activeNotifications;
-    bool deleteNoticationWorker=false;
-    int maxManualCloseNotifications=4;
-    int manualCloseNotificationsCount=0; 
     void plasmoidMode();
     void createWatcher();
     void disableApplet();
@@ -188,12 +183,15 @@ private:
     void launchAutomaticDeactivation();
     void stopDeactivation();
     void reactivateControl();
-    void closeAllNotifications(QList<QPointer<KNotification>> openNotifications);
+    void closeAllNotifications();
     void automaticDeactivation();
     void reactivate();
 
 private slots:
     
+    void initPlasmoid(bool isEnabled, int timeOut);
+    void getInfo();
+    void updateInfo(bool isAvailable, bool isEnabled, int cartConfigured, int maxNumCart);
     void applyChangesFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
 };
