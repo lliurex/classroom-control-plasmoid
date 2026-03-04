@@ -18,34 +18,26 @@ using namespace edupals::variant;
 class ClassroomControlWidgetUtils : public QObject
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.classroomcontrol.Bridge")
 
 
 public:
    
 
-   ClassroomControlWidgetUtils(QObject *parent = nullptr);
+   explicit ClassroomControlWidgetUtils(QObject *parent = nullptr);
 
    void cleanCache();
-   QVariantList getCurrentCart();
-   int getMaxNumCart();
-   bool showWidget();
-   bool isClassroomControlAvailable();
-   QVariantList getApplyChangesResult(QString stout,QString stderr);
    bool isAdi();
-   int getDeactivationTimeOut();
-   bool automaticDeactivation();
+
+   QVariantList getApplyChangesResult(QString stout,QString stderr);
    bool reactivateControl(int cart);
+   void getWidgetStatus();
+   void getCurrentInfo();
+   bool automaticDeactivation();
+
 
 
    QString user;
-   int maxNumCart=0;
-   Variant cartInfo =Variant::create_array(0);
    QString controlModeVar="/var/lib/n4d/variables/CLASSROOM";
-   QString natfreeServer="/usr/bin/natfree-adi";
-   QString hideAppletVar="/var/lib/n4d/variables/HIDE_CLASSROOM_APPLET";
-   QString automaticDeactivationConfig="/etc/classroom-plasmoid.cfg";
-   int defaultDeactivationTimeOut=3600000;
 
 
 public slots:
@@ -54,16 +46,30 @@ public slots:
     void launchDeactivation();
 
 signals:
-
-    void closeWarning();
+    
+    void getWidgetStatusFinished (bool isEnabled, int deactivationTimeOut);
+    void getCurrentInfoFinished (bool isAvailable, bool isEnabled, int cartConfigured, int maxNumCart);
+    void closeWarningSignal();
 
 private:    
      
     n4d::Client client;
     QFile TARGET_FILE;
+    int maxNumCart=0;
+    Variant cartInfo =Variant::create_array(0);
+    QString natfreeServer="/usr/bin/natfree-adi";
+    QString hideAppletVar="/var/lib/n4d/variables/HIDE_CLASSROOM_APPLET";
+    QString automaticDeactivationConfig="/etc/classroom-plasmoid.cfg";
+    int defaultDeactivationTimeOut=3600000;
+
     QString getInstalledVersion();
     bool getHideAppletValue();
     void registerService();
+    QVariantList getCurrentCart();
+    int getMaxNumCart();
+    bool showWidget();
+    bool isClassroomControlAvailable();
+    int getDeactivationTimeOut();
 
      
 signals:

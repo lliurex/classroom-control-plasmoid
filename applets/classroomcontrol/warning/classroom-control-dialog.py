@@ -135,7 +135,7 @@ if __name__=="__main__":
 
 	bus.add_signal_receiver(
     	handler_function=bridge.closeWarningSignal,
-    	signal_name="closeWarning",
+    	signal_name="closeWarningSignal",
     	dbus_interface="org.classroomcontrol.Bridge",
     	bus_name="com.classroomcontrol.DeactivationWarning"
     )

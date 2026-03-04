@@ -13,6 +13,7 @@ target_sources(classroomcontrolplugin PRIVATE
     plugin/plugin.cpp
     plugin/ClassroomControlWidget.cpp
     plugin/ClassroomControlWidgetUtils.cpp
+    plugin/ClassroomControlWidgetAdaptor.cpp
    
 )
 
