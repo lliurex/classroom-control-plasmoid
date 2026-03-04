@@ -16,8 +16,7 @@
 #include <json.hpp>
 #include <QDebug>
 #include <KIO/CommandLauncherJob>
-#include <QtConcurrent/QtConcurrent>
-#include <QFuture>
+#include <QtConcurrent>
 
 using namespace edupals;
 using namespace std;
@@ -40,6 +39,9 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
     connect(m_utils,&ClassroomControlWidgetUtils::getCurrentInfoFinished,this,&ClassroomControlWidget::updateInfo);
     connect(m_applyChanges, (void (QProcess::*)(int, QProcess::ExitStatus))&QProcess::finished,
             this, &ClassroomControlWidget::applyChangesFinished);
+    connect(&m_changesWatcher,&QFutureWatcher<QVariantList>::finished,this,&ClassroomControlWidget::handleProcessingFinished);               
+    connect(&m_deactivationWatcher,&QFutureWatcher<bool>::finished,this,&ClassroomControlWidget::handleDeactivationFinished);               
+    connect(&m_reactivationWatcher,&QFutureWatcher<bool>::finished,this,&ClassroomControlWidget::handleReactivationFinished);               
     connect(m_utils,&ClassroomControlWidgetUtils::cancelDeactivationSignal,this,&ClassroomControlWidget::stopDeactivation);
     connect(m_utils,&ClassroomControlWidgetUtils::launchDeactivationSignal,this,&ClassroomControlWidget::launchAutomaticDeactivation);
     setSubToolTip(notificationTitle);
@@ -284,26 +286,49 @@ void ClassroomControlWidget::applyChanges(){
 void ClassroomControlWidget::applyChangesFinished(int exitCode, QProcess::ExitStatus exitStatus){    
    
     Q_UNUSED(exitCode);
-    bool isError=false;
-    int code=0;
-
+   
     showNotification=true;
     
     if (exitStatus!=QProcess::NormalExit){
-        isError=true;
-        code=-6;
+        int code=-6;
         notificationBody=i18n("Unable to configure classroom control");
+        qDebug()<<"[CLASSROOM_CONTROL]: Apply changes with error. Code: "<<code;
+        setShowWaitMsg(false);
+        setMsgCode(0);
+        setArePendingChanges(false);
+        setShowError(true);
+        setErrorCode(code);
+        setIconName("classroom_control_error");
+        setIconNamePh("classroom_control_error");
+        title=i18n("Error configuring classroom control");
+        setSubToolTip(title+'\n'+notificationBody);
+        if (showNotification){
+            KNotification *m_notification = new KNotification(QStringLiteral("Error"),KNotification::CloseOnTimeout,this);
+            m_notification->setComponentName(QStringLiteral("classroomcontrol"));
+            m_notification->setTitle(title);
+            m_notification->setText(notificationBody);
+            m_notification->setIconName("classroom_control_error");
+            m_notification->sendEvent();
+        }
 
     }else{
         QString stdout=QString::fromLocal8Bit(m_applyChanges->readAllStandardOutput());
         QString stderr=QString::fromLocal8Bit(m_applyChanges->readAllStandardError());
 
-        QVariantList ret=m_utils->getApplyChangesResult(stdout, stderr);
-        isError=ret[0].toBool();
-        code=ret[1].toInt();
-        notificationBody=ret[2].toString();
+        auto future= QtConcurrent::run([this,stdout,stderr](){
+            return m_utils->getApplyChangesResult(stdout, stderr);
+        });
+        m_changesWatcher.setFuture(future);
     }
-    
+}
+
+void ClassroomControlWidget::handleProcessingFinished(){
+
+    QVariantList ret=m_changesWatcher.result();
+    bool isError=ret[0].toBool();
+    int code=ret[1].toInt();
+    notificationBody=ret[2].toString();
+
     if (isError){
         if (code==-7){  
             cancelChanges();
@@ -416,15 +441,15 @@ void ClassroomControlWidget::launchAutomaticDeactivation(){
     setShowWaitMsg(true);
     setMsgCode(4);
    
-    QFuture<void> future=QtConcurrent::run([this](){
-        this->ClassroomControlWidget::automaticDeactivation();
+    auto future=QtConcurrent::run([this](){
+        return m_utils->automaticDeactivation();
     });
-
+    m_deactivationWatcher.setFuture(future);
 }
 
-void ClassroomControlWidget::automaticDeactivation(){
+void ClassroomControlWidget::handleDeactivationFinished(){
      
-    bool ret=m_utils->automaticDeactivation();
+    bool ret=m_deactivationWatcher.result();
 
     if (!ret){
         closeAllNotifications();
@@ -449,15 +474,18 @@ void ClassroomControlWidget::reactivateControl(){
     setShowWaitMsg(true);
     setMsgCode(5);
     cartControlEnabled=true;
-    QFuture<void> future=QtConcurrent::run([this](){
-        this->ClassroomControlWidget::reactivate();
+
+    auto future=QtConcurrent::run([this](){
+        return m_utils->reactivateControl(this->lastCartConfigured);
     });
+    m_reactivationWatcher.setFuture(future);
+    
    
 }
 
-void ClassroomControlWidget::reactivate(){
+void ClassroomControlWidget::handleReactivationFinished(){
 
-   bool ret=m_utils->reactivateControl(lastCartConfigured);
+   bool ret=m_reactivationWatcher.result();
 
    if (!ret){
         closeAllNotifications();

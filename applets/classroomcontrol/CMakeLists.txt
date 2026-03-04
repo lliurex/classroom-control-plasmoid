@@ -21,6 +21,7 @@ target_link_libraries(classroomcontrolplugin PRIVATE
                       Qt6::Quick
                       Qt6::Core
                       Qt6::Widgets
+                      Qt6::Concurrent
                       KF6::CoreAddons
                       KF6::I18n
                       KF6::Notifications

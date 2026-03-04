@@ -71,7 +71,6 @@ private:
     bool isClassroomControlAvailable();
     int getDeactivationTimeOut();
 
-     
 signals:
     void cancelDeactivationSignal();
     void launchDeactivationSignal();
