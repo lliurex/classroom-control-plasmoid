@@ -29,12 +29,10 @@ public:
    bool isAdi();
 
    QVariantList getApplyChangesResult(QString stout,QString stderr);
-   bool reactivateControl(int cart);
    void getWidgetStatus();
    void getCurrentInfo();
-   bool automaticDeactivation();
-
-
+   void reactivateControl(int cart);
+   void automaticDeactivation();
 
    QString user;
    QString controlModeVar="/var/lib/n4d/variables/CLASSROOM";
@@ -49,6 +47,8 @@ signals:
     
     void getWidgetStatusFinished (bool isEnabled, int deactivationTimeOut);
     void getCurrentInfoFinished (bool isAvailable, bool isEnabled, int cartConfigured, int maxNumCart);
+    void automaticDeactivationFinished (bool result);
+    void reactivateControlFinished (bool result);
     void closeWarningSignal();
 
 private:    

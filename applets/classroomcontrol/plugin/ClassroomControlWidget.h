@@ -10,6 +10,8 @@
 #include <QThread>
 #include <QFileSystemWatcher>
 #include <KIO/CommandLauncherJob>
+#include <QFutureWatcher>
+#include <QtConcurrent>
 
 #include <variant.hpp>
 
@@ -176,6 +178,7 @@ private:
     QPointer<KNotification> m_notification;
     QPointer<KNotification> m_reactivationNotification;
     QTimer *m_timer_deactivation = nullptr;
+    QFutureWatcher <QVariantList> m_changesWatcher;
     void plasmoidMode();
     void createWatcher();
     void disableApplet();
@@ -186,6 +189,7 @@ private:
     void closeAllNotifications();
     void automaticDeactivation();
     void reactivate();
+    void handleProcessingFinished();
 
 private slots:
     
@@ -193,6 +197,8 @@ private slots:
     void getInfo();
     void updateInfo(bool isAvailable, bool isEnabled, int cartConfigured, int maxNumCart);
     void applyChangesFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    void handleDeactivationFinished(bool result);
+    void handleReactivationFinished(bool result);
 
 };
 
