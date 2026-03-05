@@ -13,6 +13,7 @@
 #include <QDBusConnection>
 #include <QDebug>
 #include <QThreadPool>
+#include <QPointer>
 
 #include <grp.h>
 #include <pwd.h>

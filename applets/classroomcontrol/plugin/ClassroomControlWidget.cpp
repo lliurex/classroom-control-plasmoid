@@ -17,6 +17,7 @@
 #include <QDebug>
 #include <KIO/CommandLauncherJob>
 #include <QtConcurrent>
+#include <QPointer>
 
 using namespace edupals;
 using namespace std;
