@@ -4,20 +4,16 @@
 #include <KLocalizedString>
 #include <KFormat>
 #include <KNotification>
+#include <KIO/CommandLauncherJob>
+
 #include <QTimer>
-#include <QStandardPaths>
 #include <QDebug>
 #include <QFile>
 #include <QFileSystemWatcher>
 #include <QThread>
-#include <QtCore/QStringList>
-#include <QJsonObject>
-#include <variant.hpp>
-#include <json.hpp>
-#include <QDebug>
-#include <KIO/CommandLauncherJob>
-#include <QtConcurrent>
 #include <QPointer>
+
+#include <QtConcurrent>
 
 using namespace edupals;
 using namespace std;
@@ -38,11 +34,11 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
     connect(m_utils,&ClassroomControlWidgetUtils::getWidgetStatusFinished,this,&ClassroomControlWidget::initPlasmoid);
     connect(m_timer_deactivation, &QTimer::timeout, this, &ClassroomControlWidget::showDeactivationWarning);
     connect(m_utils,&ClassroomControlWidgetUtils::getCurrentInfoFinished,this,&ClassroomControlWidget::updateInfo);
-    connect(m_applyChanges, (void (QProcess::*)(int, QProcess::ExitStatus))&QProcess::finished,
+    connect(m_applyChanges,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             this, &ClassroomControlWidget::applyChangesFinished);
     connect(&m_changesWatcher,&QFutureWatcher<QVariantList>::finished,this,&ClassroomControlWidget::handleProcessingFinished);               
-    connect(m_utils,&ClassroomControlWidgetUtils::automaticDeactivationFinished,this,&ClassroomControlWidget::handleDeactivationFinished);               
-    connect(m_utils,&ClassroomControlWidgetUtils::reactivateControlFinished,this,&ClassroomControlWidget::handleReactivationFinished);               
+    connect(m_utils,&ClassroomControlWidgetUtils::automaticDeactivationFinished,this,&ClassroomControlWidget::handleDeactivationFinished);
+    connect(m_utils,&ClassroomControlWidgetUtils::reactivateControlFinished,this,&ClassroomControlWidget::handleReactivationFinished);
     connect(m_utils,&ClassroomControlWidgetUtils::cancelDeactivationSignal,this,&ClassroomControlWidget::stopDeactivation);
     connect(m_utils,&ClassroomControlWidgetUtils::launchDeactivationSignal,this,&ClassroomControlWidget::launchAutomaticDeactivation);
     setSubToolTip(notificationTitle);
@@ -76,13 +72,13 @@ void ClassroomControlWidget::createWatcher(){
     if (TARGET_DIR_N4DVARS.exists()){
         if (!createDirectoryN4dWatcher){
             createDirectoryN4dWatcher=true;
-            connect(watcher,SIGNAL(directoryChanged(QString)),this,SLOT(getInfo()));
+            connect(watcher,&QFileSystemWatcher::directoryChanged,this,&ClassroomControlWidget::getInfo);
             watcher->addPath(n4dVarPath);
         }
         if (TARGET_VAR_FILE.exists()){
             if (!createFileVarWatcher){
                 createFileVarWatcher=true;
-                connect(watcher,SIGNAL(fileChanged(QString)),this,SLOT(getInfo()));
+                connect(watcher,&QFileSystemWatcher::fileChanged,this,&ClassroomControlWidget::getInfo);
                 watcher->addPath(m_utils->controlModeVar);
             }
 

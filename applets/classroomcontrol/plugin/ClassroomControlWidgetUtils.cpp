@@ -1,30 +1,21 @@
 #include "ClassroomControlWidgetUtils.h"
 #include "ClassroomControlWidgetAdaptor.h"
 
-#include <QFile>
-#include <QDateTime>
-#include <QFileInfo>
-#include <QRegularExpression>
-#include <QStandardPaths>
-#include <QTextStream>
-#include <QJsonObject>
-#include <QList>
 #include <KLocalizedString>
+
+#include <QFile>
+#include <QTextStream>
+#include <QList>
 #include <QDBusConnection>
 #include <QDebug>
 #include <QThreadPool>
-#include <QPointer>
+#include <QtConcurrent>
 
 #include <grp.h>
 #include <pwd.h>
 #include <n4d.hpp>
-#include <variant.hpp>
-#include <json.hpp>
 
 #include <tuple>
-#include <sys/types.h>
-
-
 
 using namespace edupals;
 using namespace std;

@@ -4,16 +4,11 @@
 #include <QObject>
 #include <QProcess>
 #include <QPointer>
-#include <KNotification>
 #include <QDir>
 #include <QFile>
-#include <QThread>
-#include <QFileSystemWatcher>
-#include <KIO/CommandLauncherJob>
-#include <QFutureWatcher>
-#include <QtConcurrent>
 
-#include <variant.hpp>
+#include <QFileSystemWatcher>
+#include <QFutureWatcher>
 
 #include "ClassroomControlWidgetUtils.h"
 
