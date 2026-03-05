@@ -8,7 +8,6 @@
 #include <QDBusConnection>
 
 #include <n4d.hpp>
-#include <variant.hpp>
 
 using namespace std;
 using namespace edupals;
