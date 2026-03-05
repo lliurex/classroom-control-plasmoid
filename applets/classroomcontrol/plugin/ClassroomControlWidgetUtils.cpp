@@ -8,6 +8,8 @@
 #include <QList>
 #include <QDBusConnection>
 #include <QDebug>
+#include <QPointer>
+
 #include <QtConcurrent>
 
 #include <grp.h>
