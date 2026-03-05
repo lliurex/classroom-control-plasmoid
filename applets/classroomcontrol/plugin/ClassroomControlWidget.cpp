@@ -250,28 +250,35 @@ void ClassroomControlWidget::changeCart(int newCart){
 
 void ClassroomControlWidget::applyChanges(){
 
-    QThreadPool::globalInstance()->start([this]() {
-        bool isAdi=m_utils->isAdi();
+    QPointer<ClassroomControlWidget>safeThis(this);
 
-        QMetaObject::invokeMethod(this, [this, isAdi]() {
+    QThreadPool::globalInstance()->start([safeThis]() {
+
+        if (!safeThis){
+            return;
+        }
+
+        bool isAdi=safeThis->m_utils->isAdi();
+
+        QMetaObject::invokeMethod(safeThis.data(), [safeThis, isAdi]() {
 
             if (isAdi){
-                emit m_utils->closeWarningSignal();
+                emit safeThis->m_utils->closeWarningSignal();
 
-                closeAllNotifications();
-                setShowError(false);
-                setShowWaitMsg(true);
-                setMsgCode(2);
+                safeThis->closeAllNotifications();
+                safeThis->setShowError(false);
+                safeThis->setShowWaitMsg(true);
+                safeThis->setMsgCode(2);
 
                 QString newCart="";
                 QString cmd="";
 
-                if (m_applyChanges->state() != QProcess::NotRunning) {
-                    m_applyChanges->kill();
+                if (safeThis->m_applyChanges->state() != QProcess::NotRunning) {
+                    safeThis->m_applyChanges->waitForFinished(500);
                 }
 
-                if (cartControlEnabled){
-                    newCart=QString::number(m_currentCart);
+                if (safeThis->cartControlEnabled){
+                    newCart=QString::number(safeThis->m_currentCart);
                     qDebug()<<"[CLASSROOM_CONTROL]: Apply changes. New Cart: "<<newCart;
                     cmd="pkexec natfree-adi CONFIGURE "+newCart;
                 }else{
@@ -279,10 +286,10 @@ void ClassroomControlWidget::applyChanges(){
                     cmd="pkexec natfree-adi UNSET";
                 
                 }
-                m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
+                safeThis->m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
                                    << cmd,QIODevice::ReadOnly);
             }else{
-                disableApplet();
+                safeThis->disableApplet();
             }
         }, Qt::QueuedConnection);
     });
@@ -396,25 +403,30 @@ void ClassroomControlWidget::cancelChanges(){
 
 void ClassroomControlWidget::unlockCart(){
 
-    QThreadPool::globalInstance()->start([this]() {
-        bool isAdi=m_utils->isAdi();
+    QPointer<ClassroomControlWidget>safeThis(this);
 
-        QMetaObject::invokeMethod(this, [this, isAdi]() {
+    QThreadPool::globalInstance()->start([safeThis]() {
+        if (!safeThis){
+            return;
+        }
+        bool isAdi=safeThis->m_utils->isAdi();
+
+        QMetaObject::invokeMethod(safeThis.data(), [safeThis, isAdi]() {
 
             if (isAdi){
                qDebug()<<"[CLASSROOM_CONTROL]: Unlock cart ...";
 
-               emit m_utils->closeWarningSignal();
-               closeAllNotifications();
-               setShowError(false);
-               setShowWaitMsg(true);
-               setMsgCode(2);
+               emit safeThis->m_utils->closeWarningSignal();
+               safeThis->closeAllNotifications();
+               safeThis->setShowError(false);
+               safeThis->setShowWaitMsg(true);
+               safeThis->setMsgCode(2);
 
                QString cmd="pkexec natfree-adi UNSET ";
-               m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
+               safeThis->m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
                                    << cmd,QIODevice::ReadOnly);
             }else{
-                disableApplet();
+                safeThis->disableApplet();
             }
         }, Qt::QueuedConnection);
     });

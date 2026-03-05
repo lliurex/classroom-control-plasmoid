@@ -119,16 +119,24 @@ void ClassroomControlWidgetUtils::registerService(){
 
 void ClassroomControlWidgetUtils::getWidgetStatus(){
 
-    QThreadPool::globalInstance()->start([this]() {
+    QPointer<ClassroomControlWidgetUtils>safeThis(this);
+
+    QThreadPool::globalInstance()->start([safeThis]() {
+        if (!safeThis){
+            return;
+        }
+
         bool isEnabled=false;
         int deactivationTimeOut=0;
-        if (showWidget()){
-            if (isClassroomControlAvailable()){
-                deactivationTimeOut=getDeactivationTimeOut();
+        if (safeThis->showWidget()){
+            if (safeThis->isClassroomControlAvailable()){
+                deactivationTimeOut=safeThis->getDeactivationTimeOut();
                 isEnabled=true;
             }
         }
-        emit getWidgetStatusFinished(isEnabled,deactivationTimeOut);
+        if (safeThis){
+            emit safeThis->getWidgetStatusFinished(isEnabled,deactivationTimeOut);
+        }
     });
 }
 bool ClassroomControlWidgetUtils::showWidget(){
@@ -174,27 +182,33 @@ bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
 
 void ClassroomControlWidgetUtils::getCurrentInfo(){
 
-    QThreadPool::globalInstance()->start([this]() {
+    QPointer<ClassroomControlWidgetUtils>safeThis(this);
+
+    QThreadPool::globalInstance()->start([safeThis]() {
+        if (!safeThis){
+            return;
+        }
 
         qDebug()<<"[CLASSROOM_CONTROL]: Getting current info";
         bool isAvailable=false;
         bool isEnabled=false;
         int cartConfigured=0;
 
-        if (isClassroomControlAvailable()){
+        if (safeThis->isClassroomControlAvailable()){
             isAvailable=true;
-            getMaxNumCart();
-            QFile n4dVarFile(controlModeVar);
+            safeThis->getMaxNumCart();
+            QFile n4dVarFile(safeThis->controlModeVar);
             if (n4dVarFile.exists()){
-                QVariantList ret=getCurrentCart();
+                QVariantList ret=safeThis->getCurrentCart();
                 cartConfigured=ret[1].toInt();
                 if (cartConfigured>0){
                     isEnabled=true;
                 }
             }
         }
-
-    emit getCurrentInfoFinished(isAvailable,isEnabled,cartConfigured,maxNumCart);
+        if (safeThis){
+            emit safeThis->getCurrentInfoFinished(isAvailable,isEnabled,cartConfigured,safeThis->maxNumCart);
+        }
     });
 }
 
@@ -369,33 +383,48 @@ int ClassroomControlWidgetUtils::getDeactivationTimeOut(){
 
 void ClassroomControlWidgetUtils::automaticDeactivation(){
 
-    QThreadPool::globalInstance()->start([this]() {
+    QPointer<ClassroomControlWidgetUtils>safeThis(this);
+    
+    QThreadPool::globalInstance()->start([safeThis]() {
+        if (!safeThis){
+            return;
+        }
+
         bool result=false;
         try{
-            Variant ret=client.call("NatfreeADI","unset");
+            Variant ret=safeThis->client.call("NatfreeADI","unset");
             result=ret;
             qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Result: "<<result;
         }catch(std::exception& e){
             qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Error: "<<e.what();
         }
-
-        emit automaticDeactivationFinished(result);
+        if (safeThis){
+            emit safeThis->automaticDeactivationFinished(result);
+        }
     });
 }
 
 void ClassroomControlWidgetUtils::reactivateControl(int cart){
 
-    QThreadPool::globalInstance()->start([this,cart]() {
+    QPointer<ClassroomControlWidgetUtils>safeThis(this);
+
+    QThreadPool::globalInstance()->start([safeThis,cart]() {
+        if (!safeThis){
+            return;
+        }
+
         bool result=false;
         try{
             vector<Variant> params={cart};
-            Variant ret=client.call("NatfreeADI","set",params);
+            Variant ret=safeThis->client.call("NatfreeADI","set",params);
             result=ret;
             qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Result: "<<result;
         }catch(std::exception& e){
             qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Error: "<<e.what();
         }
-        emit reactivateControlFinished(result);
+        if (safeThis){
+            emit safeThis->reactivateControlFinished(result);
+        }
     });
 }
 
