@@ -367,32 +367,36 @@ int ClassroomControlWidgetUtils::getDeactivationTimeOut(){
 
 }
 
-bool ClassroomControlWidgetUtils::automaticDeactivation(){
+void ClassroomControlWidgetUtils::automaticDeactivation(){
 
-    bool result=false;
-    try{
-        Variant ret=client.call("NatfreeADI","unset");
-        result=ret;
-        qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Result: "<<result;
-    }catch(std::exception& e){
-        qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Error: "<<e.what();
-    }
+    QThreadPool::globalInstance()->start([this]() {
+        bool result=false;
+        try{
+            Variant ret=client.call("NatfreeADI","unset");
+            result=ret;
+            qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Result: "<<result;
+        }catch(std::exception& e){
+            qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Error: "<<e.what();
+        }
 
-    return result;
+        emit automaticDeactivationFinished(result);
+    });
 }
 
-bool ClassroomControlWidgetUtils::reactivateControl(int cart){
+void ClassroomControlWidgetUtils::reactivateControl(int cart){
 
-    bool result=false;
-    try{
-        vector<Variant> params={cart};
-        Variant ret=client.call("NatfreeADI","set",params);
-        result=ret;
-        qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Result: "<<result;
-    }catch(std::exception& e){
-        qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Error: "<<e.what();
-    }
-    return result;
+    QThreadPool::globalInstance()->start([this,cart]() {
+        bool result=false;
+        try{
+            vector<Variant> params={cart};
+            Variant ret=client.call("NatfreeADI","set",params);
+            result=ret;
+            qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Result: "<<result;
+        }catch(std::exception& e){
+            qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Error: "<<e.what();
+        }
+        emit reactivateControlFinished(result);
+    });
 }
 
 void ClassroomControlWidgetUtils::cancelDeactivation(){

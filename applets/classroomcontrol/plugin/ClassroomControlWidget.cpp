@@ -40,8 +40,8 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
     connect(m_applyChanges, (void (QProcess::*)(int, QProcess::ExitStatus))&QProcess::finished,
             this, &ClassroomControlWidget::applyChangesFinished);
     connect(&m_changesWatcher,&QFutureWatcher<QVariantList>::finished,this,&ClassroomControlWidget::handleProcessingFinished);               
-    connect(&m_deactivationWatcher,&QFutureWatcher<bool>::finished,this,&ClassroomControlWidget::handleDeactivationFinished);               
-    connect(&m_reactivationWatcher,&QFutureWatcher<bool>::finished,this,&ClassroomControlWidget::handleReactivationFinished);               
+    connect(m_utils,&ClassroomControlWidgetUtils::automaticDeactivationFinished,this,&ClassroomControlWidget::handleDeactivationFinished);               
+    connect(m_utils,&ClassroomControlWidgetUtils::reactivateControlFinished,this,&ClassroomControlWidget::handleReactivationFinished);               
     connect(m_utils,&ClassroomControlWidgetUtils::cancelDeactivationSignal,this,&ClassroomControlWidget::stopDeactivation);
     connect(m_utils,&ClassroomControlWidgetUtils::launchDeactivationSignal,this,&ClassroomControlWidget::launchAutomaticDeactivation);
     setSubToolTip(notificationTitle);
@@ -250,36 +250,42 @@ void ClassroomControlWidget::changeCart(int newCart){
 
 void ClassroomControlWidget::applyChanges(){
 
-    if (m_utils->isAdi()){
+    QThreadPool::globalInstance()->start([this]() {
+        bool isAdi=m_utils->isAdi();
 
-        emit m_utils->closeWarningSignal();
+        QMetaObject::invokeMethod(this, [this, isAdi]() {
 
-        closeAllNotifications();
-        setShowError(false);
-        setShowWaitMsg(true);
-        setMsgCode(2);
+            if (isAdi){
+                emit m_utils->closeWarningSignal();
 
-        QString newCart="";
-        QString cmd="";
+                closeAllNotifications();
+                setShowError(false);
+                setShowWaitMsg(true);
+                setMsgCode(2);
 
-        if (m_applyChanges->state() != QProcess::NotRunning) {
-            m_applyChanges->kill();
-        }
+                QString newCart="";
+                QString cmd="";
 
-        if (cartControlEnabled){
-            newCart=QString::number(m_currentCart);
-            qDebug()<<"[CLASSROOM_CONTROL]: Apply changes. New Cart: "<<newCart;
-            cmd="pkexec natfree-adi CONFIGURE "+newCart;
-        }else{
-            qDebug()<<"[CLASSROOM_CONTROL]: Apply changes. Disable classroom control";
-            cmd="pkexec natfree-adi UNSET";
-        
-        }
-        m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
-                           << cmd,QIODevice::ReadOnly);
-    }else{
-        disableApplet();
-    }
+                if (m_applyChanges->state() != QProcess::NotRunning) {
+                    m_applyChanges->kill();
+                }
+
+                if (cartControlEnabled){
+                    newCart=QString::number(m_currentCart);
+                    qDebug()<<"[CLASSROOM_CONTROL]: Apply changes. New Cart: "<<newCart;
+                    cmd="pkexec natfree-adi CONFIGURE "+newCart;
+                }else{
+                    qDebug()<<"[CLASSROOM_CONTROL]: Apply changes. Disable classroom control";
+                    cmd="pkexec natfree-adi UNSET";
+                
+                }
+                m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
+                                   << cmd,QIODevice::ReadOnly);
+            }else{
+                disableApplet();
+            }
+        }, Qt::QueuedConnection);
+    });
 
 }
 
@@ -390,22 +396,28 @@ void ClassroomControlWidget::cancelChanges(){
 
 void ClassroomControlWidget::unlockCart(){
 
-    if (m_utils->isAdi()){
-        qDebug()<<"[CLASSROOM_CONTROL]: Unlock cart ...";
+    QThreadPool::globalInstance()->start([this]() {
+        bool isAdi=m_utils->isAdi();
 
-       emit m_utils->closeWarningSignal();
-       closeAllNotifications();
+        QMetaObject::invokeMethod(this, [this, isAdi]() {
 
-       setShowError(false);
-       setShowWaitMsg(true);
-       setMsgCode(2);
+            if (isAdi){
+               qDebug()<<"[CLASSROOM_CONTROL]: Unlock cart ...";
 
-       QString cmd="pkexec natfree-adi UNSET ";
-       m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
-                           << cmd,QIODevice::ReadOnly);
-    }else{
-        disableApplet();
-    }
+               emit m_utils->closeWarningSignal();
+               closeAllNotifications();
+               setShowError(false);
+               setShowWaitMsg(true);
+               setMsgCode(2);
+
+               QString cmd="pkexec natfree-adi UNSET ";
+               m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
+                                   << cmd,QIODevice::ReadOnly);
+            }else{
+                disableApplet();
+            }
+        }, Qt::QueuedConnection);
+    });
 
 }
 
@@ -440,18 +452,14 @@ void ClassroomControlWidget::launchAutomaticDeactivation(){
     setShowError(false);
     setShowWaitMsg(true);
     setMsgCode(4);
-   
-    auto future=QtConcurrent::run([this](){
-        return m_utils->automaticDeactivation();
-    });
-    m_deactivationWatcher.setFuture(future);
+
+    m_utils->automaticDeactivation();
+
 }
 
-void ClassroomControlWidget::handleDeactivationFinished(){
+void ClassroomControlWidget::handleDeactivationFinished(bool result){
      
-    bool ret=m_deactivationWatcher.result();
-
-    if (!ret){
+    if (!result){
         closeAllNotifications();
         QString titleError=i18n("Automatic deactivation has failed");
         QString bodyError=i18n("Classroom control remains active");
@@ -474,20 +482,13 @@ void ClassroomControlWidget::reactivateControl(){
     setShowWaitMsg(true);
     setMsgCode(5);
     cartControlEnabled=true;
-
-    auto future=QtConcurrent::run([this](){
-        return m_utils->reactivateControl(this->lastCartConfigured);
-    });
-    m_reactivationWatcher.setFuture(future);
-    
+    m_utils->reactivateControl(lastCartConfigured);
    
 }
 
-void ClassroomControlWidget::handleReactivationFinished(){
+void ClassroomControlWidget::handleReactivationFinished(bool result){
 
-   bool ret=m_reactivationWatcher.result();
-
-   if (!ret){
+   if (!result){
         closeAllNotifications();
         QString titleError=i18n("The reactivation has failed");
         QString bodyError=i18n("Classroom control remains deactivate");
