@@ -28,12 +28,37 @@ ClassroomControlWidgetUtils::ClassroomControlWidgetUtils(QObject *parent)
        
 {
     user=qgetenv("USER");
-    
-    n4d::Client tmpClient=n4d::Client("https://127.0.0.1:9779",user.toStdString(),"");
-    n4d::Ticket ticket=tmpClient.create_ticket();
-    tmpClient=n4d::Client(ticket);
-    client=tmpClient;
-    registerService();
+    registeredService=registerService();
+}
+
+void ClassroomControlWidgetUtils::startUtils(){
+
+    QPointer<ClassroomControlWidgetUtils>safeThis(this);
+
+    QtConcurrent::run([safeThis]() {
+
+        if (!safeThis){
+            return;
+        }
+
+        bool startOk=false;
+
+        try{
+            safeThis->cleanCache();
+            n4d::Client tmpClient=n4d::Client("https://127.0.0.1:9779",safeThis->user.toStdString(),"");
+            n4d::Ticket ticket=tmpClient.create_ticket();
+            tmpClient=n4d::Client(ticket);
+            safeThis->client=tmpClient;
+            startOk=true;
+        }catch (std::exception& e){
+            qDebug()<<"[CLASSROOM_CONTROL]: Error creatin n4d client: " <<e.what();
+        } 
+
+        if (safeThis){
+            emit safeThis->startUtilsFinished(startOk);
+        }
+
+    });
 }
 
 void ClassroomControlWidgetUtils::cleanCache(){
@@ -100,13 +125,32 @@ QString ClassroomControlWidgetUtils::getInstalledVersion(){
 
 }  
 
-void ClassroomControlWidgetUtils::registerService(){
+bool ClassroomControlWidgetUtils::registerService(){
 
     new ClassroomControlWidgetAdaptor(this);
+
     QDBusConnection bus=QDBusConnection::sessionBus();
-    if (bus.registerService("com.classroomcontrol.DeactivationWarning")){
-        bus.registerObject("/DeactivationWarning",this,QDBusConnection::ExportAdaptors);
+
+
+    if (!bus.isConnected()) {
+        qDebug()<<"[CLASSROOM_CONTROL]: Error registering service: " << bus.lastError().message();
+        return false; 
     }
+
+    bool success=true;
+    if (bus.registerService("com.classroomcontrol.DeactivationWarning")) {
+    
+        success = bus.registerObject("/DeactivationWarning", 
+                                      this, 
+                                      QDBusConnection::ExportAdaptors);
+    
+        if (!success){
+            qDebug()<<"[CLASSROOM_CONTROL]: Error registering service: " <<bus.lastError().message();
+        }
+    }
+
+    return success;
+
 }
 
 

@@ -24,7 +24,7 @@ public:
 
    explicit ClassroomControlWidgetUtils(QObject *parent = nullptr);
 
-   void cleanCache();
+   void startUtils();
    bool isAdi();
 
    QVariantList getApplyChangesResult(QString stout,QString stderr);
@@ -35,6 +35,7 @@ public:
 
    QString user;
    QString controlModeVar="/var/lib/n4d/variables/CLASSROOM";
+   bool registeredService=true;
 
 
 public slots:
@@ -44,6 +45,7 @@ public slots:
 
 signals:
     
+    void startUtilsFinished(bool startOk);
     void getWidgetStatusFinished (bool isEnabled, int deactivationTimeOut);
     void getCurrentInfoFinished (bool isAvailable, bool isEnabled, int cartConfigured, int maxNumCart);
     void automaticDeactivationFinished (bool result);
@@ -61,9 +63,10 @@ private:
     QString automaticDeactivationConfig="/etc/classroom-plasmoid.cfg";
     int defaultDeactivationTimeOut=3600000;
 
+    void cleanCache();
     QString getInstalledVersion();
     bool getHideAppletValue();
-    void registerService();
+    bool registerService();
     QVariantList getCurrentCart();
     int getMaxNumCart();
     bool showWidget();

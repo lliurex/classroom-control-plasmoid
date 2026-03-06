@@ -26,11 +26,12 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
     , m_applyChanges(new QProcess(this))
     , m_timer_deactivation(new QTimer(this))
 {
-    m_utils->cleanCache();
+    
     notificationTitle=i18n("Mobile Classroom Control");
     TARGET_VAR_FILE.setFileName(m_utils->controlModeVar);
     TARGET_DIR_N4DVARS.setPath(n4dVarPath);
-
+    
+    connect(m_utils,&ClassroomControlWidgetUtils::startUtilsFinished,this,&ClassroomControlWidget::handleStartFinished);
     connect(m_utils,&ClassroomControlWidgetUtils::getWidgetStatusFinished,this,&ClassroomControlWidget::initPlasmoid);
     connect(m_timer_deactivation, &QTimer::timeout, this, &ClassroomControlWidget::showDeactivationWarning);
     connect(m_utils,&ClassroomControlWidgetUtils::getCurrentInfoFinished,this,&ClassroomControlWidget::updateInfo);
@@ -42,15 +43,26 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
     connect(m_utils,&ClassroomControlWidgetUtils::cancelDeactivationSignal,this,&ClassroomControlWidget::stopDeactivation);
     connect(m_utils,&ClassroomControlWidgetUtils::launchDeactivationSignal,this,&ClassroomControlWidget::launchAutomaticDeactivation);
     setSubToolTip(notificationTitle);
-    plasmoidMode();
+    
+    m_utils->startUtils();
 
-}  
+} 
 
-void ClassroomControlWidget::plasmoidMode(){
+void ClassroomControlWidget::handleStartFinished(bool startOk){
 
-    m_utils->getWidgetStatus();
-  
-}
+    if (startOk){
+        m_utils->getWidgetStatus();
+    }else{
+        notificationBody=i18n("Mobile Classroom Control not be initialized correctly");
+        setCanEdit(false);
+        setIconName("classroom_control_error");
+        setIconNamePh("classroom_control_error");
+        setSubToolTip(notificationBody);
+        setCurrentStackIndex(0);
+        changeTryIconState(0);
+    }
+
+} 
 
 void ClassroomControlWidget::initPlasmoid(bool isEnabled, int timeOut){
 
@@ -106,8 +118,10 @@ void ClassroomControlWidget::updateInfo(bool isAvailable, bool isEnabled, int ca
             previousCart=cartConfigured;
             showNotification=true;
             if (deactivationTimerLaunched){
-                m_timer_deactivation->stop();
-                m_timer_deactivation->start(deactivationTimeOut);
+                if (m_utils->registeredService){
+                    m_timer_deactivation->stop();
+                    m_timer_deactivation->start(deactivationTimeOut);
+                }
             }
         }else{
             showNotification=false;
@@ -115,9 +129,11 @@ void ClassroomControlWidget::updateInfo(bool isAvailable, bool isEnabled, int ca
         qDebug()<<"[CLASSROOM_CONTROL]: Updating info";
         if (isEnabled){
             lastCartConfigured=cartConfigured;
-            if (!deactivationTimerLaunched){
-                m_timer_deactivation->start(deactivationTimeOut);
-                deactivationTimerLaunched=true;
+            if (m_utils->registeredService){
+                if (!deactivationTimerLaunched){
+                    m_timer_deactivation->start(deactivationTimeOut);
+                    deactivationTimerLaunched=true;
+                }
             }
             cartControlEnabled=true;
             title=i18n("Classroom control activated");
