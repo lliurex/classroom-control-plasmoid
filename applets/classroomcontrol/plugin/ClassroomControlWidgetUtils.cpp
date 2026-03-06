@@ -63,6 +63,8 @@ void ClassroomControlWidgetUtils::startUtils(){
 
 void ClassroomControlWidgetUtils::cleanCache(){
 
+    qDebug()<<"[CLASSROOM_CONTROL]: Clean cache";
+    
     QFile CURRENT_VERSION_TOKEN;
     QDir cacheDir("/home/"+user+"/.cache/plasmashell/qmlcache");
     QDir warningCache("/home/"+user+"/.cache/classroom-control-dialog.py");
