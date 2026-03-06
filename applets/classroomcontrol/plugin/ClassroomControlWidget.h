@@ -174,7 +174,6 @@ private:
     QPointer<KNotification> m_reactivationNotification;
     QTimer *m_timer_deactivation = nullptr;
     QFutureWatcher <QVariantList> m_changesWatcher;
-    void plasmoidMode();
     void createWatcher();
     void disableApplet();
     void showDeactivationWarning();
@@ -189,6 +188,7 @@ private:
 
 private slots:
     
+    void handleStartFinished(bool startOk);
     void initPlasmoid(bool isEnabled, int timeOut);
     void getInfo();
     void updateInfo(bool isAvailable, bool isEnabled, int cartConfigured, int maxNumCart);
