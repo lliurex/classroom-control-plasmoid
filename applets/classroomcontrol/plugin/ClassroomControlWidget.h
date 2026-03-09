@@ -191,7 +191,7 @@ private slots:
     void handleStartFinished(bool startOk);
     void initPlasmoid(bool isEnabled, int timeOut);
     void getInfo();
-    void updateInfo(bool isAvailable, bool isEnabled, int cartConfigured, int maxNumCart);
+    void getInfoFinished(bool isAvailable, bool isEnabled, int cartConfigured, int maxNumCart);
     void applyChangesFinished(int exitCode, QProcess::ExitStatus exitStatus);
     void handleDeactivationFinished(bool result);
     void handleReactivationFinished(bool result);

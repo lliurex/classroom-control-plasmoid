@@ -31,7 +31,7 @@ ClassroomControlWidgetUtils::ClassroomControlWidgetUtils(QObject *parent)
     registeredService=registerService();
 }
 
-void ClassroomControlWidgetUtils::startUtils(){
+void ClassroomControlWidgetUtils::startWidget(){
 
     QPointer<ClassroomControlWidgetUtils>safeThis(this);
 
@@ -55,7 +55,7 @@ void ClassroomControlWidgetUtils::startUtils(){
         } 
 
         if (safeThis){
-            emit safeThis->startUtilsFinished(startOk);
+            emit safeThis->startWidgetFinished(startOk);
         }
 
     });

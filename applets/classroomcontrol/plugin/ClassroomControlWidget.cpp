@@ -30,10 +30,10 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
     TARGET_VAR_FILE.setFileName(m_utils->controlModeVar);
     TARGET_DIR_N4DVARS.setPath(n4dVarPath);
     
-    connect(m_utils,&ClassroomControlWidgetUtils::startUtilsFinished,this,&ClassroomControlWidget::handleStartFinished);
+    connect(m_utils,&ClassroomControlWidgetUtils::startWidgetFinished,this,&ClassroomControlWidget::handleStartFinished);
     connect(m_utils,&ClassroomControlWidgetUtils::getWidgetStatusFinished,this,&ClassroomControlWidget::initPlasmoid);
     connect(m_timer_deactivation, &QTimer::timeout, this, &ClassroomControlWidget::showDeactivationWarning);
-    connect(m_utils,&ClassroomControlWidgetUtils::getCurrentInfoFinished,this,&ClassroomControlWidget::updateInfo);
+    connect(m_utils,&ClassroomControlWidgetUtils::getCurrentInfoFinished,this,&ClassroomControlWidget::getInfoFinished);
     connect(m_applyChanges,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             this, &ClassroomControlWidget::applyChangesFinished);
     connect(&m_changesWatcher,&QFutureWatcher<QVariantList>::finished,this,&ClassroomControlWidget::handleProcessingFinished);               
@@ -43,7 +43,7 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
     connect(m_utils,&ClassroomControlWidgetUtils::launchDeactivationSignal,this,&ClassroomControlWidget::launchAutomaticDeactivation);
     setSubToolTip(notificationTitle);
     
-    m_utils->startUtils();
+    m_utils->startWidget();
 
 } 
 
@@ -107,7 +107,7 @@ void ClassroomControlWidget::getInfo(){
     }
 }
 
-void ClassroomControlWidget::updateInfo(bool isAvailable, bool isEnabled, int cartConfigured, int maxNumCart){
+void ClassroomControlWidget::getInfoFinished(bool isAvailable, bool isEnabled, int cartConfigured, int maxNumCart){
 
     if (isAvailable){
         m_maxNumCart=maxNumCart;
