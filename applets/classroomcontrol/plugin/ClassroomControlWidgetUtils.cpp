@@ -1,27 +1,22 @@
 #include "ClassroomControlWidgetUtils.h"
+#include "ClassroomControlWidgetAdaptor.h"
+
+#include <KLocalizedString>
 
 #include <QFile>
-#include <QDateTime>
-#include <QFileInfo>
-#include <QRegularExpression>
-#include <QStandardPaths>
-#include <QDebug>
 #include <QTextStream>
-#include <QJsonObject>
 #include <QList>
-#include <KLocalizedString>
-#include <sys/types.h>
 #include <QDBusConnection>
+#include <QDBusError>
+#include <QDebug>
+#include <QThreadPool>
+#include <QtConcurrent>
 
 #include <grp.h>
 #include <pwd.h>
 #include <n4d.hpp>
-#include <variant.hpp>
-#include <json.hpp>
 
 #include <tuple>
-#include <sys/types.h>
-#include <QDebug>
 
 using namespace edupals;
 using namespace std;
@@ -33,14 +28,42 @@ ClassroomControlWidgetUtils::ClassroomControlWidgetUtils(QObject *parent)
        
 {
     user=qgetenv("USER");
-    n4d::Client tmpClient=n4d::Client("https://127.0.0.1:9779",user.toStdString(),"");
-    n4d::Ticket ticket=tmpClient.create_ticket();
-    tmpClient=n4d::Client(ticket);
-    client=tmpClient;
-    registerService();
+    registeredService=registerService();
+}
+
+void ClassroomControlWidgetUtils::startWidget(){
+
+    QPointer<ClassroomControlWidgetUtils>safeThis(this);
+
+    QThreadPool::globalInstance()->start([safeThis](){
+
+        if (!safeThis){
+            return;
+        }
+
+        bool startOk=false;
+
+        try{
+            safeThis->cleanCache();
+            n4d::Client tmpClient=n4d::Client("https://127.0.0.1:9779",safeThis->user.toStdString(),"");
+            n4d::Ticket ticket=tmpClient.create_ticket();
+            tmpClient=n4d::Client(ticket);
+            safeThis->client=tmpClient;
+            startOk=true;
+        }catch (std::exception& e){
+            qDebug()<<"[CLASSROOM_CONTROL]: Error creatin n4d client: " <<e.what();
+        } 
+
+        if (safeThis){
+            emit safeThis->startWidgetFinished(startOk);
+        }
+
+    });
 }
 
 void ClassroomControlWidgetUtils::cleanCache(){
+
+    qDebug()<<"[CLASSROOM_CONTROL]: Clean cache";
 
     QFile CURRENT_VERSION_TOKEN;
     QDir cacheDir("/home/"+user+"/.cache/plasmashell/qmlcache");
@@ -104,14 +127,57 @@ QString ClassroomControlWidgetUtils::getInstalledVersion(){
 
 }  
 
-void ClassroomControlWidgetUtils::registerService(){
+bool ClassroomControlWidgetUtils::registerService(){
+
+    new ClassroomControlWidgetAdaptor(this);
 
     QDBusConnection bus=QDBusConnection::sessionBus();
-    bus.registerService("com.classroomcontrol.DeactivationWarning");
-    bus.registerObject("/DeactivationWarning",this,QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals);
+
+
+    if (!bus.isConnected()) {
+        qDebug()<<"[CLASSROOM_CONTROL]: Error registering service: " << bus.lastError().message();
+        return false; 
+    }
+
+    bool success=true;
+    if (bus.registerService("com.classroomcontrol.DeactivationWarning")) {
+    
+        success = bus.registerObject("/DeactivationWarning", 
+                                      this, 
+                                      QDBusConnection::ExportAdaptors);
+    
+        if (!success){
+            qDebug()<<"[CLASSROOM_CONTROL]: Error registering service: " <<bus.lastError().message();
+        }
+    }
+
+    return success;
+
 }
 
 
+void ClassroomControlWidgetUtils::getWidgetStatus(){
+
+    QPointer<ClassroomControlWidgetUtils>safeThis(this);
+
+    QThreadPool::globalInstance()->start([safeThis]() {
+        if (!safeThis){
+            return;
+        }
+
+        bool isEnabled=false;
+        int deactivationTimeOut=0;
+        if (safeThis->showWidget()){
+            if (safeThis->isClassroomControlAvailable()){
+                deactivationTimeOut=safeThis->getDeactivationTimeOut();
+                isEnabled=true;
+            }
+        }
+        if (safeThis){
+            emit safeThis->getWidgetStatusFinished(isEnabled,deactivationTimeOut);
+        }
+    });
+}
 bool ClassroomControlWidgetUtils::showWidget(){
 
     int j, ngroups=32;
@@ -137,11 +203,11 @@ bool ClassroomControlWidgetUtils::showWidget(){
 
 bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
 
-    TARGET_FILE.setFileName(natfreeServer);
+    QFile natfreeServerFile(natfreeServer);
     bool isAvailable=false;
 
     if (isAdi()){
-        if (TARGET_FILE.exists()){
+        if (natfreeServerFile.exists()){
             if (!getHideAppletValue()){
                 isAvailable=true;
             }
@@ -151,6 +217,38 @@ bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
     qDebug()<<"[CLASSROOM_CONTROL]: Classroom Control Available: "<<isAvailable;
     return isAvailable;
 
+}
+
+void ClassroomControlWidgetUtils::getCurrentInfo(){
+
+    QPointer<ClassroomControlWidgetUtils>safeThis(this);
+
+    QThreadPool::globalInstance()->start([safeThis]() {
+        if (!safeThis){
+            return;
+        }
+
+        qDebug()<<"[CLASSROOM_CONTROL]: Getting current info";
+        bool isAvailable=false;
+        bool isEnabled=false;
+        int cartConfigured=0;
+
+        if (safeThis->isClassroomControlAvailable()){
+            isAvailable=true;
+            safeThis->getMaxNumCart();
+            QFile n4dVarFile(safeThis->controlModeVar);
+            if (n4dVarFile.exists()){
+                QVariantList ret=safeThis->getCurrentCart();
+                cartConfigured=ret[1].toInt();
+                if (cartConfigured>0){
+                    isEnabled=true;
+                }
+            }
+        }
+        if (safeThis){
+            emit safeThis->getCurrentInfoFinished(isAvailable,isEnabled,cartConfigured,safeThis->maxNumCart);
+        }
+    });
 }
 
 QVariantList ClassroomControlWidgetUtils::getCurrentCart(){
@@ -311,12 +409,10 @@ int ClassroomControlWidgetUtils::getDeactivationTimeOut(){
             try{
                 deactivationTimeOut=customTimeOut.toInt()*60*1000;
             }catch(std::exception& e){
-                qDebug()<<"[CLASSROOM_CONTROL]: Reading custom timeout. Error: "<<e.what();
+                qDebug()<<"[CLASSROOM_CONTROL]: getDeactivationTimeOut. Error: "<<e.what();
             }
-
         }
     }
-
     if (deactivationTimeOut==0){
         deactivationTimeOut=defaultDeactivationTimeOut;
     }
@@ -324,32 +420,51 @@ int ClassroomControlWidgetUtils::getDeactivationTimeOut(){
 
 }
 
-bool ClassroomControlWidgetUtils::automaticDeactivation(){
+void ClassroomControlWidgetUtils::automaticDeactivation(){
 
-    bool result=false;
-    try{
-        Variant ret=client.call("NatfreeADI","unset");
-        result=ret;
-        qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Result: "<<result;
-    }catch(std::exception& e){
-        qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Error: "<<e.what();
-    }
+    QPointer<ClassroomControlWidgetUtils>safeThis(this);
+    
+    QThreadPool::globalInstance()->start([safeThis]() {
+        if (!safeThis){
+            return;
+        }
 
-    return result;
+        bool result=false;
+        try{
+            Variant ret=safeThis->client.call("NatfreeADI","unset");
+            result=ret;
+            qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Result: "<<result;
+        }catch(std::exception& e){
+            qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Error: "<<e.what();
+        }
+        if (safeThis){
+            emit safeThis->automaticDeactivationFinished(result);
+        }
+    });
 }
 
-bool ClassroomControlWidgetUtils::reactivateControl(int cart){
+void ClassroomControlWidgetUtils::reactivateControl(int cart){
 
-    bool result=false;
-    try{
-        vector<Variant> params={cart};
-        Variant ret=client.call("NatfreeADI","set",params);
-        result=ret;
-        qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Result: "<<result;
-    }catch(std::exception& e){
-        qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Error: "<<e.what();
-    }
-    return result;
+    QPointer<ClassroomControlWidgetUtils>safeThis(this);
+
+    QThreadPool::globalInstance()->start([safeThis,cart]() {
+        if (!safeThis){
+            return;
+        }
+
+        bool result=false;
+        try{
+            vector<Variant> params={cart};
+            Variant ret=safeThis->client.call("NatfreeADI","set",params);
+            result=ret;
+            qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Result: "<<result;
+        }catch(std::exception& e){
+            qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Error: "<<e.what();
+        }
+        if (safeThis){
+            emit safeThis->reactivateControlFinished(result);
+        }
+    });
 }
 
 void ClassroomControlWidgetUtils::cancelDeactivation(){
