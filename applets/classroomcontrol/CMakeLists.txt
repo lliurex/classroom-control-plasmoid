@@ -12,6 +12,7 @@ set(classroomcontrolwidget_SRCS
     plugin/plugin.cpp
     plugin/ClassroomControlWidget.cpp
     plugin/ClassroomControlWidgetUtils.cpp
+    plugin/ClassroomControlWidgetAdaptor.cpp
    
 )
 

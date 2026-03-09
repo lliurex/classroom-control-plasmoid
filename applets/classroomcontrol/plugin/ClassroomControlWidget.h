@@ -4,14 +4,12 @@
 #include <QObject>
 #include <QProcess>
 #include <QPointer>
-#include <KNotification>
 #include <QDir>
 #include <QFile>
-#include <QThread>
-#include <QFileSystemWatcher>
-#include <KIO/CommandLauncherJob>
 
-#include <variant.hpp>
+
+#include <QFileSystemWatcher>
+#include <QFutureWatcher>
 
 #include "ClassroomControlWidgetUtils.h"
 
@@ -108,7 +106,6 @@ public:
 
 public slots:
     
-    void updateInfo();
     void changeCart(int cart);
     void changeControlMode(bool isCartControlEnabled);
     void manageNavigation(int stackIndex);
@@ -177,24 +174,27 @@ private:
     QPointer<KNotification> m_notification;
     QPointer<KNotification> m_reactivationNotification;
     QTimer *m_timer_deactivation = nullptr;
-    QList<QPointer <KNotification>> activeNotifications;
-    bool deleteNoticationWorker=false;
-    int maxManualCloseNotifications=4;
-    int manualCloseNotificationsCount=0; 
-    void plasmoidMode();
+    QFutureWatcher <QVariantList> m_changesWatcher;
     void createWatcher();
     void disableApplet();
     void showDeactivationWarning();
     void launchAutomaticDeactivation();
     void stopDeactivation();
     void reactivateControl();
-    void closeAllNotifications(QList<QPointer<KNotification>> openNotifications);
+    void closeAllNotifications();
     void automaticDeactivation();
     void reactivate();
+    void handleProcessingFinished();
 
 private slots:
     
+    void handleStartFinished(bool startOk);
+    void initPlasmoid(bool isEnabled, int timeOut);
+    void getInfo();
+    void getInfoFinished(bool isAvailable, bool isEnabled, int cartConfigured, int maxNumCart);
     void applyChangesFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    void handleDeactivationFinished(bool result);
+    void handleReactivationFinished(bool result);
 
 };
 

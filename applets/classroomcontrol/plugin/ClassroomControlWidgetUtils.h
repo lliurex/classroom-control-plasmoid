@@ -8,7 +8,6 @@
 #include <QDBusConnection>
 
 #include <n4d.hpp>
-#include <variant.hpp>
 
 using namespace std;
 using namespace edupals;
@@ -18,34 +17,25 @@ using namespace edupals::variant;
 class ClassroomControlWidgetUtils : public QObject
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.classroomcontrol.Bridge")
 
 
 public:
    
 
-   ClassroomControlWidgetUtils(QObject *parent = nullptr);
+   explicit ClassroomControlWidgetUtils(QObject *parent = nullptr);
 
-   void cleanCache();
-   QVariantList getCurrentCart();
-   int getMaxNumCart();
-   bool showWidget();
-   bool isClassroomControlAvailable();
-   QVariantList getApplyChangesResult(QString stout,QString stderr);
+   void startWidget();
    bool isAdi();
-   int getDeactivationTimeOut();
-   bool automaticDeactivation();
-   bool reactivateControl(int cart);
 
+   QVariantList getApplyChangesResult(QString stout,QString stderr);
+   void getWidgetStatus();
+   void getCurrentInfo();
+   void reactivateControl(int cart);
+   void automaticDeactivation();
 
    QString user;
-   int maxNumCart=0;
-   variant::Variant cartInfo =variant::Variant::create_array(0);
    QString controlModeVar="/var/lib/n4d/variables/CLASSROOM";
-   QString natfreeServer="/usr/bin/natfree-adi";
-   QString hideAppletVar="/var/lib/n4d/variables/HIDE_CLASSROOM_APPLET";
-   QString automaticDeactivationConfig="/etc/classroom-plasmoid.cfg";
-   int defaultDeactivationTimeOut=3600000;
+   bool registeredService=true;
 
 
 public slots:
@@ -54,19 +44,34 @@ public slots:
     void launchDeactivation();
 
 signals:
-
-    void closeWarning();
+    
+    void startWidgetFinished(bool startOk);
+    void getWidgetStatusFinished (bool isEnabled, int deactivationTimeOut);
+    void getCurrentInfoFinished (bool isAvailable, bool isEnabled, int cartConfigured, int maxNumCart);
+    void automaticDeactivationFinished (bool result);
+    void reactivateControlFinished (bool result);
+    void closeWarningSignal();
 
 private:    
      
     n4d::Client client;
     QFile TARGET_FILE;
+    int maxNumCart=0;
+    variant::Variant cartInfo =variant::Variant::create_array(0);
+    QString natfreeServer="/usr/bin/natfree-adi";
+    QString hideAppletVar="/var/lib/n4d/variables/HIDE_CLASSROOM_APPLET";
+    QString automaticDeactivationConfig="/etc/classroom-plasmoid.cfg";
+    int defaultDeactivationTimeOut=3600000;
+
+    void cleanCache();
     QString getInstalledVersion();
     bool getHideAppletValue();
-    void registerService();
-
-     
-
+    bool registerService();
+    QVariantList getCurrentCart();
+    int getMaxNumCart();
+    bool showWidget();
+    bool isClassroomControlAvailable();
+    int getDeactivationTimeOut();
 
 signals:
     void cancelDeactivationSignal();
