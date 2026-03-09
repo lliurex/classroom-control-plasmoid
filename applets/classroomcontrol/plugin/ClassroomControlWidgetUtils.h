@@ -24,7 +24,7 @@ public:
 
    explicit ClassroomControlWidgetUtils(QObject *parent = nullptr);
 
-   void startUtils();
+   void startWidget();
    bool isAdi();
 
    QVariantList getApplyChangesResult(QString stout,QString stderr);
@@ -45,7 +45,7 @@ public slots:
 
 signals:
     
-    void startUtilsFinished(bool startOk);
+    void startWidgetFinished(bool startOk);
     void getWidgetStatusFinished (bool isEnabled, int deactivationTimeOut);
     void getCurrentInfoFinished (bool isAvailable, bool isEnabled, int cartConfigured, int maxNumCart);
     void automaticDeactivationFinished (bool result);

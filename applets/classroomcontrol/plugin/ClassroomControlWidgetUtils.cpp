@@ -7,6 +7,7 @@
 #include <QTextStream>
 #include <QList>
 #include <QDBusConnection>
+#include <QDBusError>
 #include <QDebug>
 #include <QPointer>
 
@@ -25,13 +26,14 @@ using namespace edupals::variant;
 
 ClassroomControlWidgetUtils::ClassroomControlWidgetUtils(QObject *parent)
     : QObject(parent)
+
        
 {
     user=qgetenv("USER");
     registeredService=registerService();
 }
 
-void ClassroomControlWidgetUtils::startUtils(){
+void ClassroomControlWidgetUtils::startWidget(){
 
     QPointer<ClassroomControlWidgetUtils>safeThis(this);
 
@@ -55,7 +57,7 @@ void ClassroomControlWidgetUtils::startUtils(){
         } 
 
         if (safeThis){
-            emit safeThis->startUtilsFinished(startOk);
+            emit safeThis->startWidgetFinished(startOk);
         }
 
     });
