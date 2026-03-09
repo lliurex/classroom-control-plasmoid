@@ -1,3 +1,10 @@
+classroom-control-plasmoid (0.1.15+LliureX23) jammy; urgency=medium
+
+  * Improved startup
+  * Improved stability
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Mon, 09 Mar 2026 11:12:47 +0100
+
 classroom-control-plasmoid (0.1.14) jammy; urgency=medium
 
   * Hided deactivation warning when unlock cart
