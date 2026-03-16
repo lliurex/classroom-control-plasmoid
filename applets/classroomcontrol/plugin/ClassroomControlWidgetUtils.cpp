@@ -10,6 +10,7 @@
 #include <QDBusError>
 #include <QDebug>
 #include <QPointer>
+#include <QMutexLocker>
 
 #include <QtConcurrent>
 
@@ -46,7 +47,7 @@ void ClassroomControlWidgetUtils::startWidget(){
         bool startOk=false;
 
         try{
-            safeThis->cleanCache();
+            QMutexLocker locker(&safeThis->clientMutex); 
             n4d::Client tmpClient=n4d::Client("https://127.0.0.1:9779",safeThis->user.toStdString(),"");
             n4d::Ticket ticket=tmpClient.create_ticket();
             tmpClient=n4d::Client(ticket);
@@ -62,72 +63,6 @@ void ClassroomControlWidgetUtils::startWidget(){
 
     });
 }
-
-void ClassroomControlWidgetUtils::cleanCache(){
-
-    qDebug()<<"[CLASSROOM_CONTROL]: Clean cache";
-    
-    QFile CURRENT_VERSION_TOKEN;
-    QDir cacheDir("/home/"+user+"/.cache/plasmashell/qmlcache");
-    QDir warningCache("/home/"+user+"/.cache/classroom-control-dialog.py");
-    QString currentVersion="";
-    bool clear=false;
-
-    CURRENT_VERSION_TOKEN.setFileName("/home/"+user+"/.config/classroom-control-widget.conf");
-    QString installedVersion=getInstalledVersion();
-
-    if (!CURRENT_VERSION_TOKEN.exists()){
-        if (CURRENT_VERSION_TOKEN.open(QIODevice::WriteOnly)){
-            QTextStream data(&CURRENT_VERSION_TOKEN);
-            data<<installedVersion;
-            CURRENT_VERSION_TOKEN.close();
-            clear=true;
-        }
-    }else{
-        if (CURRENT_VERSION_TOKEN.open(QIODevice::ReadOnly)){
-            QTextStream content(&CURRENT_VERSION_TOKEN);
-            currentVersion=content.readLine();
-            CURRENT_VERSION_TOKEN.close();
-        }
-
-        if (currentVersion!=installedVersion){
-            if (CURRENT_VERSION_TOKEN.open(QIODevice::WriteOnly)){
-                QTextStream data(&CURRENT_VERSION_TOKEN);
-                data<<installedVersion;
-                CURRENT_VERSION_TOKEN.close();
-                clear=true;
-            }
-        }
-    } 
-    if (clear){
-        if (cacheDir.exists()){
-            cacheDir.removeRecursively();
-        }
-
-        if (warningCache.exists()){
-            warningCache.removeRecursively();
-        }
-    }   
-
-}
-
-QString ClassroomControlWidgetUtils::getInstalledVersion(){
-
-    QFile INSTALLED_VERSION_TOKEN;
-    QString installedVersion="";
-    
-    INSTALLED_VERSION_TOKEN.setFileName("/var/lib/classroom-control-plasmoid/version");
-
-    if (INSTALLED_VERSION_TOKEN.exists()){
-        if (INSTALLED_VERSION_TOKEN.open(QIODevice::ReadOnly)){
-            QTextStream content(&INSTALLED_VERSION_TOKEN);
-            installedVersion=content.readLine();
-            INSTALLED_VERSION_TOKEN.close();
-        }
-    }
-    return installedVersion;
-
-}  
 
 bool ClassroomControlWidgetUtils::registerService(){
 
@@ -225,8 +160,9 @@ bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
 void ClassroomControlWidgetUtils::getCurrentInfo(){
 
     QPointer<ClassroomControlWidgetUtils>safeThis(this);
+    QString tmpN4dVar=this->controlModeVar;
 
-    QtConcurrent::run([safeThis]() {
+    QtConcurrent::run([safeThis,tmpN4dVar]() {
 
         if (!safeThis){
             return;
@@ -240,7 +176,7 @@ void ClassroomControlWidgetUtils::getCurrentInfo(){
         if (safeThis->isClassroomControlAvailable()){
             isAvailable=true;
             safeThis->getMaxNumCart();
-            QFile n4dVarFile(safeThis->controlModeVar);
+            QFile n4dVarFile(tmpN4dVar);
             if (n4dVarFile.exists()){
                 QVariantList ret=safeThis->getCurrentCart();
                 cartConfigured=ret[1].toInt();
@@ -260,6 +196,7 @@ QVariantList ClassroomControlWidgetUtils::getCurrentCart(){
     bool isError=false;
     QString currentCart="-1";
     QVariantList result;
+    QMutexLocker locker(&clientMutex); 
 
     try{
         variant::Variant cartInfo = client.get_variable("CLASSROOM",true);
@@ -359,6 +296,8 @@ bool ClassroomControlWidgetUtils::getHideAppletValue(){
 
     if (TARGET_FILE.exists()){
 
+        QMutexLocker locker(&clientMutex); 
+
         try{
             variant::Variant appletInfo = client.get_variable("HIDE_CLASSROOM_APPLET",true);
             hideApplet=appletInfo["value"];
@@ -433,6 +372,8 @@ void ClassroomControlWidgetUtils::automaticDeactivation(){
         }
 
         bool result=false;
+        QMutexLocker locker(&safeThis->clientMutex); 
+
         try{
             variant::Variant ret=safeThis->client.call("NatfreeADI","unset");
             result=ret;
@@ -454,6 +395,8 @@ void ClassroomControlWidgetUtils::reactivateControl(int cart){
             return;
         }
         bool result=false;
+        QMutexLocker locker(&safeThis->clientMutex); 
+
         try{
             vector<variant::Variant>params={cart};
             variant::Variant ret=safeThis->client.call("NatfreeADI","set",params);

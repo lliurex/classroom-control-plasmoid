@@ -27,7 +27,6 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
     , m_timer_deactivation(new QTimer(this))
 {
     
-    notificationTitle=i18n("Mobile Classroom Control");
     TARGET_VAR_FILE.setFileName(m_utils->controlModeVar);
     TARGET_DIR_N4DVARS.setPath(n4dVarPath);
     
@@ -44,11 +43,15 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
     connect(m_utils,&ClassroomControlWidgetUtils::launchDeactivationSignal,this,&ClassroomControlWidget::launchAutomaticDeactivation);
     setSubToolTip(notificationTitle);
     
-    m_utils->startWidget();
+    QTimer::singleShot(0,this,[this](){
+        m_utils->startWidget();
+    });
 
 } 
 
 void ClassroomControlWidget::handleStartFinished(bool startOk){
+
+    notificationTitle=i18n("Mobile Classroom Control");
 
     if (startOk){
         m_utils->getWidgetStatus();
