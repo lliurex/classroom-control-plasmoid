@@ -47,6 +47,7 @@ void ClassroomControlWidgetUtils::startWidget(){
         bool startOk=false;
 
         try{
+            safeThis->cleanCache();
             QMutexLocker locker(&safeThis->clientMutex); 
             n4d::Client tmpClient=n4d::Client("https://127.0.0.1:9779",safeThis->user.toStdString(),"");
             n4d::Ticket ticket=tmpClient.create_ticket();
@@ -62,6 +63,68 @@ void ClassroomControlWidgetUtils::startWidget(){
         }
 
     });
+}
+
+void ClassroomControlWidgetUtils::cleanCache(){
+
+    qDebug()<<"[CLASSROOM_CONTROL]: Clean cache";
+
+    QFile CURRENT_VERSION_TOKEN;
+    QDir warningCache("/home/"+user+"/.cache/classroom-control-dialog.py");
+    QString currentVersion="";
+    bool clear=false;
+
+    CURRENT_VERSION_TOKEN.setFileName("/home/"+user+"/.config/classroom-control-widget.conf");
+    QString installedVersion=getInstalledVersion();
+
+    if (!CURRENT_VERSION_TOKEN.exists()){
+        if (CURRENT_VERSION_TOKEN.open(QIODevice::WriteOnly)){
+            QTextStream data(&CURRENT_VERSION_TOKEN);
+            data<<installedVersion;
+            CURRENT_VERSION_TOKEN.close();
+            clear=true;
+        }
+    }else{
+        if (CURRENT_VERSION_TOKEN.open(QIODevice::ReadOnly)){
+            QTextStream content(&CURRENT_VERSION_TOKEN);
+            currentVersion=content.readLine();
+            CURRENT_VERSION_TOKEN.close();
+        }
+
+        if (currentVersion!=installedVersion){
+            if (CURRENT_VERSION_TOKEN.open(QIODevice::WriteOnly)){
+                QTextStream data(&CURRENT_VERSION_TOKEN);
+                data<<installedVersion;
+                CURRENT_VERSION_TOKEN.close();
+                clear=true;
+            }
+        }
+    } 
+    if (clear){
+  
+        if (warningCache.exists()){
+            warningCache.removeRecursively();
+        }
+    }   
+
+}
+
+QString ClassroomControlWidgetUtils::getInstalledVersion(){
+
+    QFile INSTALLED_VERSION_TOKEN;
+    QString installedVersion="";
+    
+    INSTALLED_VERSION_TOKEN.setFileName("/var/lib/classroom-control-plasmoid/version");
+
+    if (INSTALLED_VERSION_TOKEN.exists()){
+        if (INSTALLED_VERSION_TOKEN.open(QIODevice::ReadOnly)){
+            QTextStream content(&INSTALLED_VERSION_TOKEN);
+            installedVersion=content.readLine();
+            INSTALLED_VERSION_TOKEN.close();
+        }
+    }
+    return installedVersion;
+
 }
 
 bool ClassroomControlWidgetUtils::registerService(){
@@ -292,9 +355,7 @@ bool ClassroomControlWidgetUtils::getHideAppletValue(){
 
     bool hideApplet=false;
 
-    TARGET_FILE.setFileName(hideAppletVar);
-
-    if (TARGET_FILE.exists()){
+    if (QFile(hideAppletVar).exists()){
 
         QMutexLocker locker(&clientMutex); 
 
