@@ -11,6 +11,7 @@
 #include <QDebug>
 #include <QThreadPool>
 #include <QtConcurrent>
+#include <QMutexLocker>
 
 #include <grp.h>
 #include <pwd.h>
@@ -45,6 +46,7 @@ void ClassroomControlWidgetUtils::startWidget(){
 
         try{
             safeThis->cleanCache();
+            QMutexLocker locker(&safeThis->clientMutex); 
             n4d::Client tmpClient=n4d::Client("https://127.0.0.1:9779",safeThis->user.toStdString(),"");
             n4d::Ticket ticket=tmpClient.create_ticket();
             tmpClient=n4d::Client(ticket);
@@ -66,7 +68,6 @@ void ClassroomControlWidgetUtils::cleanCache(){
     qDebug()<<"[CLASSROOM_CONTROL]: Clean cache";
 
     QFile CURRENT_VERSION_TOKEN;
-    QDir cacheDir("/home/"+user+"/.cache/plasmashell/qmlcache");
     QDir warningCache("/home/"+user+"/.cache/classroom-control-dialog.py");
     QString currentVersion="";
     bool clear=false;
@@ -98,10 +99,7 @@ void ClassroomControlWidgetUtils::cleanCache(){
         }
     } 
     if (clear){
-        if (cacheDir.exists()){
-            cacheDir.removeRecursively();
-        }
-
+  
         if (warningCache.exists()){
             warningCache.removeRecursively();
         }
@@ -125,7 +123,7 @@ QString ClassroomControlWidgetUtils::getInstalledVersion(){
     }
     return installedVersion;
 
-}  
+}
 
 bool ClassroomControlWidgetUtils::registerService(){
 
@@ -222,8 +220,9 @@ bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
 void ClassroomControlWidgetUtils::getCurrentInfo(){
 
     QPointer<ClassroomControlWidgetUtils>safeThis(this);
+    QString tmpN4dVar=this->controlModeVar;
 
-    QThreadPool::globalInstance()->start([safeThis]() {
+    QThreadPool::globalInstance()->start([safeThis,tmpN4dVar]() {
         if (!safeThis){
             return;
         }
@@ -236,7 +235,7 @@ void ClassroomControlWidgetUtils::getCurrentInfo(){
         if (safeThis->isClassroomControlAvailable()){
             isAvailable=true;
             safeThis->getMaxNumCart();
-            QFile n4dVarFile(safeThis->controlModeVar);
+            QFile n4dVarFile(tmpN4dVar);
             if (n4dVarFile.exists()){
                 QVariantList ret=safeThis->getCurrentCart();
                 cartConfigured=ret[1].toInt();
@@ -256,6 +255,7 @@ QVariantList ClassroomControlWidgetUtils::getCurrentCart(){
     bool isError=false;
     QString currentCart="-1";
     QVariantList result;
+    QMutexLocker locker(&clientMutex); 
 
     try{
         Variant cartInfo = client.get_variable("CLASSROOM",true);
@@ -351,9 +351,9 @@ bool ClassroomControlWidgetUtils::getHideAppletValue(){
 
     bool hideApplet=false;
 
-    TARGET_FILE.setFileName(hideAppletVar);
+    if (QFile(hideAppletVar).exists()){
 
-    if (TARGET_FILE.exists()){
+        QMutexLocker locker(&clientMutex); 
 
         try{
             Variant appletInfo = client.get_variable("HIDE_CLASSROOM_APPLET",true);
@@ -430,6 +430,8 @@ void ClassroomControlWidgetUtils::automaticDeactivation(){
         }
 
         bool result=false;
+        QMutexLocker locker(&safeThis->clientMutex); 
+
         try{
             Variant ret=safeThis->client.call("NatfreeADI","unset");
             result=ret;
@@ -453,6 +455,8 @@ void ClassroomControlWidgetUtils::reactivateControl(int cart){
         }
 
         bool result=false;
+        QMutexLocker locker(&safeThis->clientMutex); 
+
         try{
             vector<Variant> params={cart};
             Variant ret=safeThis->client.call("NatfreeADI","set",params);
