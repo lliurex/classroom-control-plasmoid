@@ -10,6 +10,8 @@
 #include <QFileSystemWatcher>
 #include <QFutureWatcher>
 
+#include <QtQml/qqmlregistration.h>
+
 #include "ClassroomControlWidgetUtils.h"
 
 using namespace edupals;
@@ -23,6 +25,17 @@ class AsyncDbus;
 class ClassroomControlWidget : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
+
+public:
+    /**
+     * System tray icon states.
+     */
+    enum TrayStatus {
+        ActiveStatus=0,
+        PassiveStatus,
+        HiddenStatus
+    };
 
 
     Q_PROPERTY(TrayStatus status READ status NOTIFY statusChanged)
@@ -41,19 +54,9 @@ class ClassroomControlWidget : public QObject
     Q_PROPERTY(int errorCode READ errorCode NOTIFY errorCodeChanged)
     Q_PROPERTY(bool showWaitMsg READ showWaitMsg NOTIFY showWaitMsgChanged)
     Q_PROPERTY(int msgCode READ msgCode NOTIFY msgCodeChanged)
-    Q_ENUMS(TrayStatus)
+    Q_ENUM(TrayStatus)
 
-public:
-    /**
-     * System tray icon states.
-     */
-    enum TrayStatus {
-        ActiveStatus=0,
-        PassiveStatus,
-        HiddenStatus
-    };
-
-    ClassroomControlWidget(QObject *parent = nullptr);
+    explicit ClassroomControlWidget(QObject *parent = nullptr);
 
     TrayStatus status() const;
     void changeTryIconState (int state);

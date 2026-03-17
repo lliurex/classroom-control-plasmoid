@@ -1,17 +1,14 @@
 #ifndef CLASSROOM_CONTROL_PLUGIN_H
 #define CLASSROOM_CONTROL_PLUGIN_H
 
-#include <QQmlEngine>
-#include <QQmlExtensionPlugin>
+#include <QQmlEngineExtensionPlugin>
 
-class ClassroomControlPlugin : public QQmlExtensionPlugin
+class ClassroomControlPlugin : public QQmlEngineExtensionPlugin
 {
     Q_OBJECT
-/*    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")*/
-    Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
+    Q_PLUGIN_METADATA(IID QQmlEngineExtensionInterface_iid)
 
 public:
-    void registerTypes(const char *uri) Q_DECL_OVERRIDE;
+    using QQmlEngineExtensionPlugin::QQmlEngineExtensionPlugin;
 };
-
-#endif // LLIUREX_QUOTA_WATCH_PLUGIN_H
+#endif // CLASSROOM_CONTROL_PLUGIN_H

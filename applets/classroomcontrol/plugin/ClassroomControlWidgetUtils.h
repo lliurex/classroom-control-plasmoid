@@ -6,6 +6,8 @@
 #include <QFile>
 #include <QDir>
 #include <QDBusConnection>
+#include <QMutex>
+#include <QMutexLocker>
 
 #include <n4d.hpp>
 
@@ -55,6 +57,7 @@ signals:
 private:    
      
     n4d::Client client;
+    QMutex clientMutex;
     QFile TARGET_FILE;
     int maxNumCart=0;
     Variant cartInfo =Variant::create_array(0);

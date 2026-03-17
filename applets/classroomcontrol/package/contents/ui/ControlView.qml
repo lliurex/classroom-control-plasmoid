@@ -7,7 +7,6 @@ import org.kde.plasma.components as PC3
 import org.kde.plasma.extras as PlasmaExtras
 import org.kde.kirigami as Kirigami
 
-import org.kde.plasma.private.classroomcontrol 1.0
 
 Rectangle{
 	id: optionsContainer
