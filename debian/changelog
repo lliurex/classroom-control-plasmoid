@@ -1,3 +1,9 @@
+classroom-control-plasmoid (0.1.16+LliureX23) jammy; urgency=medium
+
+  * Changed so that the cache doesn't have to be cleared on startup
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 20 Mar 2026 08:03:46 +0100
+
 classroom-control-plasmoid (0.1.15+LliureX23) jammy; urgency=medium
 
   * Improved startup
