@@ -1,3 +1,9 @@
+classroom-control-plasmoid (0.1.16) noble; urgency=medium
+
+  * Changed to that cache dosn't have to be cleared on the startup
+ 
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 20 Mar 2026 09:08:55 +0100
+
 classroom-control-plasmoid (0.1.15) noble; urgency=medium
 
   * Improved startup
