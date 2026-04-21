@@ -120,7 +120,7 @@ void ClassroomControlWidget::getInfoFinished(bool isAvailable, bool isEnabled, i
         if (previousCart!=cartConfigured){
             previousCart=cartConfigured;
             showNotification=true;
-            if (deactivationTimerLaunched){
+            if (isEnabled && deactivationTimerLaunched){
                 if (m_utils->registeredService){
                     m_timer_deactivation->stop();
                     m_timer_deactivation->start(deactivationTimeOut);
@@ -136,6 +136,10 @@ void ClassroomControlWidget::getInfoFinished(bool isAvailable, bool isEnabled, i
                 if (!deactivationTimerLaunched){
                     m_timer_deactivation->start(deactivationTimeOut);
                     deactivationTimerLaunched=true;
+                }else{
+                    if (!m_timer_deactivation->isActive()){
+                        m_timer_deactivation->start(deactivationTimeOut);
+                    }
                 }
             }
             cartControlEnabled=true;
