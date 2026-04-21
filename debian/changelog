@@ -1,3 +1,9 @@
+classroom-control-plasmoid (0.1.17+LliureX23) jammy; urgency=medium
+
+  * Restarted automatic deactivation timeout if changes are cancelled
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Tue, 21 Apr 2026 15:56:27 +0200
+
 classroom-control-plasmoid (0.1.16+LliureX23) jammy; urgency=medium
 
   * Changed so that the cache doesn't have to be cleared on startup
