@@ -155,7 +155,7 @@ void ClassroomControlWidget::getInfoFinished(bool isAvailable, bool isEnabled, i
             setSubToolTip(title+'\n'+notificationBody); 
             if (showNotification){
                 closeAllNotifications();
-                KNotification *m_notification = new KNotification(QStringLiteral("Set"),KNotification::CloseOnTimeout,this);
+                m_notification = new KNotification(QStringLiteral("Set"),KNotification::CloseOnTimeout,this);
                 m_notification->setComponentName(QStringLiteral("classroomcontrol"));
                 m_notification->setTitle(title);
                 m_notification->setText(notificationBody);
@@ -180,7 +180,7 @@ void ClassroomControlWidget::getInfoFinished(bool isAvailable, bool isEnabled, i
                 if (!m_reactivationNotification){
                     closeAllNotifications();
                     QString bodyWarning=i18n("Automatically disabled");
-                    KNotification *m_reactivationNotification=new KNotification(QStringLiteral("Warning"),KNotification::Persistent,this);
+                    m_reactivationNotification=new KNotification(QStringLiteral("Warning"),KNotification::Persistent,this);
                     m_reactivationNotification->setComponentName(QStringLiteral("classroomcontrol"));
                     m_reactivationNotification->setTitle(title);
                     m_reactivationNotification->setText(bodyWarning);
@@ -194,7 +194,7 @@ void ClassroomControlWidget::getInfoFinished(bool isAvailable, bool isEnabled, i
             }else{    
                 if (showNotification){
                     closeAllNotifications();
-                    KNotification *m_notification = new KNotification(QStringLiteral("Unset"),KNotification::CloseOnTimeout,this);
+                    m_notification = new KNotification(QStringLiteral("Unset"),KNotification::CloseOnTimeout,this);
                     m_notification->setComponentName(QStringLiteral("classroomcontrol"));
                     m_notification->setTitle(title);
                     m_notification->setText("");
@@ -338,7 +338,7 @@ void ClassroomControlWidget::applyChangesFinished(int exitCode, QProcess::ExitSt
         title=i18n("Error configuring classroom control");
         setSubToolTip(title+'\n'+notificationBody);
         if (showNotification){
-            KNotification *m_notification = new KNotification(QStringLiteral("Error"),KNotification::CloseOnTimeout,this);
+            m_notification = new KNotification(QStringLiteral("Error"),KNotification::CloseOnTimeout,this);
             m_notification->setComponentName(QStringLiteral("classroomcontrol"));
             m_notification->setTitle(title);
             m_notification->setText(notificationBody);
@@ -380,7 +380,7 @@ void ClassroomControlWidget::handleProcessingFinished(){
             title=i18n("Error configuring classroom control");
             setSubToolTip(title+'\n'+notificationBody);
             if (showNotification){
-                KNotification *m_notification = new KNotification(QStringLiteral("Error"),KNotification::CloseOnTimeout,this);
+                m_notification = new KNotification(QStringLiteral("Error"),KNotification::CloseOnTimeout,this);
                 m_notification->setComponentName(QStringLiteral("classroomcontrol"));
                 m_notification->setTitle(title);
                 m_notification->setText(notificationBody);
@@ -498,7 +498,7 @@ void ClassroomControlWidget::handleDeactivationFinished(bool result){
         closeAllNotifications();
         QString titleError=i18n("Automatic deactivation has failed");
         QString bodyError=i18n("Classroom control remains active");
-        KNotification *m_notification=new KNotification(QStringLiteral("Error"),KNotification::CloseOnTimeout,this);
+        m_notification=new KNotification(QStringLiteral("Error"),KNotification::CloseOnTimeout,this);
         m_notification->setComponentName(QStringLiteral("classroomcontrol"));
         m_notification->setTitle(titleError);
         m_notification->setText(bodyError);
@@ -527,7 +527,7 @@ void ClassroomControlWidget::handleReactivationFinished(bool result){
         closeAllNotifications();
         QString titleError=i18n("The reactivation has failed");
         QString bodyError=i18n("Classroom control remains deactivate");
-        KNotification *m_notification=new KNotification(QStringLiteral("Error"),KNotification::CloseOnTimeout,this);
+        m_notification=new KNotification(QStringLiteral("Error"),KNotification::CloseOnTimeout,this);
         m_notification->setComponentName(QStringLiteral("classroomcontrol"));
         m_notification->setTitle(titleError);
         m_notification->setText(bodyError);
@@ -561,10 +561,14 @@ void ClassroomControlWidget::closeAllNotifications(){
    
     if (m_notification){
         m_notification->close();
+        m_notification->deleteLater();
+        m_notification=nullptr;
     }
 
     if (m_reactivationNotification){
         m_reactivationNotification->close();
+        m_reactivationNotification->deleteLater();
+        m_reactivationNotification=nullptr;
     }
 
 }

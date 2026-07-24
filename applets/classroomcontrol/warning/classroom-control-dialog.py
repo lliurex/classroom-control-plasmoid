@@ -16,6 +16,8 @@ _=gettext.gettext
 
 class Bridge(QObject):
 
+	timeRemainingChanged=Signal()
+	
 	def __init__(self,iface):
 
 		QObject.__init__(self)
@@ -26,18 +28,46 @@ class Bridge(QObject):
 		self.currentCounter=0
 		self.countdownTimer = QTimer(None)
 		self.countdownTimer.timeout.connect(self.updateCountDown)
-		self._timeRemaining=["01:00",self.indicatorColor]
+		self._timeRemaining={"time":"01:00","color":self.indicatorColor}
+
 
 		self.initValues()
 
 	#def __init__
+
+	@Property('QVariant',notify=timeRemainingChanged)
+	def timeRemaining(self):
+
+		return self._timeRemaining
+
+	#def timeRemaining	
+
+	@timeRemaining.setter
+	def timeRemaining(self,timeRemaining):
+
+		self._timeRemaining=timeRemaining
+		self.timeRemainingChanged.emit()	
+
+	#def timeRemaining
+
+	def _getTranslateMsg(self):
+
+		return self._translateMsg
+
+	#def _getVisibleCancelBtn	
 	
+	def _getVisibleCancelBtn(self):
+
+		return self._visibleCancelBtn
+
+	#def _getVisibleCancelBtn	
+
 	def initValues(self):
 		
 		warningMsg=_("Classroom Control will be deactivate in few seconds")
 		cancelBtnMsg=_("Cancel deactivation")
 
-		self._translateMsg=[warningMsg,cancelBtnMsg]
+		self._translateMsg={"msg":warningMsg,"btnMsg":cancelBtnMsg}
 		self.countdownTimer.start(1000)
 	
 	#def init_values
@@ -45,49 +75,26 @@ class Bridge(QObject):
 	def updateCountDown(self):
 
 		self.currentCounter+=1
+		count=self.countdown-self.currentCounter
 
-		if self.countdown-self.currentCounter >=0:
-			count=self.countdown-self.currentCounter
-			
-			if count==60:
-				self.timeRemaining=["01:00",self.indicatorColor]
-			elif count<10:
+		if count>=0:
+			mins,secs=divmod(count,60)
+
+			if count<=10:
 				self.indicatorColor="#ff0000"
-				self.timeRemaining=["00:0"+str(count),self.indicatorColor]
-			else:
-				if count==10:
-					self.indicatorColor="#ff0000"
-				self.timeRemaining=["00:"+str(count),self.indicatorColor]
+
+			self.timeRemaining={"time":f"{mins:02d}:{secs:02d}","color":self.indicatorColor}
 		else:
 			self.countdownTimer.stop()
 			self.iface.launchDeactivation()
-			app.quit()
+			QApplication.quit()
 
 	#def updateCountDown
-
-	def _getTranslateMsg(self):
-
-		return self._translateMsg
-
-	#def _getTranslateMsg	
-	
-	def _getTimeRemaining(self):
-
-		return self._timeRemaining
-
-	#def _getTimeRemaining	
-
-	def _setTimeRemaining(self,timeRemaining):
-
-		self._timeRemaining=timeRemaining
-		self.on_timeRemaining.emit()	
-
-	#def _setTimeRemaining
 
 	def closeWarningSignal(self):
 		
 		self.countdownTimer.stop()
-		app.quit()
+		QApplication.quit()
 
     #def closeWarningSignal
 
@@ -96,7 +103,7 @@ class Bridge(QObject):
 
 		self.countdownTimer.stop()
 		self.iface.cancelDeactivation()
-		app.quit()
+		QApplication.quit()
 
 	#def cancelClicked
 
@@ -107,9 +114,7 @@ class Bridge(QObject):
 
 	#def closed	
 		
-	on_timeRemaining=Signal()
-	timeRemaining=Property('QVariantList',_getTimeRemaining,_setTimeRemaining, notify=on_timeRemaining)
-	translateMsg=Property('QVariantList',_getTranslateMsg,constant=True)
+	translateMsg=Property('QVariant',_getTranslateMsg,constant=True)
 
 #class Bridge
 
@@ -145,7 +150,7 @@ if __name__=="__main__":
 	if not engine.rootObjects():
 		sys.exit(-1)
 
-	engine.quit.connect(QApplication.quit)
+	engine.quit.connect(app.quit)
 	app.setWindowIcon(QIcon("/usr/share/icons/hicolor/scalable/apps/classroom_control.svg"));
 	ret=app.exec_()
 	del engine
