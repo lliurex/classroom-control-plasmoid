@@ -5,7 +5,7 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.components 3.0 as PC3
 import org.kde.plasma.extras 2.0 as PlasmaExtras
-import org.kde.kirigami 2.16 as Kirigami
+import org.kde.kirigami 2.15 as Kirigami
 
 Rectangle {
     id: optionsContainer
@@ -14,7 +14,8 @@ Rectangle {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 12
+        anchors.margins: 0
+        anchors.bottomMargin:15
         spacing: 15
 
         RowLayout {
@@ -58,6 +59,7 @@ Rectangle {
         GridLayout {
             id: controlOptions
             Layout.fillWidth: true
+            Layout.leftMargin:15
             columns: 2
             columnSpacing: 10
             rowSpacing: 10
@@ -94,6 +96,8 @@ Rectangle {
             id: phMsg
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.leftMargin:15
+            Layout.rightMargin:15
             visible: classroomControlWidget.showWaitMsg
             iconName: "view-refresh"
             text: getTextMsg(classroomControlWidget.msgCode)
@@ -107,6 +111,8 @@ Rectangle {
         RowLayout {
             id: buttomsRow
             Layout.fillWidth: true
+            Layout.leftMargin:15
+            Layout.rightMargin:15
             spacing: 10
             visible: !classroomControlWidget.showWaitMsg
 
@@ -143,19 +149,30 @@ Rectangle {
     }
 
     function getTextMsg(code) {
-        var msg = ""
+
         switch (code) {
-            case -1: msg = i18n("Unable to get ip from interface"); break;
-            case -2: msg = i18n("Mask value from interface is wrong"); break;
-            case -3: msg = i18n("The selected cart is already beaing controlled by another computer"); break;
-            case -4: msg = i18n("Insufficient number of hosts in subnet"); break;
-            case -5: msg = i18n("Virtual interface not created"); break;
-            case -6: msg = i18n("Unable to configure classroom control"); break;
-            case 2:  msg = i18n("Applyng changes. Wait a moment..."); break;
-            case 3:  msg = i18n("Restoring values. Wait a moment..."); break;
-            case 4:  msg = i18n("Deactivating classroom control. Wait a moment..."); break;
-            case 5:  msg = i18n("Reactivating classroom control. Wait a moment..."); break;
+            case -1: 
+                return i18n("Unable to get ip from interface")
+            case -2:
+                return i18n("Mask value from interface is wrong")
+            case -3: 
+                return i18n("The selected cart is already beaing controlled by another computer")
+            case -4: 
+                return i18n("Insufficient number of hosts in subnet")
+            case -5: 
+                return i18n("Virtual interface not created")
+            case -6: 
+                return i18n("Unable to configure classroom control")
+            case 2:
+                return i18n("Applyng changes. Wait a moment...")
+            case 3:
+                return i18n("Restoring values. Wait a moment...")
+            case 4:
+                return i18n("Deactivating classroom control. Wait a moment...")
+            case 5:
+                return i18n("Reactivating classroom control. Wait a moment...")
+            default:
+                return ""
         }
-        return msg;
     }
 }
