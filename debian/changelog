@@ -1,3 +1,10 @@
+classroom-control-plasmoid (0.1.18+LliureX23) jammy; urgency=medium
+
+  * Changed notificacions management to ensure that are created and closed correctly
+  * Improved countdown message 
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Mon, 27 Jul 2026 10:04:10 +0200
+
 classroom-control-plasmoid (0.1.17+LliureX23) jammy; urgency=medium
 
   * Restarted automatic deactivation timeout if changes are cancelled
