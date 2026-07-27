@@ -8,7 +8,7 @@ plasma_install_package(package org.kde.plasma.classroomcontrol)
 # Notes Library
 set(PLUGIN_TARGET "classroomcontrolplugin")
 add_definitions(-DTRANSLATION_DOMAIN="plasma_applet_org.kde.plasma.classroomcontrol")
-ecm_add_qml_module(${PLUGIN_TARGET} URI org.kde.plasma.private.classroomcontrol VERSION 2.0)
+ecm_add_qml_module(${PLUGIN_TARGET} URI org.kde.plasma.private.classroomcontrol VERSION 2.1)
 
 
 target_sources(${PLUGIN_TARGET} PRIVATE
