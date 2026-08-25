@@ -11,6 +11,9 @@
 #include <QFileSystemWatcher>
 #include <QFutureWatcher>
 
+#include <QDBusMessage>
+#include <QDBusError>
+
 #include "ClassroomControlWidgetUtils.h"
 
 using namespace edupals;
@@ -55,6 +58,7 @@ public:
     };
 
     ClassroomControlWidget(QObject *parent = nullptr);
+    ~ClassroomControlWidget();
 
     TrayStatus status() const;
     void changeTryIconState (int state);
@@ -135,27 +139,35 @@ signals:
 private:
 
     TrayStatus m_status = PassiveStatus;
-    QString m_iconName = QStringLiteral("classroom_control");
-    QString m_iconNamePh = QStringLiteral("classroom_control");
-    QString m_toolTip;
-    QString m_subToolTip;
+
     int m_currentStackIndex=0;
     int m_currentCart=1;
     int m_currentCartIndex=0;
-    bool m_isCartControlEnabled=false;
-    bool m_arePendingChanges=false;
-    bool m_canEdit=false;
-    bool m_showError=false;
     int m_errorCode=0;
-    bool isWorking=false;
     int m_maxNumCart=0;
-    bool m_showWaitMsg=false;
     int m_msgCode=0;
     int cartConfigured=0;
     int previousCart=0;
     int lastCartConfigured=0;
     int deactivationTimeOut=3600000;
+
+    bool m_isCartControlEnabled=false;
+    bool m_arePendingChanges=false;
+    bool m_canEdit=false;
+    bool m_showError=false;
+    bool isWorking=false;
+    bool m_showWaitMsg=false;
     bool cartControlEnabled=false;
+    bool createFileVarWatcher=false;
+    bool createDirectoryN4dWatcher=false;
+    bool showNotification=true; 
+    bool deactivationTimerLaunched=false;
+    bool automaticallyDeactivated=false;
+
+    QString m_iconName = QStringLiteral("classroom_control");
+    QString m_iconNamePh = QStringLiteral("classroom_control");
+    QString m_toolTip;
+    QString m_subToolTip;
     QString notificationTitle;
     QString notificationBody;
     QString title;
@@ -163,18 +175,18 @@ private:
     QFile TARGET_FILE_ADI;
     QDir TARGET_DIR_N4DVARS;
     QString n4dVarPath="/var/lib/n4d/variables/";
+
     QFileSystemWatcher *watcher=nullptr;
     ClassroomControlWidgetUtils* m_utils;
-    bool createFileVarWatcher=false;
-    bool createDirectoryN4dWatcher=false;
-    bool showNotification=true; 
-    bool deactivationTimerLaunched=false;
-    bool automaticallyDeactivated=false;
+   
     QProcess *m_applyChanges=nullptr;
     QPointer<KNotification> m_notification;
-    QPointer<KNotification> m_reactivationNotification;
+
     QTimer *m_timer_deactivation = nullptr;
     QFutureWatcher <QVariantList> m_changesWatcher;
+
+    uint lastNotificationId;
+
     void createWatcher();
     void disableApplet();
     void showDeactivationWarning();
@@ -185,6 +197,8 @@ private:
     void automaticDeactivation();
     void reactivate();
     void handleProcessingFinished();
+    void sendNotification();
+    void closeNotificationForced();
 
 private slots:
     
@@ -195,6 +209,11 @@ private slots:
     void applyChangesFinished(int exitCode, QProcess::ExitStatus exitStatus);
     void handleDeactivationFinished(bool result);
     void handleReactivationFinished(bool result);
+    void onNotificationAction (uint id,QString actionId);
+    void onNotificationClosed (uint id, uint reason);
+    void onNotificationSent (const QDBusMessage &reply);
+    void onNotificationError (const QDBusError &error);
+
 
 };
 
