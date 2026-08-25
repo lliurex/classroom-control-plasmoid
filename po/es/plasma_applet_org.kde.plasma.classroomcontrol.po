@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-27 09:50+0200\n"
-"PO-Revision-Date: 2026-07-27 09:51+0200\n"
+"POT-Creation-Date: 2026-08-25 13:39+0200\n"
+"PO-Revision-Date: 2026-08-25 13:40+0200\n"
 "Last-Translator: lliurex <lliurex@lliurex.net>\n"
 "Language-Team: Catalan <kde-i18n-ca@kde.org>\n"
 "Language: es\n"
@@ -78,7 +78,7 @@ msgid "Virtual interface not created"
 msgstr "Interfaz virtual no creada"
 
 #: ../applets/classroomcontrol/package/contents/ui/ControlView.qml:165
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:326
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:404
 #: ../applets/classroomcontrol/plugin/ClassroomControlWidgetUtils.cpp:337
 #, kde-format
 msgid "Unable to configure classroom control"
@@ -114,68 +114,68 @@ msgstr "Configuración"
 msgid "See help"
 msgstr "Ver ayuda"
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:53
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:79
 #, kde-format
 msgid "Mobile Classroom Control"
 msgstr "Control del Aula Móvil"
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:58
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:84
 #, kde-format
 msgid "Mobile Classroom Control not be initialized correctly"
 msgstr "Control del Aula Móvil no se ha inicializado correctamente"
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:145
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:171
 #, kde-format
 msgid "Classroom control activated"
 msgstr "Control del Aula activado"
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:153
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:179
 #, kde-format
 msgid "Controlling the cart number: "
 msgstr "Controlando el carrito número: "
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:170
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:196
 #, kde-format
 msgid "Classroom control disabled"
 msgstr "Control del Aula desactivado"
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:181
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:244
 #, kde-format
 msgid "Automatically disabled"
 msgstr "Desactivado automáticamente"
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:187
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:245
 #, kde-format
 msgid "Reactivate control of cart: "
 msgstr "Reactivar el control del carrito: "
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:218
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:291
 #, kde-format
 msgid "Mobile Classroom Control not available in this computer"
 msgstr "Control del Aula Móvil no disponible en este equipo"
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:335
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:376
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:413
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:454
 #, kde-format
 msgid "Error configuring classroom control"
 msgstr "Error configurando el Control del Aula"
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:495
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:573
 #, kde-format
 msgid "Automatic deactivation has failed"
 msgstr "La desactivación automática ha fallado"
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:496
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:574
 #, kde-format
 msgid "Classroom control remains active"
 msgstr "El Control del Aula permanece activado"
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:524
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:602
 #, kde-format
 msgid "The reactivation has failed"
 msgstr "La reactivación ha fallado"
 
-#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:525
+#: ../applets/classroomcontrol/plugin/ClassroomControlWidget.cpp:603
 #, kde-format
 msgid "Classroom control remains deactivate"
 msgstr "El Control del Aula permanece desactivado"
