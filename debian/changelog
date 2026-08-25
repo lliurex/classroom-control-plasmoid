@@ -1,3 +1,9 @@
+classroom-control-plasmoid (0.1.19) noble; urgency=medium
+
+  * Changed KNotification for QDBusMessage in the reactivation notification to ensure it closes when requested
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Tue, 25 Aug 2026 13:49:03 +0200
+
 classroom-control-plasmoid (0.1.18) noble; urgency=medium
 
   * Changed notificacions management to ensure that are created and closed correctly
