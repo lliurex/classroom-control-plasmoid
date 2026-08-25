@@ -15,6 +15,9 @@
 
 #include <QtConcurrent>
 
+#include <QDBusConnection>
+#include <QDBusMessage>
+
 using namespace edupals;
 using namespace std;
 using namespace edupals::variant;
@@ -43,9 +46,32 @@ ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
     connect(m_utils,&ClassroomControlWidgetUtils::launchDeactivationSignal,this,&ClassroomControlWidget::launchAutomaticDeactivation);
     setSubToolTip(notificationTitle);
     
+    QDBusConnection::sessionBus().connect(
+        "org.freedesktop.Notifications",
+        "/org/freedesktop/Notifications",
+        "org.freedesktop.Notifications",
+        "ActionInvoked",
+        this,
+        SLOT(onNotificationAction(uint,QString))
+    );
+
+    QDBusConnection::sessionBus().connect(
+        "org.freedesktop.Notifications",
+        "/org/freedesktop/Notifications",
+        "org.freedesktop.Notifications",
+        "NotificationClosed",
+        this,
+        SLOT(onNotificationClosed(uint,uint))
+    );
+
     QTimer::singleShot(0,this,[this](){
         m_utils->startWidget();
     });
+}
+
+ClassroomControlWidget::~ClassroomControlWidget(){
+
+    closeNotificationForced();
 
 } 
 
@@ -177,20 +203,8 @@ void ClassroomControlWidget::getInfoFinished(bool isAvailable, bool isEnabled, i
             setSubToolTip(title);
             if (automaticallyDeactivated){
                 automaticallyDeactivated=false;
-                if (!m_reactivationNotification){
-                    closeAllNotifications();
-                    QString bodyWarning=i18n("Automatically disabled");
-                    m_reactivationNotification=new KNotification(QStringLiteral("Warning"),KNotification::Persistent,this);
-                    m_reactivationNotification->setComponentName(QStringLiteral("classroomcontrol"));
-                    m_reactivationNotification->setTitle(title);
-                    m_reactivationNotification->setText(bodyWarning);
-                    m_reactivationNotification->setIconName("classroom_control_off");
-                    QString action=i18n("Reactivate control of cart: ")+QString::number(lastCartConfigured);
-                    m_reactivationNotification->setDefaultAction(action);
-                    m_reactivationNotification->setActions({action});
-                    connect(m_reactivationNotification,QOverload<unsigned int>::of(&KNotification::activated),this,&ClassroomControlWidget::reactivateControl);
-                    m_reactivationNotification->sendEvent();
-                }
+                sendNotification();
+                
             }else{    
                 if (showNotification){
                     closeAllNotifications();
@@ -215,6 +229,64 @@ void ClassroomControlWidget::getInfoFinished(bool isAvailable, bool isEnabled, i
     }
 }
 
+void ClassroomControlWidget::sendNotification(){
+    
+   if (QDBusConnection::sessionBus().isConnected()) {
+        QDBusMessage msg= QDBusMessage::createMethodCall("org.freedesktop.Notifications",
+                                       "/org/freedesktop/Notifications",
+                                       "org.freedesktop.Notifications",
+                                       "Notify" 
+                                       );
+
+        uint replacesId=0;
+        QStringList actions;
+        QVariantMap hints;
+
+        QString message=i18n("Automatically disabled");
+        QString action=i18n("Reactivate control of cart: ")+QString::number(lastCartConfigured);
+
+        actions << "reactivate_control" << action;
+        hints.insert("desktop-entry","classroom-control");
+        msg << notificationTitle << replacesId << "classroom_control_off" << title << message << actions << hints << 0; 
+        
+        QDBusConnection::sessionBus().callWithCallback(msg,this,
+            SLOT(onNotificationSent(QDBusMessage)),
+            SLOT(onNotificationError(QDBusError))
+        );
+    }
+
+}
+
+void ClassroomControlWidget::onNotificationSent(const QDBusMessage &reply){
+
+    if (reply.type()== QDBusMessage::ReplyMessage && !reply.arguments().isEmpty()){
+        lastNotificationId=reply.arguments().at(0).toUInt();
+    }else{
+        lastNotificationId=0;
+    }
+}
+
+void ClassroomControlWidget::onNotificationError(const QDBusError &error){
+
+    qDebug()<<"[CLASSROOM_CONTROL]: Unable to send the reactivation notification" << error.message();
+    lastNotificationId=0;
+
+}
+
+void ClassroomControlWidget::onNotificationAction(uint id, QString actionId){
+
+    if (id==lastNotificationId && actionId=="reactivate_control"){
+        reactivateControl();
+    }
+}
+
+void ClassroomControlWidget::onNotificationClosed(uint id, uint reason){
+
+    if (id==lastNotificationId && reason==2){
+        lastNotificationId=0;
+    }
+}
+
 void ClassroomControlWidget::disableApplet(){
 
     notificationBody=i18n("Mobile Classroom Control not available in this computer");
@@ -236,15 +308,20 @@ ClassroomControlWidget::TrayStatus ClassroomControlWidget::status() const
 
 void ClassroomControlWidget::changeTryIconState(int state){
 
-    if (state==0){
-    	setStatus(ActiveStatus);
-        setToolTip(notificationTitle);
-    }else if (state==1){
-        setStatus(PassiveStatus);
-    }else if (state==2){
-        setStatus(HiddenStatus);
+    switch(state) {
+        case 0:
+            setStatus(ActiveStatus);
+            setToolTip(notificationTitle);
+            break;
+        case 1:
+            setStatus(PassiveStatus);
+            break;
+        case 2:
+            setStatus(HiddenStatus);
+            break;
+        default:
+            break;
     }
-
 }
 
 void ClassroomControlWidget::changeControlMode(bool isCartControlEnabled){
@@ -558,17 +635,30 @@ void ClassroomControlWidget::manageNavigation(int stackIndex)
 void ClassroomControlWidget::closeAllNotifications(){
 
     qDebug()<<"[CLASSROOM_CONTROL]: Clossing all notifications...";
-   
+    
     if (m_notification){
         m_notification->close();
         m_notification->deleteLater();
         m_notification=nullptr;
     }
 
-    if (m_reactivationNotification){
-        m_reactivationNotification->close();
-        m_reactivationNotification->deleteLater();
-        m_reactivationNotification=nullptr;
+    closeNotificationForced();
+
+}
+
+void ClassroomControlWidget::closeNotificationForced(){
+
+    if (lastNotificationId !=0){
+        if (QDBusConnection::sessionBus().isConnected()) {
+            QDBusMessage closeMsg=QDBusMessage::createMethodCall("org.freedesktop.Notifications",
+                                       "/org/freedesktop/Notifications",
+                                       "org.freedesktop.Notifications",
+                                       "CloseNotification" 
+                                       );
+            closeMsg << lastNotificationId;
+            QDBusConnection::sessionBus().send(closeMsg);
+            lastNotificationId=0;
+        }
     }
 
 }
@@ -777,4 +867,3 @@ void ClassroomControlWidget::setMsgCode(int msgCode){
         emit msgCodeChanged();
     }
 }
-
