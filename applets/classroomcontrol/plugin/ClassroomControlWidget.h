@@ -146,7 +146,6 @@ private:
     int m_errorCode=0;
     int m_maxNumCart=0;
     int m_msgCode=0;
-    int cartConfigured=0;
     int previousCart=0;
     int lastCartConfigured=0;
     int deactivationTimeOut=3600000;
@@ -163,6 +162,7 @@ private:
     bool showNotification=true; 
     bool deactivationTimerLaunched=false;
     bool automaticallyDeactivated=false;
+    bool isApplyingChanges=false;
 
     QString m_iconName = QStringLiteral("classroom_control");
     QString m_iconNamePh = QStringLiteral("classroom_control");
