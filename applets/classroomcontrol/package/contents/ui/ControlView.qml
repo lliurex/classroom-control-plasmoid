@@ -100,6 +100,7 @@ Rectangle {
             Layout.fillHeight: true
             Layout.leftMargin:15
             Layout.rightMargin:15
+            Layout.alignment:Qt.AlignHCenter | Qt.AlignVCenter
             visible: classroomControlWidget.showWaitMsg
             iconName: "view-refresh"
             text: getTextMsg(classroomControlWidget.msgCode)

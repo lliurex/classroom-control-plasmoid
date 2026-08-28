@@ -143,6 +143,9 @@ void ClassroomControlWidget::getInfoFinished(bool isAvailable, bool isEnabled, i
         m_maxNumCart=maxNumCart;
         createWatcher();
 
+        currentConfig.enable=isEnabled;
+        currentConfig.cart=(cartConfigured>0) ? cartConfigured:1;
+
         if (previousCart!=cartConfigured){
             previousCart=cartConfigured;
             showNotification=true;
@@ -327,22 +330,17 @@ void ClassroomControlWidget::changeControlMode(bool isCartControlEnabled){
 
     if (cartControlEnabled!=isCartControlEnabled){
         cartControlEnabled=isCartControlEnabled;
-        setArePendingChanges(true);
-    }else{
-        setArePendingChanges(false);
     }
+    checkChangesInConfig();
 }
 
 void ClassroomControlWidget::changeCart(int newCart){
 
-    if (newCart!=previousCart){
-        setArePendingChanges(true);
-    }else{
-        setArePendingChanges(false);
-    }
+    setCurrentCart(newCart);
+    setCurrentCartIndex(newCart-1);
 
-   setCurrentCart(newCart);
-   setCurrentCartIndex(newCart-1);
+    checkChangesInConfig();
+   
 }
 
 void ClassroomControlWidget::applyChanges(){
@@ -683,6 +681,21 @@ void ClassroomControlWidget::openHelp(){
     KIO::CommandLauncherJob *job = nullptr;
     job = new KIO::CommandLauncherJob(command);
     job->start();
+}
+
+void ClassroomControlWidget::checkChangesInConfig(){
+
+    if (currentConfig.enable!=cartControlEnabled){
+        setArePendingChanges(true);
+        return;
+    }
+    
+    if (cartControlEnabled && currentConfig.cart!=m_currentCart){
+        setArePendingChanges(true);
+    }else{
+        setArePendingChanges(false);
+    }
+
 }
 
 void ClassroomControlWidget::setStatus(ClassroomControlWidget::TrayStatus status)

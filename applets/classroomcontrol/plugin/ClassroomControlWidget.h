@@ -23,6 +23,11 @@ class QTimer;
 class KNotification;
 class AsyncDbus;
 
+struct CurrentConfig{
+    bool enable=false;
+    int cart=1;
+};
+
 
 class ClassroomControlWidget : public QObject
 {
@@ -140,6 +145,8 @@ private:
 
     TrayStatus m_status = PassiveStatus;
 
+    CurrentConfig currentConfig;
+
     int m_currentStackIndex=0;
     int m_currentCart=1;
     int m_currentCartIndex=0;
@@ -171,10 +178,11 @@ private:
     QString notificationTitle;
     QString notificationBody;
     QString title;
+    QString n4dVarPath="/var/lib/n4d/variables/";
+
     QFile TARGET_VAR_FILE;
     QFile TARGET_FILE_ADI;
     QDir TARGET_DIR_N4DVARS;
-    QString n4dVarPath="/var/lib/n4d/variables/";
 
     QFileSystemWatcher *watcher=nullptr;
     ClassroomControlWidgetUtils* m_utils;
@@ -199,6 +207,7 @@ private:
     void handleProcessingFinished();
     void sendNotification();
     void closeNotificationForced();
+    void checkChangesInConfig();
 
 private slots:
     
