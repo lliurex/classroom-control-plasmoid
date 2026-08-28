@@ -78,6 +78,7 @@ private:
     bool registerService();
     bool showWidget();
     bool isClassroomControlAvailable();
+    bool isNatFreeUp();
 
     QString getInstalledVersion();
     

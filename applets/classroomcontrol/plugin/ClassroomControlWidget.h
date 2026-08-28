@@ -24,6 +24,11 @@ class QTimer;
 class KNotification;
 class AsyncDbus;
 
+struct CurrentConfig{
+    bool enable=false;
+    int cart=1;
+};
+
 
 class ClassroomControlWidget : public QObject
 {
@@ -142,13 +147,14 @@ private:
 
     TrayStatus m_status = PassiveStatus;
 
+    CurrentConfig currentConfig;
+
     int m_currentStackIndex=0;
     int m_currentCart=1;
     int m_currentCartIndex=0;
     int m_errorCode=0;
     int m_maxNumCart=0;
     int m_msgCode=0;
-    int cartConfigured=0;
     int previousCart=0;
     int lastCartConfigured=0;
     int deactivationTimeOut=3600000;
@@ -165,6 +171,7 @@ private:
     bool showNotification=true; 
     bool deactivationTimerLaunched=false;
     bool automaticallyDeactivated=false;
+    bool isApplyingChanges=false;
 
     QString m_iconName = QStringLiteral("classroom_control");
     QString m_iconNamePh = QStringLiteral("classroom_control");
@@ -205,6 +212,7 @@ private:
     void handleProcessingFinished();
     void sendNotification();
     void closeNotificationForced();
+    void checkChangesInConfig();
 
 private slots:
     
