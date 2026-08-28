@@ -239,12 +239,14 @@ void ClassroomControlWidgetUtils::getCurrentInfo(){
         if (safeThis->isClassroomControlAvailable()){
             isAvailable=true;
             safeThis->getMaxNumCart();
-            QFile n4dVarFile(tmpN4dVar);
-            if (n4dVarFile.exists()){
-                QVariantList ret=safeThis->getCurrentCart();
-                cartConfigured=ret[1].toInt();
-                if (cartConfigured>0){
-                    isEnabled=true;
+            if (safeThis->isNatFreeUp()){
+                QFile n4dVarFile(tmpN4dVar);
+                if (n4dVarFile.exists()){
+                    QVariantList ret=safeThis->getCurrentCart();
+                    cartConfigured=ret[1].toInt();
+                    if (cartConfigured>0){
+                        isEnabled=true;
+                    }
                 }
             }
         }
@@ -481,5 +483,28 @@ void ClassroomControlWidgetUtils::cancelDeactivation(){
 void ClassroomControlWidgetUtils::launchDeactivation(){
 
     emit launchDeactivationSignal();
+}
+
+bool ClassroomControlWidgetUtils::isNatFreeUp(){
+
+    bool isNatFreeUp=false;
+
+    QProcess proces;
+    proces.start("natfree-adi", QStringList() << "show");
+    
+    if (proces.waitForFinished(2000)){
+        QString sortida = QString::fromUtf8(proces.readAllStandardOutput());
+        QRegularExpression regex("state\\s+(\\w+)");
+        QRegularExpressionMatch match = regex.match(sortida);
+        if (match.hasMatch()) {
+            QString natfreeState = match.captured(1);
+            qDebug()<<"[CLASSROOM_CONTROL]: Status of natfree interface:" <<natfreeState;
+            if (natfreeState=="UP"){
+                isNatFreeUp=true;
+            }
+        }
+    }
+
+    return isNatFreeUp; 
 }
 
