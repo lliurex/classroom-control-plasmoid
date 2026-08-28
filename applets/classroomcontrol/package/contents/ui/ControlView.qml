@@ -51,6 +51,8 @@ Rectangle {
         Kirigami.InlineMessage {
             id: warningMsg
             Layout.fillWidth: true
+            Layout.leftMargin:15
+            Layout.rightMargin:15
             visible: classroomControlWidget.showError
             text: getTextMsg(classroomControlWidget.errorCode)
             type: Kirigami.MessageType.Error
@@ -98,6 +100,7 @@ Rectangle {
             Layout.fillHeight: true
             Layout.leftMargin:15
             Layout.rightMargin:15
+            Layout.alignment:Qt.AlignHCenter | Qt.AlignVCenter
             visible: classroomControlWidget.showWaitMsg
             iconName: "view-refresh"
             text: getTextMsg(classroomControlWidget.msgCode)

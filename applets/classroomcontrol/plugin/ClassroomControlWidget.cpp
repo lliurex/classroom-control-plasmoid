@@ -129,7 +129,7 @@ void ClassroomControlWidget::createWatcher(){
 
 void ClassroomControlWidget::getInfo(){
 
-    if (!isWorking){
+    if (!isApplyingChanges && !isWorking){
         qDebug()<<"[CLASSROOM_CONTROL]: Detecting changed in n4d vars directory";
         isWorking=true;
         m_utils->getCurrentInfo();
@@ -141,6 +141,9 @@ void ClassroomControlWidget::getInfoFinished(bool isAvailable, bool isEnabled, i
     if (isAvailable){
         m_maxNumCart=maxNumCart;
         createWatcher();
+
+        currentConfig.enable=isEnabled;
+        currentConfig.cart=(cartConfigured>0) ? cartConfigured:1;
 
         if (previousCart!=cartConfigured){
             previousCart=cartConfigured;
@@ -188,7 +191,6 @@ void ClassroomControlWidget::getInfoFinished(bool isAvailable, bool isEnabled, i
                 m_notification->sendEvent();
             } 
         }else{
-            cartConfigured=0;
             cartControlEnabled=false;
             createFileVarWatcher=false;
             m_timer_deactivation->stop();
@@ -327,22 +329,17 @@ void ClassroomControlWidget::changeControlMode(bool isCartControlEnabled){
 
     if (cartControlEnabled!=isCartControlEnabled){
         cartControlEnabled=isCartControlEnabled;
-        setArePendingChanges(true);
-    }else{
-        setArePendingChanges(false);
     }
+    checkChangesInConfig();
 }
 
 void ClassroomControlWidget::changeCart(int newCart){
 
-    if (newCart!=cartConfigured){
-        setArePendingChanges(true);
-    }else{
-        setArePendingChanges(false);
-    }
+    setCurrentCart(newCart);
+    setCurrentCartIndex(newCart-1);
 
-   setCurrentCart(newCart);
-   setCurrentCartIndex(newCart-1);
+    checkChangesInConfig();
+   
 }
 
 void ClassroomControlWidget::applyChanges(){
@@ -383,6 +380,7 @@ void ClassroomControlWidget::applyChanges(){
                     cmd="pkexec natfree-adi UNSET";
                 
                 }
+                safeThis->isApplyingChanges=true;
                 safeThis->m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
                                    << cmd,QIODevice::ReadOnly);
             }else{
@@ -400,6 +398,8 @@ void ClassroomControlWidget::applyChangesFinished(int exitCode, QProcess::ExitSt
     showNotification=true;
     
     if (exitStatus!=QProcess::NormalExit){
+        m_timer_deactivation->stop();
+        isApplyingChanges=false;
         int code=-6;
         notificationBody=i18n("Unable to configure classroom control");
         qDebug()<<"[CLASSROOM_CONTROL]: Apply changes with error. Code: "<<code;
@@ -434,6 +434,7 @@ void ClassroomControlWidget::applyChangesFinished(int exitCode, QProcess::ExitSt
 
 void ClassroomControlWidget::handleProcessingFinished(){
 
+    isApplyingChanges=false;
     QVariantList ret=m_changesWatcher.result();
     bool isError=ret[0].toBool();
     int code=ret[1].toInt();
@@ -444,6 +445,7 @@ void ClassroomControlWidget::handleProcessingFinished(){
             cancelChanges();
         }else{
             qDebug()<<"[CLASSROOM_CONTROL]: Apply changes with error. Code: "<<code;
+            m_timer_deactivation->stop();
             setShowWaitMsg(false);
             setMsgCode(0);
             setArePendingChanges(false);
@@ -464,10 +466,8 @@ void ClassroomControlWidget::handleProcessingFinished(){
         }
     
     }else{
-        if (!createDirectoryN4dWatcher || !createFileVarWatcher){
-            if (!isWorking){
-                getInfo();
-            }
+        if (!isWorking){
+            getInfo();
         }
         setShowWaitMsg(false);
         setMsgCode(0);
@@ -488,6 +488,7 @@ void ClassroomControlWidget::cancelChanges(){
     setMsgCode(3);
     
     showNotification=false;
+    isApplyingChanges=false;
     
     if (!isWorking){
         getInfo();
@@ -520,6 +521,7 @@ void ClassroomControlWidget::unlockCart(){
                safeThis->setMsgCode(2);
 
                QString cmd="pkexec natfree-adi UNSET ";
+               safeThis->isApplyingChanges=true;
                safeThis->m_applyChanges->start("/bin/sh", QStringList()<< "-c" 
                                    << cmd,QIODevice::ReadOnly);
             }else{
@@ -561,13 +563,16 @@ void ClassroomControlWidget::launchAutomaticDeactivation(){
     setShowError(false);
     setShowWaitMsg(true);
     setMsgCode(4);
-
+   
+    isApplyingChanges=true;
     m_utils->automaticDeactivation();
-
+    
 }
 
 void ClassroomControlWidget::handleDeactivationFinished(bool result){
      
+    isApplyingChanges=false;
+
     if (!result){
         closeAllNotifications();
         QString titleError=i18n("Automatic deactivation has failed");
@@ -579,6 +584,8 @@ void ClassroomControlWidget::handleDeactivationFinished(bool result){
         m_notification->setIconName("classroom_control_error");
         m_notification->sendEvent();
         m_notification->sendEvent();
+    }else{
+        getInfo();
     }
     setShowWaitMsg(false);
     setMsgCode(0);
@@ -591,12 +598,14 @@ void ClassroomControlWidget::reactivateControl(){
     setShowWaitMsg(true);
     setMsgCode(5);
     cartControlEnabled=true;
+    isApplyingChanges=true;
     m_utils->reactivateControl(lastCartConfigured);
    
 }
 
 void ClassroomControlWidget::handleReactivationFinished(bool result){
 
+   isApplyingChanges=false;
    if (!result){
         closeAllNotifications();
         QString titleError=i18n("The reactivation has failed");
@@ -608,6 +617,8 @@ void ClassroomControlWidget::handleReactivationFinished(bool result){
         m_notification->setIconName("classroom_control_error");
         m_notification->sendEvent();
        
+   }else{
+        getInfo();
    }
    setShowWaitMsg(false);
    setMsgCode(0);
@@ -666,6 +677,21 @@ void ClassroomControlWidget::openHelp(){
     KIO::CommandLauncherJob *job = nullptr;
     job = new KIO::CommandLauncherJob(command);
     job->start();
+}
+
+void ClassroomControlWidget::checkChangesInConfig(){
+
+    if (currentConfig.enable!=cartControlEnabled){
+        setArePendingChanges(true);
+        return;
+    }
+    
+    if (cartControlEnabled && currentConfig.cart!=m_currentCart){
+        setArePendingChanges(true);
+    }else{
+        setArePendingChanges(false);
+    }
+
 }
 
 void ClassroomControlWidget::setStatus(ClassroomControlWidget::TrayStatus status)
