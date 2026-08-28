@@ -1,3 +1,11 @@
+classroom-control-plasmoid (0.1.20) noble; urgency=medium
+
+  * Improved error management
+  * Added check on status of the natfree interface to ensure its up
+  * Improved ui response to configuration changes
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 28 Aug 2026 10:41:33 +0200
+
 classroom-control-plasmoid (0.1.19) noble; urgency=medium
 
   * Changed KNotification for QDBusMessage in the reactivation notification to ensure it closes when requested
