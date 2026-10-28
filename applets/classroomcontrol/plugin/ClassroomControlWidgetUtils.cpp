@@ -24,8 +24,14 @@ using namespace std;
 using namespace edupals::variant;
 
 
-ClassroomControlWidgetUtils::ClassroomControlWidgetUtils(QObject *parent)
-    : QObject(parent)
+ClassroomControlWidgetUtils::ClassroomControlWidgetUtils()
+    : QObject(nullptr)
+    , m_isStarting(false)
+    , m_isInitialized(false)
+    , m_isGettingStatus(false)
+    , m_isGettingInfo(false)
+    , m_isDeactivating(false)
+    , m_isReactivating(false) 
        
 {
     user=qgetenv("USER");
@@ -34,6 +40,17 @@ ClassroomControlWidgetUtils::ClassroomControlWidgetUtils(QObject *parent)
 
 void ClassroomControlWidgetUtils::startWidget(){
 
+    if (m_isInitialized){
+        emit startWidgetFinished(true);
+        return;
+    } 
+
+    if (m_isStarting){
+        return;
+    }
+
+    m_isStarting=true;
+    
     QPointer<ClassroomControlWidgetUtils>safeThis(this);
 
     QThreadPool::globalInstance()->start([safeThis](){
@@ -57,6 +74,8 @@ void ClassroomControlWidgetUtils::startWidget(){
         } 
 
         if (safeThis){
+            safeThis->m_isStarting=false;
+            safeThis->m_isInitialized=startOk;
             emit safeThis->startWidgetFinished(startOk);
         }
 
@@ -156,6 +175,12 @@ bool ClassroomControlWidgetUtils::registerService(){
 
 void ClassroomControlWidgetUtils::getWidgetStatus(){
 
+    if (m_isGettingStatus){
+        return;
+    }
+
+    m_isGettingStatus=true;
+   
     QPointer<ClassroomControlWidgetUtils>safeThis(this);
 
     QThreadPool::globalInstance()->start([safeThis]() {
@@ -172,6 +197,7 @@ void ClassroomControlWidgetUtils::getWidgetStatus(){
             }
         }
         if (safeThis){
+            safeThis->m_isGettingStatus=false;
             emit safeThis->getWidgetStatusFinished(isEnabled,deactivationTimeOut);
         }
     });
@@ -219,6 +245,12 @@ bool ClassroomControlWidgetUtils::isClassroomControlAvailable(){
 
 void ClassroomControlWidgetUtils::getCurrentInfo(){
 
+    if (m_isGettingInfo){
+        return;
+    }
+
+    m_isGettingInfo=true;
+   
     QPointer<ClassroomControlWidgetUtils>safeThis(this);
     QString tmpN4dVar=this->controlModeVar;
 
@@ -247,6 +279,7 @@ void ClassroomControlWidgetUtils::getCurrentInfo(){
             }
         }
         if (safeThis){
+            safeThis->m_isGettingInfo=false;
             emit safeThis->getCurrentInfoFinished(isAvailable,isEnabled,cartConfigured,safeThis->maxNumCart);
         }
     });
@@ -424,6 +457,12 @@ int ClassroomControlWidgetUtils::getDeactivationTimeOut(){
 
 void ClassroomControlWidgetUtils::automaticDeactivation(){
 
+    if (m_isDeactivating){
+        return;
+    }
+
+    m_isDeactivating=true;
+
     QPointer<ClassroomControlWidgetUtils>safeThis(this);
     
     QThreadPool::globalInstance()->start([safeThis]() {
@@ -442,12 +481,19 @@ void ClassroomControlWidgetUtils::automaticDeactivation(){
             qDebug()<<"[CLASSROOM_CONTROL]: Automatic deactivation. Error: "<<e.what();
         }
         if (safeThis){
+            safeThis->m_isDeactivating=false;
             emit safeThis->automaticDeactivationFinished(result);
         }
     });
 }
 
 void ClassroomControlWidgetUtils::reactivateControl(int cart){
+
+    if (m_isReactivating){
+        return;
+    }
+
+    m_isReactivating=true;
 
     QPointer<ClassroomControlWidgetUtils>safeThis(this);
 
@@ -468,6 +514,7 @@ void ClassroomControlWidgetUtils::reactivateControl(int cart){
             qDebug()<<"[CLASSROOM_CONTROL]: Reactivation control. Error: "<<e.what();
         }
         if (safeThis){
+            safeThis->m_isReactivating=false;
             emit safeThis->reactivateControlFinished(result);
         }
     });
