@@ -1,3 +1,9 @@
+classroom-control-plasmoid (0.1.21+LliureX23) jammy; urgency=medium
+
+  * Improved performance when widget is running in two or more panels
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Wed, 28 Oct 2026 08:57:20 +0100
+
 classroom-control-plasmoid (0.1.20+LliureX23) jammy; urgency=medium
 
   * Improved error management
