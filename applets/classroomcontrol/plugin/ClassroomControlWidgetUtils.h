@@ -22,9 +22,13 @@ class ClassroomControlWidgetUtils : public QObject
 
 
 public:
-   
+    static ClassroomControlWidgetUtils& instance(){
+        static ClassroomControlWidgetUtils _instance;
+        return _instance;
+    }
 
-   explicit ClassroomControlWidgetUtils(QObject *parent = nullptr);
+   ClassroomControlWidgetUtils(const ClassroomControlWidgetUtils&)=delete;
+   ClassroomControlWidgetUtils& operator=(const ClassroomControlWidgetUtils&) =delete;
 
    bool registeredService=true;
 
@@ -57,6 +61,15 @@ signals:
 
 private:
 
+    explicit ClassroomControlWidgetUtils();
+
+    bool m_isStarting=false;
+    bool m_isInitialized=false;
+    bool m_isGettingStatus=false;
+    bool m_isGettingInfo=false;
+    bool m_isDeactivating=false;
+    bool m_isReactivating=false;
+       
     int maxNumCart=0;
     int defaultDeactivationTimeOut=3600000;
 

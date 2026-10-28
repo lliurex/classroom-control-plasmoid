@@ -25,7 +25,7 @@ using namespace edupals::variant;
 
 ClassroomControlWidget::ClassroomControlWidget(QObject *parent)
     : QObject(parent)
-    , m_utils(new ClassroomControlWidgetUtils(this))
+    , m_utils(&ClassroomControlWidgetUtils::instance())
     , m_applyChanges(new QProcess(this))
     , m_timer_deactivation(new QTimer(this))
 {
@@ -548,6 +548,7 @@ void ClassroomControlWidget::showDeactivationWarning(){
 void ClassroomControlWidget::stopDeactivation(){
 
     closeAllNotifications();
+    emit m_utils->closeWarningSignal();
 
     if (cartControlEnabled){
         m_timer_deactivation->stop();
