@@ -63,7 +63,6 @@ private:
 
     explicit ClassroomControlWidgetUtils();
 
-    QMutex m_workMutex;
     bool m_isStarting=false;
     bool m_isInitialized=false;
     bool m_isGettingStatus=false;
